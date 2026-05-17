@@ -36,7 +36,7 @@ Add `--solve` to run the backtracking solver and print the spoiler line of
 1-based column positions (one per row):
 
 ```
-Solution: 16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1
+> Solution: 16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1
 Total solutions found: 1
 ```
 
@@ -73,6 +73,20 @@ tests/
     conftest.py      # --network and --slow opt-in flags
     test_grids.py    # grid recognition, URL reader, and solver tests
 ```
+
+## Batch solve all community levels
+
+`solve_all.sh` iterates over all known community levels (1–692) and writes
+the full output to `all_solutions/solutions.txt`:
+
+```bash
+bash solve_all.sh              # levels 1-692, 1 s delay between requests
+bash solve_all.sh 1 692 0.5   # custom range and delay (seconds)
+```
+
+Each level prints a `=== Level N ===` header followed by the raw output from
+`nqueens-recog --solve`, including any errors. All output is also appended to
+`all_solutions/solutions.txt` (excluded from git).
 
 ## How it works
 

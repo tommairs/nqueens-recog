@@ -40,7 +40,7 @@ def solve(
         if y == size:
             # queens is in row order: queens[i] = (col, row_i)
             cols = [x + 1 for x, _ in queens]
-            print("Solution: " + ", ".join(str(c) for c in cols))
+            print("> Solution: " + ", ".join(str(c) for c in cols))
             if verbose:
                 print_board(board, queens)
             all_solutions.append(queens)
