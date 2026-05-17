@@ -70,7 +70,7 @@ src/nqueens_recog/
 img/
     puzzle-*.png     # sample puzzle images (test fixtures)
 tests/
-    conftest.py      # test-specific flags
+    conftest.py      # --network and --slow opt-in flags
     test_grids.py    # grid recognition, URL reader, and solver tests
 ```
 
