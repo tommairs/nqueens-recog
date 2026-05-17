@@ -48,7 +48,7 @@ def main() -> None:
 
     print(f"Grid: {size} × {size}, {size} colours")
     if args.verbose:
-        from .solver import print_board
+        from .display import print_board
         print_board(board)
 
     if args.solve:

@@ -1,5 +1,7 @@
 # nqueens-recog
 
+[![CI](https://github.com/tuck1s/nqueens-recog/actions/workflows/ci.yml/badge.svg)](https://github.com/tuck1s/nqueens-recog/actions/workflows/ci.yml)
+
 Detect and parse a colour grid from an N-Queens puzzle, either from a
 [community-level URL](https://queensgame.vercel.app/community-level/657) or
 from a screenshot/image file.
@@ -61,8 +63,9 @@ pytest --network # also cross-validates image recognition against GitHub level d
 src/nqueens_recog/
     grid_reader.py   # image → Grid (perspective correct, line detect, k-means)
     palette.py       # queensgame colour palette and nearest-colour matching
+    display.py       # ANSI terminal board renderer (letter view and queen view)
     url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
-    solver.py        # backtracking solver; prints coloured board + spoiler line
+    solver.py        # backtracking solver; prints spoiler line + coloured board
     __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
 img/
     puzzle-*.png     # sample puzzle images (test fixtures)
