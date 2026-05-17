@@ -85,6 +85,8 @@ class TestPuzzle687:
 # Uses the default game palette; colours mapped via nearest-RGB matching.
 # Correct the rows below if the colour assignments need adjusting.
 # ---------------------------------------------------------------------------
+# Disable annoying spell checker in the expected letter grid
+# cspell: disable
 
 def test_puzzle_687_letter_map():
     grid = read_grid(str(PUZZLE_687))
@@ -110,3 +112,4 @@ def test_puzzle_687_letter_map():
     ]
     assert result == expected
 
+# cspell: enable
