@@ -1,4 +1,13 @@
 {
   "version": "0.2",
-  "words": ["nqueens", "recog", "nbconvert"]
+  "words": [
+    "nqueens", "recog", "nbconvert",
+    "deskew", "deskewing", "tesseract", "pytesseract",
+    "opencv", "BGR", "bgr", "OTSU", "otsu",
+    "warpPerspective", "polyDP", "imshow",
+    "hough", "sobel", "canny",
+    "recognised", "colour", "colours", "coloured",
+    "centre", "centres", "rectified", "grayscale",
+    "linalg", "ksize", "tessedit", "imread"
+  ]
 }
