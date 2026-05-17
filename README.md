@@ -44,18 +44,26 @@ B B B B E O O J A J O E P E E E E
 ...
 ```
 
-Add `--solve` to run the backtracking solver and print the solution:
+Add `--solve` to run the backtracking solver. By default only the terse
+spoiler line is printed:
 
 ```bash
 nqueens-recog https://queensgame.vercel.app/community-level/657 --solve
 ```
 
-The solved board is printed with ANSI colour backgrounds and queen markers,
-followed by a spoiler line of 1-based column positions (one per row):
-
 ```
 Solution: 16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1
+Total solutions found: 1
 ```
+
+Add `-v` / `--verbose` to also show the letter grid and the coloured board
+with queen markers:
+
+```bash
+nqueens-recog https://queensgame.vercel.app/community-level/657 --solve -v
+```
+
+The spoiler line lists 1-based column positions, one per row.
 
 `python -m nqueens_recog <url_or_image>` also works if the package is not installed.
 
@@ -79,7 +87,7 @@ src/nqueens_recog/
     palette.py       # queensgame colour palette and nearest-colour matching
     url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
     solver.py        # backtracking solver; prints coloured board + spoiler line
-    __main__.py      # entry point: nqueens-recog <url_or_image> [--solve]
+    __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
 img/
     puzzle-687.png   # reference puzzle image (standard test fixture)
 tests/

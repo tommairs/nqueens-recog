@@ -23,6 +23,11 @@ def main() -> None:
         action="store_true",
         help="Solve the puzzle and print the solution board.",
     )
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Show the letter grid and coloured board in addition to the solution line.",
+    )
     args = parser.parse_args()
 
     if is_community_level_url(args.input):
@@ -30,15 +35,25 @@ def main() -> None:
     else:
         board = [list(row) for row in grid_to_letters(read_grid(args.input))]
 
+    # Check board validity before attempting to solve.
     size = len(board)
-    print(f"Grid: {size} × {size}, {size} colours")
-    for row in board:
-        print(" ".join(row))
+    col_counts = {len(row) for row in board}
+    if col_counts != {size}:
+        print(f"Error: board is not square ({size} rows, column counts: {sorted(col_counts)})", file=sys.stderr)
+        sys.exit(1)
+    n_colours = len({cell for row in board for cell in row})
+    if n_colours != size:
+        print(f"Error: expected {size} distinct colours for a {size}×{size} board, found {n_colours}", file=sys.stderr)
+        sys.exit(1)
+
+    if not args.solve or args.verbose:
+        print(f"Grid: {size} × {size}, {size} colours")
+        for row in board:
+            print(" ".join(row))
 
     if args.solve:
         from .solver import solve
-        print("\nSolving ...")
-        solutions = solve(board)
+        solutions = solve(board, verbose=args.verbose)
         print(f"Total solutions found: {len(solutions)}")
 
 

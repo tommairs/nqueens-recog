@@ -16,13 +16,16 @@ _LETTER_TO_HEX: dict[str, str] = {letter: hex_color for letter, hex_color in PAL
 _UNKNOWN_COLOR = "#888888"
 
 
-def solve(board: list[list[str]]) -> list[list[tuple[int, int]]]:
+def solve(
+    board: list[list[str]], verbose: bool = True
+) -> list[list[tuple[int, int]]]:
     """Return all solutions for *board* as lists of (col, row) queen positions.
 
     Each solution is a list of *n* ``(x, y)`` tuples – one queen per row –
     where ``x`` is the column index and ``y`` is the row index.
 
-    A solution is printed to stdout as it is found.
+    The ``Solution:`` spoiler line is always printed for each solution found.
+    When *verbose* is true the coloured board is also printed.
     """
     size = len(board)
     all_solutions: list[list[tuple[int, int]]] = []
@@ -39,11 +42,13 @@ def solve(board: list[list[str]]) -> list[list[tuple[int, int]]]:
         queens: list[tuple[int, int]],
     ) -> None:
         if y == size:
-            print_board(board, queens)
+            if verbose:
+                print_board(board, queens)
             # queens is in row order: queens[i] = (col, row_i)
             cols = [x + 1 for x, _ in queens]
             print("Solution: " + ", ".join(str(c) for c in cols))
-            print()
+            if verbose:
+                print()
             all_solutions.append(queens)
             return
         for x in range(size):
