@@ -28,4 +28,5 @@ nqueens-recog = "nqueens_recog.__main__:main"
 testpaths = ["tests"]
 markers = [
     "network: tests that require internet access (opt-in with --network)",
+    "slow: tests that take a long time to run (opt-in with --slow)",
 ]

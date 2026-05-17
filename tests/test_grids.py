@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from nqueens_recog.grid_reader import Grid, Tile, read_grid
 from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_letters
 from nqueens_recog.url_reader import is_community_level_url, read_community_level, _parse_color_regions
+from nqueens_recog.solver import solve
 
 IMG_DIR = Path(__file__).parent.parent / "img"
 PUZZLE_687   = IMG_DIR / "puzzle-687.png"
@@ -264,4 +265,28 @@ def test_image_matches_community_level(level_id: str, image_path: Path) -> None:
             for i, (img, url_r) in enumerate(zip(img_rows, expected))
             if img != url_r
         )
+    )
+
+
+# ---------------------------------------------------------------------------
+# Solver: each puzzle must have exactly one solution
+# Board is built from local image recognition (no network required).
+# ---------------------------------------------------------------------------
+
+@pytest.mark.slow
+@pytest.mark.parametrize("image_path,label,expected_cols", [
+    (PUZZLE_589, "589", [10, 1, 5, 8, 6, 2, 7, 4, 9, 11, 3]),
+    (PUZZLE_687, "687", [14, 3, 6, 4, 12, 7, 5, 8, 11, 13, 10, 17, 2, 15, 9, 16, 1]),
+    (PUZZLE_657, "657", [16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1]),
+])
+def test_solver_finds_one_solution(image_path: Path, label: str, expected_cols: list[int]) -> None:
+    """Solver must find exactly one solution for each sample puzzle."""
+    board = [list(row) for row in grid_to_letters(read_grid(str(image_path)))]
+    solutions = solve(board)
+    assert len(solutions) == 1, (
+        f"Puzzle {label}: expected 1 solution, got {len(solutions)}"
+    )
+    cols = [x + 1 for x, _ in solutions[0]]
+    assert cols == expected_cols, (
+        f"Puzzle {label}: solution {cols} != expected {expected_cols}"
     )

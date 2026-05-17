@@ -1,37 +1,45 @@
 """Entry point: read a grid from an image file or a community-level URL."""
 
+import argparse
 import sys
 
-from .grid_reader import Grid, read_grid
+from .grid_reader import read_grid
 from .palette import grid_to_letters
 from .url_reader import is_community_level_url, read_community_level
 
 
-def _print_image_grid(grid: Grid) -> None:
-    for row in grid_to_letters(grid):
-        print(" ".join(row))
-
-
-def _print_letter_grid(rows: list[list[str]]) -> None:
-    for row in rows:
-        print(" ".join(row))
-
-
 def main() -> None:
-    if len(sys.argv) < 2:
-        print("Usage: nqueens-recog <image_path | community_level_url>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        prog="nqueens-recog",
+        description="Recognise an N-Queens puzzle grid and optionally solve it.",
+    )
+    parser.add_argument(
+        "input",
+        metavar="IMAGE_OR_URL",
+        help="Path to a puzzle screenshot, or a queensgame community-level URL.",
+    )
+    parser.add_argument(
+        "--solve",
+        action="store_true",
+        help="Solve the puzzle and print the solution board.",
+    )
+    args = parser.parse_args()
 
-    arg = sys.argv[1]
-    if is_community_level_url(arg):
-        rows = read_community_level(arg)
-        size = len(rows)
-        print(f"Grid: {size} × {size}, {size} colours")
-        _print_letter_grid(rows)
+    if is_community_level_url(args.input):
+        board = read_community_level(args.input)
     else:
-        grid = read_grid(arg)
-        print(f"Grid: {grid.rows} × {grid.cols}, {grid.rows} colours")
-        _print_image_grid(grid)
+        board = [list(row) for row in grid_to_letters(read_grid(args.input))]
+
+    size = len(board)
+    print(f"Grid: {size} × {size}, {size} colours")
+    for row in board:
+        print(" ".join(row))
+
+    if args.solve:
+        from .solver import solve
+        print("\nSolving ...")
+        solutions = solve(board)
+        print(f"Total solutions found: {len(solutions)}")
 
 
 if __name__ == "__main__":
