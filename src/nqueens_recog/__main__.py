@@ -46,10 +46,10 @@ def main() -> None:
         print(f"Error: expected {size} distinct colours for a {size}×{size} board, found {n_colours}", file=sys.stderr)
         sys.exit(1)
 
-    if not args.solve or args.verbose:
-        print(f"Grid: {size} × {size}, {size} colours")
-        for row in board:
-            print(" ".join(row))
+    print(f"Grid: {size} × {size}, {size} colours")
+    if args.verbose:
+        from .solver import print_board
+        print_board(board)
 
     if args.solve:
         from .solver import solve

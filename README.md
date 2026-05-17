@@ -22,62 +22,38 @@ pip install -e ".[dev]"
 
 ## Run
 
-Print the letter grid for a community level by URL:
-
 ```bash
 nqueens-recog https://queensgame.vercel.app/community-level/657
-```
-
-Or from a local screenshot:
-
-```bash
 nqueens-recog img/puzzle-687.png
 ```
 
-Each cell is printed as its palette letter (A–S). In image mode, colours not
-matching the game palette are assigned consecutive lowercase letters (a, b, c, …).
+Prints `Grid: N × N, N colours`. Add `-v` / `--verbose` to also show the
+coloured board (ANSI background per region, region letter in each cell).
 
-```
-Grid: 17 × 17, 17 colours
-E B B E E E L O O O L E E G E E E
-B B B B E O O J A J O E P E E E E
-...
-```
-
-Add `--solve` to run the backtracking solver. By default only the terse
-spoiler line is printed:
-
-```bash
-nqueens-recog https://queensgame.vercel.app/community-level/657 --solve
-```
+Add `--solve` to run the backtracking solver and print the spoiler line of
+1-based column positions (one per row):
 
 ```
 Solution: 16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1
 Total solutions found: 1
 ```
 
-Add `-v` / `--verbose` to also show the letter grid and the coloured board
-with queen markers:
+`-v` and `--solve` are independent — combine them to show both the coloured
+grid and the solved board with queen markers:
 
 ```bash
 nqueens-recog https://queensgame.vercel.app/community-level/657 --solve -v
 ```
-
-The spoiler line lists 1-based column positions, one per row.
 
 `python -m nqueens_recog <url_or_image>` also works if the package is not installed.
 
 ## Test
 
 ```bash
-pytest
+pytest           # fast tests (image recognition, palette, URL parser)
+pytest --slow    # also runs the solver against all three sample images
+pytest --network # also cross-validates image recognition against GitHub level data
 ```
-
-Tests run against `img/puzzle-687.png` using the
-[queensgame default palette](https://github.com/samimsu/queens-game).
-Each detected cluster colour is matched to the nearest palette entry by
-squared RGB distance and the resulting letter grid is compared to a known
-expected output.
 
 ## Project layout
 
@@ -89,8 +65,9 @@ src/nqueens_recog/
     solver.py        # backtracking solver; prints coloured board + spoiler line
     __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
 img/
-    puzzle-687.png   # reference puzzle image (standard test fixture)
+    puzzle-*.png     # sample puzzle images (test fixtures)
 tests/
+    conftest.py      # test-specific flags
     test_grids.py    # grid recognition, URL reader, and solver tests
 ```
 
