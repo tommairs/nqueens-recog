@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from nqueens_recog.grid_reader import Grid, Tile, read_grid
 from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_letters
+from nqueens_recog.url_reader import is_community_level_url, read_community_level, _parse_color_regions
 
 IMG_DIR = Path(__file__).parent.parent / "img"
 PUZZLE_687   = IMG_DIR / "puzzle-687.png"
@@ -161,3 +162,106 @@ def test_puzzle_657_letter_map():
     assert result == expected
 
 # cspell: enable
+
+
+# ---------------------------------------------------------------------------
+# url_reader: unit tests (no network required)
+# ---------------------------------------------------------------------------
+
+_MINIMAL_TS = """\
+import {{ turquoiseBlue }} from "../colors";
+
+const level = {{
+  path: "/community-level/1",
+  size: 3,
+  colorRegions: [
+    ["A", "A", "B"],
+    ["A", "C", "B"],
+    ["C", "C", "B"],
+  ],
+  regionColors: {{
+    A: turquoiseBlue,
+  }},
+  solutionsCount: 1,
+}};
+
+export default level;
+"""
+
+
+class TestIsCommunityLevelUrl:
+    def test_valid(self):
+        assert is_community_level_url(
+            "https://queensgame.vercel.app/community-level/657"
+        )
+
+    def test_valid_http(self):
+        assert is_community_level_url(
+            "http://queensgame.vercel.app/community-level/1"
+        )
+
+    def test_rejects_image_path(self):
+        assert not is_community_level_url("img/puzzle-687.png")
+
+    def test_rejects_other_url(self):
+        assert not is_community_level_url("https://example.com/community-level/1")
+
+
+class TestParseColorRegions:
+    def test_returns_correct_shape(self):
+        rows = _parse_color_regions(_MINIMAL_TS, "1")
+        assert len(rows) == 3
+        assert all(len(r) == 3 for r in rows)
+
+    def test_returns_correct_letters(self):
+        rows = _parse_color_regions(_MINIMAL_TS, "1")
+        assert rows[0] == ["A", "A", "B"]
+        assert rows[1] == ["A", "C", "B"]
+        assert rows[2] == ["C", "C", "B"]
+
+    def test_raises_on_missing_size(self):
+        bad = _MINIMAL_TS.replace("size: 3,", "")
+        with pytest.raises(ValueError, match="size"):
+            _parse_color_regions(bad, "1")
+
+    def test_raises_on_missing_block(self):
+        bad = _MINIMAL_TS.replace("colorRegions", "gridData")
+        with pytest.raises(ValueError, match="colorRegions"):
+            _parse_color_regions(bad, "1")
+
+    def test_raises_on_wrong_cell_count(self):
+        bad = _MINIMAL_TS.replace('size: 3,', 'size: 4,')
+        with pytest.raises(ValueError, match="expected"):
+            _parse_color_regions(bad, "1")
+
+
+# ---------------------------------------------------------------------------
+# Cross-validation: image recognition vs. authoritative URL data
+# Run with:  pytest --network
+# ---------------------------------------------------------------------------
+
+_COMMUNITY_LEVELS = {
+    "589": PUZZLE_589,
+    "657": PUZZLE_657,
+    "687": PUZZLE_687,
+}
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("level_id,image_path", _COMMUNITY_LEVELS.items())
+def test_image_matches_community_level(level_id: str, image_path: Path) -> None:
+    """Image recognition output must exactly match the authoritative level data."""
+    url = f"https://queensgame.vercel.app/community-level/{level_id}"
+    url_rows = read_community_level(url)
+    expected = ["".join(r) for r in url_rows]
+
+    img_rows = grid_to_letters(read_grid(str(image_path)))
+
+    assert img_rows == expected, (
+        f"Level {level_id}: image recognition differs from community-level data.\n"
+        + "\n".join(
+            f"  row {i}: img={img!r}  url={url_r!r}"
+            for i, (img, url_r) in enumerate(zip(img_rows, expected))
+            if img != url_r
+        )
+    )

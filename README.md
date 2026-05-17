@@ -1,9 +1,14 @@
 # nqueens-recog
 
-Detect and parse a colour grid from an image, designed for
-[N-Queens puzzle](https://queensgame.vercel.app/) recognition.
+Detect and parse a colour grid from an N-Queens puzzle, either from a
+[community-level URL](https://queensgame.vercel.app/community-level/657) or
+from a screenshot/image file.
 
-The pipeline uses OpenCV for perspective correction and gradient-based grid
+**URL mode** fetches the level's TypeScript source directly from the
+[queens-game GitHub repo](https://github.com/samimsu/queens-game), giving an
+exact, lossless letter grid with no image processing.
+
+**Image mode** uses OpenCV for perspective correction and gradient-based grid
 line detection, then k-means colour quantisation to assign each cell to one
 of the *n* region colours. No OCR is used; recognition is purely colour-based.
 
@@ -17,14 +22,20 @@ pip install -e ".[dev]"
 
 ## Run
 
-Print the letter grid for a puzzle image:
+Print the letter grid for a community level by URL:
+
+```bash
+nqueens-recog https://queensgame.vercel.app/community-level/657
+```
+
+Or from a local screenshot:
 
 ```bash
 nqueens-recog img/puzzle-687.png
 ```
 
-Each cell is printed as its palette letter (A–S). Colours not matching the
-game palette are assigned consecutive lowercase letters (a, b, c, …).
+Each cell is printed as its palette letter (A–S). In image mode, colours not
+matching the game palette are assigned consecutive lowercase letters (a, b, c, …).
 
 ```
 Grid: 17 × 17, 17 colours
@@ -33,7 +44,7 @@ B B B B E O O J A J O E P E E E E
 ...
 ```
 
-`python -m nqueens_recog <image>` also works if the package is not installed.
+`python -m nqueens_recog <url_or_image>` also works if the package is not installed.
 
 ## Test
 
@@ -53,11 +64,12 @@ expected output.
 src/nqueens_recog/
     grid_reader.py   # image → Grid (perspective correct, line detect, k-means)
     palette.py       # queensgame colour palette and nearest-colour matching
-    __main__.py      # entry point: nqueens-recog <image>
+    url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
+    __main__.py      # entry point: nqueens-recog <url_or_image>
 img/
     puzzle-687.png   # reference puzzle image (standard test fixture)
 tests/
-    test_grids.py    # grid recognition tests
+    test_grids.py    # grid recognition and URL reader tests
 ```
 
 ## How it works
