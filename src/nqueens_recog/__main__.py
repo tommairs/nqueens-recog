@@ -31,7 +31,11 @@ def main() -> None:
     args = parser.parse_args()
 
     if is_community_level_url(args.input):
-        board = read_community_level(args.input)
+        try:
+            board = read_community_level(args.input)
+        except (ValueError, RuntimeError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            sys.exit(1)
     else:
         board = [list(row) for row in grid_to_letters(read_grid(args.input))]
 
