@@ -13,6 +13,8 @@ from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_l
 
 IMG_DIR = Path(__file__).parent.parent / "img"
 PUZZLE_687   = IMG_DIR / "puzzle-687.png"
+PUZZLE_589   = IMG_DIR / "puzzle-589.png"
+PUZZLE_657   = IMG_DIR / "puzzle-657-bad-cropping.png"
 
 # ---------------------------------------------------------------------------
 # Colour palette and matching helpers are imported from nqueens_recog.palette.
@@ -109,6 +111,52 @@ def test_puzzle_687_letter_map():
         "NMMMMMMMQMMNNNMMM",
         "MMMKMMMMMMMMKMMMM",
         "KMMKKKMMQMKMKKMMM",
+    ]
+    assert result == expected
+
+
+def test_puzzle_589_letter_map():
+    grid = read_grid(str(PUZZLE_589))
+    result = grid_to_letters(grid)
+    expected = [
+        "EEEEIIIJJJJ",
+        "EIIAKKKFIII",
+        "AAAAAIIFFJJ",
+        "IIIAKKKFIII",
+        "IIIAKKKKIII",
+        "IIKKKKKDKKI",
+        "CCCCIDDDDHB",
+        "HHHCKKKHHHB",
+        "HHHIKKKDHHB",
+        "GHHIKKKDIHB",
+        "GGGGIIIDIBB",
+    ]
+    assert result == expected
+
+
+def test_puzzle_657_letter_map():
+    """18x18 puzzle with UI chrome above and below the grid."""
+    grid = read_grid(str(PUZZLE_657))
+    result = grid_to_letters(grid)
+    expected = [
+        "OONKKKKKKKKKKKKKOO",
+        "ONNNKKKKKKKKKKKKKO",
+        "KKNKKQQQQQQQQKKKKK",
+        "KKKKQLLLLGLLLQKKKK",
+        "KKKQLLLFLLJLGLQKKK",
+        "KKQLLLILLLLLLHLQKK",
+        "KKQALLLLRRLJLLLQKK",
+        "KKQLBLLRRRRLLLLQKP",
+        "KKQLLLRRRRRRLDLQKP",
+        "KKQLLLRRRRRRLLLQKK",
+        "KKQLLCLRRRRLLLLQKK",
+        "KKQLLLLLRRLLLLBQKK",
+        "KKQLDLLLHLLGLLLQKK",
+        "KKKQLCLGLLALLLQKKK",
+        "KKKKQLLLILLFLQKKKK",
+        "KKKKKQQQQQQQQKKKEO",
+        "OKMMKKKKKKKKKKKEEE",
+        "OOOMKKKKKKKKKKKOEO",
     ]
     assert result == expected
 
