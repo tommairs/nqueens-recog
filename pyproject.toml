@@ -16,7 +16,6 @@ dev = [
     "jupyter>=1.0",
     "matplotlib>=3.8",
     "opencv-python>=4.8",
-    "pytesseract>=0.3",
 ]
 
 [tool.setuptools.packages.find]

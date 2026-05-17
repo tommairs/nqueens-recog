@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 import cv2
 import numpy as np
@@ -21,7 +20,6 @@ class Tile:
     row: int
     col: int
     color_rgb: tuple[int, int, int]
-    letter: Optional[str]
 
     def __repr__(self) -> str:
         return f"Tile({self.row},{self.col} rgb={self.color_rgb})"
@@ -38,10 +36,6 @@ class Grid:
     def __getitem__(self, pos: tuple[int, int]) -> Tile:
         row, col = pos
         return self.tiles[row][col]
-
-    def letter_grid(self) -> list[list[Optional[str]]]:
-        """Return a 2-D list of letters (always None; OCR is not used)."""
-        return [[t.letter for t in row] for row in self.tiles]
 
     def color_grid(self) -> list[list[tuple[int, int, int]]]:
         """Return a 2-D list of (R, G, B) colour tuples."""
@@ -196,7 +190,7 @@ def _quantize_colors(tiles: list[list[Tile]], n: int) -> list[list[Tile]]:
         new_row: list[Tile] = []
         for tile in row:
             rgb = tuple(int(v) for v in centers[labels_flat[idx]])
-            new_row.append(Tile(row=tile.row, col=tile.col, color_rgb=rgb, letter=None))
+            new_row.append(Tile(row=tile.row, col=tile.col, color_rgb=rgb))
             idx += 1
         result.append(new_row)
     return result
@@ -207,7 +201,7 @@ def _quantize_colors(tiles: list[list[Tile]], n: int) -> list[list[Tile]]:
 # ---------------------------------------------------------------------------
 
 
-def read_grid(image_path: str, *, ocr: bool = False) -> Grid:
+def read_grid(image_path: str) -> Grid:
     """
     Detect and parse a square colour grid from *image_path*.
 
@@ -218,22 +212,16 @@ def read_grid(image_path: str, *, ocr: bool = False) -> Grid:
     Tile colours are quantized to exactly *n* canonical colours via k-means,
     on the assumption that an n × n puzzle uses exactly n distinct colours.
 
-    OCR is not performed.  The ``ocr`` parameter is accepted for API
-    compatibility but ignored; ``tile.letter`` is always ``None``.
-
     Parameters
     ----------
     image_path:
         Path to the source image.
-    ocr:
-        Ignored.
 
     Returns
     -------
     Grid
         ``grid.tiles[row][col]`` → :class:`Tile`.
         ``tile.color_rgb`` is one of exactly *n* canonical colours.
-        ``tile.letter`` is always ``None``.
     """
     bgr = cv2.imread(str(image_path))
     if bgr is None:
@@ -297,7 +285,7 @@ def read_grid(image_path: str, *, ocr: bool = False) -> Grid:
         for c in range(n):
             xc0, xc1 = col_bounds[c], col_bounds[c + 1]
             color = _cell_color(rgb[yr0:yr1, xc0:xc1])
-            row_tiles.append(Tile(row=r, col=c, color_rgb=color, letter=None))
+            row_tiles.append(Tile(row=r, col=c, color_rgb=color))
         tiles.append(row_tiles)
 
     tiles = _quantize_colors(tiles, n)

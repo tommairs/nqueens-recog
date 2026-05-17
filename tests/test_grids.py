@@ -55,10 +55,6 @@ class TestPuzzle687:
                     f"Invalid RGB at ({tile.row},{tile.col}): {tile.color_rgb}"
                 )
 
-    def test_no_letters(self, grid):
-        for row in grid.tiles:
-            for tile in row:
-                assert tile.letter is None
 
     def test_tile_coordinates(self, grid):
         for r, row in enumerate(grid.tiles):
