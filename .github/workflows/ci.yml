@@ -32,4 +32,4 @@ jobs:
       - name: Run notebook (smoke test)
         run: |
           pip install nbconvert jupyter
-          jupyter nbconvert --to notebook --execute notebooks/hello_world.ipynb --output /tmp/hello_world_executed.ipynb
+          jupyter nbconvert --to notebook --execute notebooks/nqueens-recog.ipynb --output /tmp/nqueens-recog_executed.ipynb
