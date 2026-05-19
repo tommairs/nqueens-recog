@@ -13,15 +13,16 @@ from .display import print_board
 
 
 def solve(
-    board: list[list[str]], verbose: bool = True
+    board: list[list[str]], verbose: bool = True, quiet: bool = False
 ) -> list[list[tuple[int, int]]]:
     """Return all solutions for *board* as lists of (col, row) queen positions.
 
     Each solution is a list of *n* ``(x, y)`` tuples – one queen per row –
     where ``x`` is the column index and ``y`` is the row index.
 
-    The ``Solution:`` spoiler line is always printed for each solution found.
-    When *verbose* is true the coloured board is also printed.
+    The ``Solution:`` spoiler line is always printed for each solution found
+    unless *quiet* is true.  When *verbose* is true the coloured board is also
+    printed (ignored when *quiet* is true).
     """
     size = len(board)
     all_solutions: list[list[tuple[int, int]]] = []
@@ -40,8 +41,9 @@ def solve(
         if y == size:
             # queens is in row order: queens[i] = (col, row_i)
             cols = [x + 1 for x, _ in queens]
-            print("> Solution: " + ", ".join(str(c) for c in cols))
-            if verbose:
+            if not quiet:
+                print("> Solution: " + ", ".join(str(c) for c in cols))
+            if verbose and not quiet:
                 print_board(board, queens)
             all_solutions.append(queens)
             return
