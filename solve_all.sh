@@ -5,12 +5,12 @@
 # Usage (with the project venv active):
 #   bash solve_all.sh [FIRST [LAST]]
 #
-# Defaults: levels 1-692.  Levels that don't exist (404) are silently skipped.
+# Defaults: levels 1-699.  Levels that don't exist (404) are silently skipped.
 
 set -euo pipefail
 
 FIRST=${1:-1}
-LAST=${2:-692}
+LAST=${2:-699}
 DELAY=${3:-1}   # seconds between requests (default 1); set to 0 to disable
 mkdir -p all_solutions
 OUTPUT="all_solutions/solutions.txt"
