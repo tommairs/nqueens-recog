@@ -56,9 +56,12 @@ def main() -> None:
         print_board(board)
 
     if args.solve:
+        import time
         from .solver import solve
+        t0 = time.monotonic()
         solutions = solve(board, verbose=args.verbose)
-        print(f"Total solutions found: {len(solutions)}")
+        elapsed = time.monotonic() - t0
+        print(f"Total solutions found: {len(solutions)}  ({elapsed:.1f}s)")
 
 
 if __name__ == "__main__":
