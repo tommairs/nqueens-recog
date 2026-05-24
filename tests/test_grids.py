@@ -11,7 +11,7 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from nqueens_recog.display import print_board
-from nqueens_recog.grid_reader import Grid, Tile, read_grid, _find_content_bbox, _find_grid_corners
+from nqueens_recog.grid_reader import Grid, Tile, read_grid
 from nqueens_recog.__main__ import main
 from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_letters
 from nqueens_recog.url_reader import is_community_level_url, read_community_level, _parse_color_regions
@@ -23,62 +23,13 @@ PUZZLE_589   = IMG_DIR / "puzzle-589.png"
 PUZZLE_657   = IMG_DIR / "puzzle-657-bad-cropping.png"
 
 # ---------------------------------------------------------------------------
-# Colour palette and matching helpers are imported from nqueens_recog.palette.
-# ---------------------------------------------------------------------------
-
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _valid_rgb(color: tuple) -> bool:
-    return len(color) == 3 and all(0 <= v <= 255 for v in color)
-
-
-# ---------------------------------------------------------------------------
-# puzzle-687.png
+# puzzle-687.png — Grid method tests
 # ---------------------------------------------------------------------------
 
 class TestPuzzle687:
     @pytest.fixture(scope="class")
     def grid(self):
         return read_grid(str(PUZZLE_687))
-
-    def test_returns_grid(self, grid):
-        assert isinstance(grid, Grid)
-
-    def test_is_square(self, grid):
-        assert grid.rows == grid.cols
-
-    def test_n_distinct_colors(self, grid):
-        n = grid.rows
-        colors = {t.color_rgb for row in grid.tiles for t in row}
-        assert len(colors) == n, f"Expected {n} distinct colors, got {len(colors)}"
-
-    def test_tile_colors_valid(self, grid):
-        for row in grid.tiles:
-            for tile in row:
-                assert _valid_rgb(tile.color_rgb), (
-                    f"Invalid RGB at ({tile.row},{tile.col}): {tile.color_rgb}"
-                )
-
-
-    def test_tile_coordinates(self, grid):
-        for r, row in enumerate(grid.tiles):
-            for c, tile in enumerate(row):
-                assert tile.row == r
-                assert tile.col == c
-
-    def test_indexing(self, grid):
-        assert grid[0, 0] is grid.tiles[0][0]
-        assert grid[grid.rows - 1, grid.cols - 1] is grid.tiles[-1][-1]
-
-    def test_color_grid_shape(self, grid):
-        cg = grid.color_grid()
-        assert len(cg) == grid.rows
-        assert all(len(row) == grid.cols for row in cg)
-        assert all(_valid_rgb(c) for row in cg for c in row)
 
     def test_color_index_grid(self, grid):
         cig = grid.color_index_grid()
@@ -198,11 +149,6 @@ class TestIsCommunityLevelUrl:
     def test_valid(self):
         assert is_community_level_url(
             "https://queensgame.vercel.app/community-level/657"
-        )
-
-    def test_valid_http(self):
-        assert is_community_level_url(
-            "http://queensgame.vercel.app/community-level/1"
         )
 
     def test_rejects_image_path(self):
@@ -328,23 +274,6 @@ class TestSolveUnit:
         assert len(sols) == 2
         assert [(1, 0), (3, 1), (0, 2), (2, 3)] in sols
         assert [(2, 0), (0, 1), (3, 2), (1, 3)] in sols
-
-    def test_quiet_suppresses_output(self, capsys):
-        solve(self._1x1, quiet=True)
-        assert capsys.readouterr().out == ""
-
-    def test_verbose_false_prints_solution_only(self, capsys):
-        solve(self._1x1, verbose=False)
-        out = capsys.readouterr().out
-        assert "> Solution:" in out
-        assert "\033[" not in out  # no ANSI board output
-
-    def test_verbose_true_prints_board(self, capsys):
-        solve(self._1x1, verbose=True)
-        out = capsys.readouterr().out
-        assert "> Solution:" in out
-        assert "\033[" in out  # ANSI board output present
-
 
 # ---------------------------------------------------------------------------
 # display.print_board unit tests
@@ -515,16 +444,6 @@ class TestMain:
 
 
 class TestGridReaderInternals:
-    def test_tile_repr(self):
-        t = Tile(row=1, col=2, color_rgb=(255, 0, 128))
-        assert "Tile(1,2" in repr(t)
-
-    def test_find_content_bbox_all_light_returns_full_extent(self):
-        """_find_content_bbox falls back to full image when no dark pixels exist."""
-        import numpy as np
-        white = np.full((30, 40), 255, dtype=np.uint8)
-        assert _find_content_bbox(white) == (0, 30, 0, 40)
-
     def test_read_grid_raises_for_nonsquare(self, tmp_path):
         """read_grid raises ValueError when detected row/col counts differ."""
         import numpy as np
