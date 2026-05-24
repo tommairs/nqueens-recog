@@ -43,8 +43,8 @@ def solve(
             cols = [x + 1 for x, _ in queens]
             if not quiet:
                 print("> Solution: " + ", ".join(str(c) for c in cols))
-            if verbose and not quiet:
-                print_board(board, queens)
+                if verbose:
+                    print_board(board, queens)
             all_solutions.append(queens)
             return
         for x in range(size):
