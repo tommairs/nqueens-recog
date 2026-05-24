@@ -11,7 +11,8 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from nqueens_recog.display import print_board
-from nqueens_recog.grid_reader import Grid, Tile, read_grid
+from nqueens_recog.grid_reader import Grid, Tile, read_grid, _find_content_bbox, _find_grid_corners
+from nqueens_recog.__main__ import main
 from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_letters
 from nqueens_recog.url_reader import is_community_level_url, read_community_level, _parse_color_regions
 from nqueens_recog.solver import solve
@@ -430,3 +431,110 @@ class TestGridToLettersUnknown:
         result = grid_to_letters(grid)
         assert result[0][0] != result[0][1]
         assert result[0][0].islower() and result[0][1].islower()
+
+
+# ---------------------------------------------------------------------------
+# __main__.main(): CLI entry point
+# ---------------------------------------------------------------------------
+
+_SIMPLE_BOARD_STR = ["AB", "BA"]  # grid_to_letters returns list of strings
+
+
+class TestMain:
+    """Tests for the CLI entry point in __main__.main()."""
+
+    def test_image_path_prints_grid_size(self, capsys):
+        with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
+             patch("nqueens_recog.__main__.read_grid"), \
+             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+            main()
+        assert "2 \u00d7 2" in capsys.readouterr().out
+
+    def test_url_path_success(self, capsys):
+        with patch("sys.argv", ["nqueens-recog", "https://queensgame.vercel.app/community-level/1"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=True), \
+             patch("nqueens_recog.__main__.read_community_level", return_value=[["A", "B"], ["B", "A"]]):
+            main()
+        assert "2 \u00d7 2" in capsys.readouterr().out
+
+    def test_url_value_error_exits(self):
+        with patch("sys.argv", ["nqueens-recog", "https://queensgame.vercel.app/community-level/1"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=True), \
+             patch("nqueens_recog.__main__.read_community_level", side_effect=ValueError("bad")):
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+        assert exc_info.value.code == 1
+
+    def test_url_runtime_error_exits(self):
+        with patch("sys.argv", ["nqueens-recog", "https://queensgame.vercel.app/community-level/1"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=True), \
+             patch("nqueens_recog.__main__.read_community_level", side_effect=RuntimeError("net")):
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+        assert exc_info.value.code == 1
+
+    def test_non_square_board_exits(self):
+        with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
+             patch("nqueens_recog.__main__.read_grid"), \
+             patch("nqueens_recog.__main__.grid_to_letters", return_value=["AB", "B"]):
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+        assert exc_info.value.code == 1
+
+    def test_wrong_color_count_exits(self):
+        with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
+             patch("nqueens_recog.__main__.read_grid"), \
+             patch("nqueens_recog.__main__.grid_to_letters", return_value=["AA", "AA"]):
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+        assert exc_info.value.code == 1
+
+    def test_verbose_flag_prints_board(self, capsys):
+        with patch("sys.argv", ["nqueens-recog", "--verbose", "fake.png"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
+             patch("nqueens_recog.__main__.read_grid"), \
+             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+            main()
+        assert "\033[" in capsys.readouterr().out
+
+    def test_solve_flag_prints_total(self, capsys):
+        with patch("sys.argv", ["nqueens-recog", "--solve", "fake.png"]), \
+             patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
+             patch("nqueens_recog.__main__.read_grid"), \
+             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+            main()
+        assert "Total solutions found:" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# grid_reader internal helpers: edge-case coverage
+# ---------------------------------------------------------------------------
+
+
+class TestGridReaderInternals:
+    def test_tile_repr(self):
+        t = Tile(row=1, col=2, color_rgb=(255, 0, 128))
+        assert "Tile(1,2" in repr(t)
+
+    def test_find_content_bbox_all_light_returns_full_extent(self):
+        """_find_content_bbox falls back to full image when no dark pixels exist."""
+        import numpy as np
+        white = np.full((30, 40), 255, dtype=np.uint8)
+        assert _find_content_bbox(white) == (0, 30, 0, 40)
+
+    def test_read_grid_raises_for_nonsquare(self, tmp_path):
+        """read_grid raises ValueError when detected row/col counts differ."""
+        import numpy as np
+        import cv2
+        img = np.full((100, 150, 3), 200, dtype=np.uint8)
+        p = tmp_path / "fake.png"
+        cv2.imwrite(str(p), img)
+        with patch(
+            "nqueens_recog.grid_reader._line_positions",
+            side_effect=[[20, 50, 80], [30, 60]],  # 4 rows, 3 cols
+        ):
+            with pytest.raises(ValueError, match="not square"):
+                read_grid(str(p))
