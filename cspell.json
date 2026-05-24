@@ -37,7 +37,9 @@
     "tessedit",
     "tesseract",
     "Tradewind",
+    "Unrecognised",
     "venv",
+    "vercel",
     "warpPerspective"
   ]
 }
