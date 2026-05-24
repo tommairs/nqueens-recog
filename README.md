@@ -1,6 +1,7 @@
 # nqueens-recog
 
 [![CI](https://github.com/tuck1s/nqueens-recog/actions/workflows/ci.yml/badge.svg)](https://github.com/tuck1s/nqueens-recog/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tuck1s/nqueens-recog/graph/badge.svg)](https://codecov.io/gh/tuck1s/nqueens-recog)
 
 Detect and parse a colour grid from an N-Queens puzzle, either from a
 [community-level URL](https://queensgame.vercel.app/community-level/657) or
