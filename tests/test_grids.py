@@ -398,7 +398,7 @@ def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "confined to col" in out     # rule_forced_row_col col branch
     assert "n-group: cols" in out       # rule_n_group col line perspective
-    assert "lookahead:" in out          # rule_lookahead fires
+    assert "lookahead [" in out          # rule_lookahead fires
 
 
 @pytest.mark.slow
@@ -429,7 +429,7 @@ def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
     _assert_matches_solver(board, result)
     assert "claims rows" in out     # rule_n_group colour perspective (rows)
     assert "claims cols" in out     # rule_n_group colour perspective (cols)
-    assert "lookahead:" in out      # rule_lookahead fires
+    assert "lookahead [" in out      # rule_lookahead fires
 
 
 @pytest.mark.slow
@@ -456,7 +456,7 @@ def test_stepwise_lookahead_10x10(capsys) -> None:
     out = capsys.readouterr().out
     assert result is not None
     _assert_matches_solver(board, result)
-    assert "lookahead:" in out      # rule_lookahead fires
+    assert "lookahead [" in out      # rule_lookahead fires
 
 
 def test_stepwise_xwing_with_lookahead(capsys) -> None:
@@ -485,7 +485,7 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "claims rows" in out         # rule_n_group colour perspective (rows)
     assert "x-wing:" in out             # rule_x_wing fires
-    assert "lookahead:" in out          # rule_lookahead fires
+    assert "lookahead [" in out          # rule_lookahead fires
 
 
 # ---------------------------------------------------------------------------

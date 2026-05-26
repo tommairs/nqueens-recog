@@ -11,6 +11,7 @@ def print_board(
     board: list[list[str]],
     queens: list[tuple[int, int]] | None = None,
     candidates: list[list[bool]] | None = None,
+    newly_eliminated: set[tuple[int, int]] | None = None,
 ) -> None:
     """Print *board* to stdout with ANSI background colours.
 
@@ -19,9 +20,12 @@ def print_board(
     a blank — matching the same 4-column cell width in both cases.
     When *candidates* is provided, eliminated cells show ✖️ on their own
     background; active cells show their region letter; queens show 👑.
+    When *newly_eliminated* is provided, those cells show ❌ instead of ✖️
+    to highlight the most recent round of eliminations.
     """
     RESET = "\033[0m"
     queen_set = set(queens) if queens is not None else set()
+    new_set = newly_eliminated or set()
     for y in range(len(board)):
         row = ""
         for x in range(len(board[y])):
@@ -31,6 +35,8 @@ def print_board(
             bg = f"\033[48;2;{r};{g};{b}m"
             if (x, y) in queen_set:
                 cell = " 👑 "  # 4 cols (emoji is 2-wide)
+            elif eliminated and (x, y) in new_set:
+                cell = " ❌ "  # ❌ is 2-wide → 4 cols total
             elif eliminated:
                 cell = " ✖️  "  # ✖️ is 1-wide, so 2 trailing spaces → 4 cols total
             elif queens is None or candidates is not None:

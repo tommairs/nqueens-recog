@@ -80,12 +80,24 @@ def solve_stepwise(
         if not quiet:
             print(msg)
 
+    # Snapshot of candidates at the last show_board call, used to highlight new eliminations.
+    _prev_candidates: list[list[bool]] = [row[:] for row in candidates]
+
     def show_board() -> None:
+        nonlocal _prev_candidates
         if not verbose:
+            _prev_candidates = [row[:] for row in candidates]
             return
         from .display import print_board
         q_list = [(c, r) for r, c in queens.items()]
-        print_board(board, queens=q_list, candidates=candidates)
+        newly = {
+            (c, r)
+            for r in range(n)
+            for c in range(n)
+            if _prev_candidates[r][c] and not candidates[r][c]
+        }
+        _prev_candidates = [row[:] for row in candidates]
+        print_board(board, queens=q_list, candidates=candidates, newly_eliminated=newly)
 
     def colour_at(r: int, c: int) -> str:
         return board[r][c]
