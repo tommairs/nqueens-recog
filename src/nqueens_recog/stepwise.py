@@ -723,7 +723,8 @@ def solve_stepwise(
         """Recursive backtracking with rules 1–3 propagation at each node.
 
         Returns ``(result, lines)`` where *lines* is the buffered trace output.
-        Leaf failures (no children) are collapsed to a single ``try … → ✗`` line.
+        Each ``try`` line includes the immediate deduction chain from propagation.
+        Leaf failures are collapsed to a single ``try … → ✗`` line.
         """
         if not _propagate_sim(sc, sq):
             return None, []
@@ -737,17 +738,31 @@ def solve_stepwise(
             nsc = [row[:] for row in sc]
             nsq = dict(sq)
             _sim_place(nsc, nsq, r_t, c_t)
+            sq_placed = dict(nsq)  # state after placing, before propagation
+            prop_ok = _propagate_sim(nsc, nsq)
+            deduced = [
+                f"{board[r2][nsq[r2]]}({r2},{nsq[r2]})"
+                for r2 in nsq if r2 not in sq_placed
+            ]
+            chain = " → " + ", ".join(deduced) if deduced else ""
+            if not prop_ok:
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → ✗")
+                continue
+            if len(nsq) == n:
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
+                return dict(nsq), lines
+            # nsc/nsq already propagated; recursive call's initial propagation is a no-op
             result, child_lines = _backtrack(nsc, nsq, depth + 1)
             if result is not None:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]")
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
                 lines.extend(child_lines)
                 return result, lines
             if child_lines:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]")
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
                 lines.extend(child_lines)
                 lines.append(f"{pad}✗ ({r_t},{c_t})")
             else:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}] → ✗")
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → ✗")
         return None, lines
 
     def _solve_sim(
