@@ -557,10 +557,17 @@ def solve_stepwise(
         return any(board[r][sq[r]] == col for r in sq)
 
     def _contradiction(sc: list[list[bool]], sq: dict[int, int]) -> bool:
-        return any(
-            not _sim_solved(sq, col) and not _sim_active(sc, sq, col)
-            for col in colours
-        )
+        occ_cols = set(sq.values())
+        # Any unsolved colour with no candidates
+        if any(not _sim_solved(sq, col) and not _sim_active(sc, sq, col) for col in colours):
+            return True
+        # Any row without a queen and no remaining candidates
+        if any(r not in sq and not any(sc[r][c] for c in range(n)) for r in range(n)):
+            return True
+        # Any column without a queen and no remaining candidates
+        if any(c not in occ_cols and not any(sc[r][c] for r in range(n)) for c in range(n)):
+            return True
+        return False
 
     def _propagate_sim(sc: list[list[bool]], sq: dict[int, int]) -> bool:
         """Apply rules 1, 2, and 4 (singleton, forced row/col, N-group) until stable. Returns False if contradicted."""
@@ -792,14 +799,27 @@ def solve_stepwise(
         for colour in colours:
             if colour_is_solved(colour):
                 continue
+            attempts: list[tuple[int, int, list[str], bool]] = []
             for r, c in active_for_colour(colour):
                 sc = [row[:] for row in candidates]
                 sq = dict(queens)
                 _sim_place(sc, sq, r, c)
-                if not _propagate_sim(sc, sq):
+                sq_after_trial = dict(sq)
+                ok = _propagate_sim(sc, sq)
+                deduced = [
+                    f"{board[r2][sq[r2]]}({r2},{sq[r2]})"
+                    for r2 in sorted(sq)
+                    if r2 not in sq_after_trial
+                ]
+                attempts.append((r, c, deduced, not ok))
+                if not ok:
                     eliminate(r, c, trace=False)
-                    out(f"  lookahead: ({r},{c}) [{colour}]: contradicts after"
-                        f" propagation → 1 cell eliminated")
+                    lines = []
+                    for ar, ac, achain, acontra in attempts:
+                        ch = " → " + ", ".join(achain) if achain else ""
+                        verdict = "→ contradiction → eliminated" if acontra else "→ ok"
+                        lines.append(f"    ({ar},{ac}){ch} {verdict}")
+                    out(f"  lookahead [{colour}]:\n" + "\n".join(lines))
                     return True
         return False
 

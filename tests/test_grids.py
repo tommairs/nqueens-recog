@@ -337,6 +337,41 @@ def test_stepwise_ngroup_colour_perspective(capsys) -> None:
     assert "confined to col" in out     # rule_forced_row_col col branch
 
 
+def test_stepwise_shadow_l_shape(capsys) -> None:
+    """Community level 578 (8×8): shadow fires on four corner regions simultaneously.
+
+    The board has four compact corner regions whose candidates each jointly
+    attack one interior cell, producing a symmetric pattern of eliminations:
+
+      F triangle top-left  (0,0),(0,1),(1,0)        → eliminates (1,1)
+      E L-shape  top-right (0,5),(0,6),(0,7),(1,7)  → eliminates (1,6)
+      G L-shape  bot-left  (5,0),(6,0),(7,0),(7,1),(7,2) → eliminates (6,1)
+      H triangle bot-right (6,7),(7,6),(7,7)         → eliminates (6,6)
+
+    In every case every candidate attacks the target via row, col, or diagonal
+    adjacency, so rule_shadow fires for each colour.
+    Source: https://queensgame.vercel.app/community-level/578
+    """
+    board = [
+        ["F", "F", "A", "A", "A", "E", "E", "E"],
+        ["F", "A", "A", "C", "A", "A", "A", "E"],
+        ["A", "A", "C", "C", "D", "D", "A", "E"],
+        ["A", "C", "C", "C", "C", "C", "A", "A"],
+        ["A", "A", "B", "B", "C", "C", "C", "A"],
+        ["G", "A", "B", "B", "B", "B", "A", "A"],
+        ["G", "A", "A", "A", "B", "A", "A", "H"],
+        ["G", "G", "G", "A", "A", "A", "H", "H"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    _assert_matches_solver(board, result)
+    assert "shadow: [E]" in out     # L-shape eliminates (1,6)
+    assert "shadow: [F]" in out     # triangle eliminates (1,1)
+    assert "shadow: [G]" in out     # L-shape eliminates (6,1)
+    assert "shadow: [H]" in out     # triangle eliminates (6,6)
+
+
 def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
     """Community level 113 (7×7): forced row/col, n-group col line, and lookahead all fire.
 
