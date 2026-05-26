@@ -45,12 +45,16 @@ from .solver import is_diagonally_adjacent
 
 
 def solve_stepwise(
-    board: list[list[str]], quiet: bool = False
+    board: list[list[str]], quiet: bool = False, verbose: bool = False
 ) -> dict[int, int] | None:
     """Apply elimination rules to *board*, printing a trace of each step.
 
     Returns a ``{row: col}`` dict (0-indexed) when the puzzle is solved by
     deduction alone, or ``None`` if the rules were insufficient.
+
+    When *verbose* is ``True``, the board state is printed after each rule
+    fires, showing region letters for active candidates, ``X`` for eliminated
+    cells, and 👑 for placed queens.
     """
     n = len(board)
     candidates: list[list[bool]] = [[True] * n for _ in range(n)]
@@ -64,6 +68,13 @@ def solve_stepwise(
     def out(msg: str) -> None:
         if not quiet:
             print(msg)
+
+    def show_board() -> None:
+        if not verbose:
+            return
+        from .display import print_board
+        q_list = [(c, r) for r, c in queens.items()]
+        print_board(board, queens=q_list, candidates=candidates)
 
     def colour_at(r: int, c: int) -> str:
         return board[r][c]
@@ -119,9 +130,7 @@ def solve_stepwise(
                 if is_diagonally_adjacent(cc, rr, placed) and candidates[rr][cc]:
                     candidates[rr][cc] = False
                     elim += 1
-        out(f"  QUEEN ({r},{c}) [{colour}]: {reason}")
-        out(f"    eliminating row {r}, col {c}, region [{colour}], diagonal adjacents"
-            f" → {elim} cell(s)")
+        out(f"  QUEEN ({r},{c}) [{colour}]: {reason}: eliminating row {r}, col {c}, region [{colour}], diagonal adjacents → {elim} cell(s)")
 
     # ------------------------------------------------------------------
     # Rule — Region / row / col singleton
@@ -699,20 +708,28 @@ def solve_stepwise(
     out(f"Board: {n}×{n}, {len(colours)} colours")
     while len(queens) < n:
         if rule_singleton():
+            show_board()
             continue
         if rule_forced_row_col():
+            show_board()
             continue
         if rule_n_group():
+            show_board()
             continue
         if rule_x_wing():
+            show_board()
             continue
         if rule_elimination():
+            show_board()
             continue
         if rule_double_block():
+            show_board()
             continue
         if rule_lookahead():
+            show_board()
             continue
         if rule_search():
+            show_board()
             continue
         break
 

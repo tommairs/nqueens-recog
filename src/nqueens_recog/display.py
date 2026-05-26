@@ -10,25 +10,31 @@ _UNKNOWN_COLOR = "#888888"
 def print_board(
     board: list[list[str]],
     queens: list[tuple[int, int]] | None = None,
+    candidates: list[list[bool]] | None = None,
 ) -> None:
     """Print *board* to stdout with ANSI background colours.
 
     When *queens* is ``None`` (default) each cell shows its region letter.
     When *queens* is provided, queen positions show 👑 and empty cells show
     a blank — matching the same 4-column cell width in both cases.
+    When *candidates* is provided, eliminated cells show ✖️ on their own
+    background; active cells show their region letter; queens show 👑.
     """
     RESET = "\033[0m"
     queen_set = set(queens) if queens is not None else set()
     for y in range(len(board)):
         row = ""
         for x in range(len(board[y])):
+            eliminated = candidates is not None and not candidates[y][x]
             hex_color = _LETTER_TO_HEX.get(board[y][x], _UNKNOWN_COLOR)
             r, g, b = hex_to_rgb(hex_color)
             bg = f"\033[48;2;{r};{g};{b}m"
-            if queens is None:
-                cell = f"  {board[y][x]} "  # 4 cols: matches queen/blank width
-            elif (x, y) in queen_set:
+            if (x, y) in queen_set:
                 cell = " 👑 "  # 4 cols (emoji is 2-wide)
+            elif eliminated:
+                cell = " ✖️  "  # ✖️ is 1-wide, so 2 trailing spaces → 4 cols total
+            elif queens is None or candidates is not None:
+                cell = f"  {board[y][x]} "  # 4 cols: matches queen/blank width
             else:
                 cell = " 　 "  # full-width space, 4 cols
             row += f"{bg}{cell}{RESET}"

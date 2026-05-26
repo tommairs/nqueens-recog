@@ -71,7 +71,7 @@ def main() -> None:
 
     if args.stepwise:
         from .stepwise import solve_stepwise
-        solve_stepwise(board)
+        solve_stepwise(board, verbose=args.verbose)
 
 
 if __name__ == "__main__":
