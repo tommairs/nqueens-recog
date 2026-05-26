@@ -244,6 +244,29 @@ def test_solver_finds_one_solution(image_path: Path, label: str, expected_cols: 
 
 
 # ---------------------------------------------------------------------------
+# Stepwise solver: X-Wing rule
+# ---------------------------------------------------------------------------
+
+def test_stepwise_x_wing_fires(capsys) -> None:
+    """{A,B} cells are confined to row-0 ∪ col-0, forcing rule_x_wing to fire.
+
+    A candidates: (0,0), (0,1), (1,0)  — not in row 0 ⟹ col 0
+    B candidates: (0,2), (0,3), (2,0)  — not in row 0 ⟹ col 0
+    X-Wing (c=2, a=1, b=1): row {0} ∪ col {0} covers all {A,B} cells.
+    Expected eliminations: C(3,0) [non-group in col 0] + A(0,0) [intersection].
+    """
+    board = [
+        ["A", "A", "B", "B"],
+        ["A", "C", "C", "C"],
+        ["B", "D", "D", "D"],
+        ["C", "C", "D", "D"],
+    ]
+    result = solve_stepwise(board)
+    assert result is not None
+    assert "x-wing:" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
 # Solver unit tests (no images needed)
 # ---------------------------------------------------------------------------
 
