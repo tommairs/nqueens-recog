@@ -12,28 +12,33 @@ Rule names follow https://www.caterbum.com/blog/linkedin-queens-game-solver:
   2. **Region forced row/col** — all candidates for a region fall on the
      same row (or column); claim that line and eliminate every other
      region's candidates on it.
-  3. **N-group** (generalised from caterbum: "triple-check") — when k regions
+  3. **Squeeze** — when a row's (or column's) active candidates span ≤ 2
+     cells, the queen placed there will always diagonally attack the overlap
+     zone in both adjacent rows (or columns); eliminate candidates there.
+     E.g. two candidates in consecutive columns eliminate 2 cells in each
+     adjacent row; three consecutive candidates eliminate 1 cell each.
+  4. **N-group** (generalised from caterbum: "triple-check") — when k regions
      together have all their candidates confined to exactly k rows (or
      columns), those lines are reserved; eliminate any other region's
      candidates on them.
-  4. **X-Wing** — when c colours have all their candidates within the union
+  5. **X-Wing** — when c colours have all their candidates within the union
      of a rows R and b columns C (a+b=c), those c queens must collectively
      claim every row in R and every column in C; eliminate other colours'
      candidates from those rows and columns.  The typical case is c=4,
      a=b=2 (two pairs of colours forming a cross pattern).
-  5. **Double-block** — tentatively place a queen at a candidate cell and
+  6. **Double-block** — tentatively place a queen at a candidate cell and
      fast-forward forced eliminations; if two regions are then left with
      all their remaining candidates on the *same* row or column (an
      impossible collision) that cell is eliminated.
-  6. **Elimination** — if placing a queen at a candidate cell would leave
+  7. **Elimination** — if placing a queen at a candidate cell would leave
      some other region with no remaining candidates at all, that cell is
      ruled out (one-step lookahead).
-  7. **Lookahead** — for small regions, trial-place a queen in every
+  8. **Lookahead** — for small regions, trial-place a queen in every
      candidate cell; remove any candidate that leads to a contradiction.
-  8. **Search** — last resort: pick the most-constrained region, guess,
+  9. **Search** — last resort: pick the most-constrained region, guess,
      and recurse with backtracking.
 
-All eight rules are implemented. The trace uses plain text so it can be
+All nine rules are implemented. The trace uses plain text so it can be
 piped or saved alongside the solutions produced by ``--solve``.
 """
 
@@ -206,6 +211,69 @@ def solve_stepwise(
                     out(f"  forced: [{colour}] confined to col {col} → {count} cell(s) eliminated")
                     changed = True
         return changed
+
+    # ------------------------------------------------------------------
+    # Rule — Squeeze
+    # ------------------------------------------------------------------
+
+    def rule_squeeze() -> bool:
+        """Eliminate in adjacent rows/cols when a line's candidates have a narrow span.
+
+        If a row's active candidates span columns [c_min, c_max] with
+        c_max - c_min ≤ 2, the queen placed there will definitely attack every
+        column in [c_max-1, c_min+1] of the immediately adjacent rows,
+        regardless of which candidate is chosen.  Those candidates are eliminated.
+
+        The symmetric rule applies to columns: when a column's candidates have
+        r_max − r_min ≤ 2 (i.e. confined to 2 or 3 consecutive rows), every
+        row in [r_max-1, r_min+1] of the immediately adjacent columns is
+        eliminated.
+        """
+        # Row perspective
+        for r in range(n):
+            if r in queens:
+                continue
+            active_cols = active_in_row(r)
+            if len(active_cols) < 2:
+                continue
+            c_min, c_max = min(active_cols), max(active_cols)
+            if c_max - c_min > 2:
+                continue
+            # Guaranteed attack zone in adjacent rows: cols [c_max-1 .. c_min+1]
+            count = 0
+            for adj_r in (r - 1, r + 1):
+                if adj_r < 0 or adj_r >= n:
+                    continue
+                for cc in range(c_max - 1, c_min + 2):
+                    if 0 <= cc < n and candidates[adj_r][cc]:
+                        eliminate(adj_r, cc, trace=False)
+                        count += 1
+            if count:
+                out(f"  squeeze: row {r} cols {c_min}–{c_max} → {count} cell(s) eliminated in adjacent rows")
+                return True
+        # Column perspective
+        for c in range(n):
+            if c in queens.values():
+                continue
+            active_rows = active_in_col(c)
+            if len(active_rows) < 2:
+                continue
+            r_min, r_max = min(active_rows), max(active_rows)
+            if r_max - r_min > 2:
+                continue
+            # Guaranteed attack zone in adjacent cols: rows [r_max-1 .. r_min+1]
+            count = 0
+            for adj_c in (c - 1, c + 1):
+                if adj_c < 0 or adj_c >= n:
+                    continue
+                for rr in range(r_max - 1, r_min + 2):
+                    if 0 <= rr < n and candidates[rr][adj_c]:
+                        eliminate(rr, adj_c, trace=False)
+                        count += 1
+            if count:
+                out(f"  squeeze: col {c} rows {r_min}–{r_max} → {count} cell(s) eliminated in adjacent cols")
+                return True
+        return False
 
     # ------------------------------------------------------------------
     # Rule — N-group (generalised triple-check)
@@ -449,7 +517,7 @@ def solve_stepwise(
         )
 
     def _propagate_sim(sc: list[list[bool]], sq: dict[int, int]) -> bool:
-        """Apply rules 1–3 to (sc, sq) until stable. Returns False if contradicted."""
+        """Apply rules 1, 2, and 4 (singleton, forced row/col, N-group) until stable. Returns False if contradicted."""
         if _contradiction(sc, sq):
             return False
         while len(sq) < n:
@@ -720,6 +788,9 @@ def solve_stepwise(
             show_board()
             continue
         if rule_forced_row_col():
+            show_board()
+            continue
+        if rule_squeeze():
             show_board()
             continue
         if rule_n_group():
