@@ -392,6 +392,15 @@ def solve_stepwise(
                                 if board[r2][cc] not in group_set and candidates[r2][cc]:
                                     eliminate(r2, cc, trace=False)
                                     count += 1
+                        # Group candidates at corner intersections (row_subset ∩ needed_cols)
+                        # are also invalid: the b queens outside row_subset must each claim
+                        # one of the b cols in needed_cols, exhausting all of them, so the
+                        # a queens inside row_subset cannot use any col from needed_cols.
+                        for r2 in row_subset:
+                            for cc in needed_cols:
+                                if board[r2][cc] in group_set and candidates[r2][cc]:
+                                    eliminate(r2, cc, trace=False)
+                                    count += 1
                         if count:
                             rows_str = ",".join(str(r2) for r2 in sorted(row_subset))
                             cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
