@@ -718,23 +718,73 @@ def solve_stepwise(
         return not _contradiction(sc, sq)
 
     def _backtrack(
-        sc: list[list[bool]], sq: dict[int, int]
-    ) -> dict[int, int] | None:
-        """Recursive backtracking with rules 1–3 propagation at each node."""
+        sc: list[list[bool]], sq: dict[int, int], depth: int = 0
+    ) -> tuple[dict[int, int] | None, list[str]]:
+        """Recursive backtracking with rules 1–3 propagation at each node.
+
+        Returns ``(result, lines)`` where *lines* is the buffered trace output.
+        Leaf failures (no children) are collapsed to a single ``try … → ✗`` line.
+        """
         if not _propagate_sim(sc, sq):
-            return None
+            return None, []
         if len(sq) == n:
-            return dict(sq)
+            return dict(sq), []
         un = [col for col in colours if not _sim_solved(sq, col)]
         best_col = min(un, key=lambda col: len(_sim_active(sc, sq, col)))
+        pad = "  " * (depth + 2)
+        lines: list[str] = []
         for r_t, c_t in _sim_active(sc, sq, best_col):
             nsc = [row[:] for row in sc]
             nsq = dict(sq)
             _sim_place(nsc, nsq, r_t, c_t)
-            result = _backtrack(nsc, nsq)
+            result, child_lines = _backtrack(nsc, nsq, depth + 1)
             if result is not None:
-                return result
-        return None
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]")
+                lines.extend(child_lines)
+                return result, lines
+            if child_lines:
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]")
+                lines.extend(child_lines)
+                lines.append(f"{pad}✗ ({r_t},{c_t})")
+            else:
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}] → ✗")
+        return None, lines
+
+    def _solve_sim(
+        sc: list[list[bool]], sq: dict[int, int]
+    ) -> list[str] | None:
+        """Solve silently. Returns None if solvable; a short failure-witness otherwise.
+
+        The witness is the first contradicting branch: a list of queen labels
+        (e.g. ``['E(3,1)', '[D]\u2205']``) showing why the position has no solution.
+        """
+        if not _propagate_sim(sc, sq):
+            occ_cols = set(sq.values())
+            for col2 in colours:
+                if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
+                    return [f"[{col2}]\u2205"]
+            for r2 in range(n):
+                if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
+                    return [f"row{r2}\u2205"]
+            for c2 in range(n):
+                if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
+                    return [f"col{c2}\u2205"]
+            return ["\u2205"]
+        if len(sq) == n:
+            return None
+        un = [col for col in colours if not _sim_solved(sq, col)]
+        best = min(un, key=lambda col: len(_sim_active(sc, sq, col)))
+        first_fail: list[str] | None = None
+        for r_t, c_t in _sim_active(sc, sq, best):
+            nsc = [row[:] for row in sc]
+            nsq = dict(sq)
+            _sim_place(nsc, nsq, r_t, c_t)
+            result = _solve_sim(nsc, nsq)
+            if result is None:
+                return None  # found a solution
+            if first_fail is None:
+                first_fail = [f"{board[r_t][c_t]}({r_t},{c_t})"] + result
+        return first_fail if first_fail is not None else ["\u2205"]
 
     # ------------------------------------------------------------------
     # Rule — Double-block
@@ -807,32 +857,62 @@ def solve_stepwise(
     # ------------------------------------------------------------------
 
     def rule_lookahead() -> bool:
-        """Eliminate if placement leads to any contradiction after full propagation."""
-        for colour in colours:
-            if colour_is_solved(colour):
-                continue
+        """Eliminate candidates that lead to a contradiction after full propagation.
+
+        Colours are tried shortest-list-first.  For the first colour where any
+        candidate contradicts, all contradicting candidates are eliminated and
+        the full attempt list (ok and failed) is printed.  Safe candidates are
+        left untouched.
+        """
+        unsolved = [col for col in colours if not colour_is_solved(col)]
+        for colour in sorted(unsolved, key=lambda col: len(active_for_colour(col))):
             attempts: list[tuple[int, int, list[str], bool]] = []
             for r, c in active_for_colour(colour):
                 sc = [row[:] for row in candidates]
                 sq = dict(queens)
                 _sim_place(sc, sq, r, c)
                 sq_after_trial = dict(sq)
-                ok = _propagate_sim(sc, sq)
+                prop_ok = _propagate_sim(sc, sq)  # capture forced moves for the deduced chain
                 deduced = [
                     f"{board[r2][sq[r2]]}({r2},{sq[r2]})"
-                    for r2 in sorted(sq)
+                    for r2 in sq  # insertion order = propagation order
                     if r2 not in sq_after_trial
                 ]
+                if not prop_ok:
+                    # Enrich the chain with why propagation failed
+                    occ_cols = set(sq.values())
+                    for col2 in colours:
+                        if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
+                            deduced.append(f"[{col2}]\u2205")
+                            break
+                    else:
+                        for r2 in range(n):
+                            if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
+                                deduced.append(f"row{r2}\u2205")
+                                break
+                        else:
+                            for c2 in range(n):
+                                if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
+                                    deduced.append(f"col{c2}\u2205")
+                                    break
+                    ok = False
+                else:
+                    witness = _solve_sim(sc, sq)  # full silent search from propagated state
+                    ok = witness is None
+                    if not ok and witness:
+                        deduced.extend(witness)
                 attempts.append((r, c, deduced, not ok))
-                if not ok:
+            contradictions = [(r, c) for r, c, _, contra in attempts if contra]
+            if contradictions:
+                for r, c in contradictions:
                     eliminate(r, c, trace=False)
-                    lines = []
-                    for ar, ac, achain, acontra in attempts:
-                        ch = " → " + ", ".join(achain) if achain else ""
-                        verdict = "→ contradiction → eliminated" if acontra else "→ ok"
-                        lines.append(f"    ({ar},{ac}){ch} {verdict}")
-                    out(f"  lookahead [{colour}]:\n" + "\n".join(lines))
-                    return True
+                lines = []
+                for ar, ac, achain, acontra in attempts:
+                    ch = " → " + ", ".join(achain) if achain else ""
+                    verdict = "✗ eliminated" if acontra else "ok"
+                    lines.append(f"    try ({ar},{ac}){ch} → {verdict}")
+                out(f"  lookahead [{colour}]:\n" + "\n".join(lines))
+                return True
         return False
 
     # ------------------------------------------------------------------
@@ -843,11 +923,12 @@ def solve_stepwise(
         """Last resort: backtracking search from the current state."""
         un = [col for col in colours if not colour_is_solved(col)]
         best = min(un, key=lambda col: len(active_for_colour(col)))
-        out(f"  search: [{best}]"
-            f" ({len(active_for_colour(best))} cands) ...")
+        out(f"  search [{best}] ({len(active_for_colour(best))} cands):")
         sc = [row[:] for row in candidates]
         sq = dict(queens)
-        result = _backtrack(sc, sq)
+        result, lines = _backtrack(sc, sq, depth=0)
+        for line in lines:
+            out(line)
         if result is None:
             out("  search: exhausted — no solution")
             return False
@@ -860,7 +941,6 @@ def solve_stepwise(
     # Main loop — apply rules in priority order, restart on any change
     # ------------------------------------------------------------------
 
-    out(f"Board: {n}×{n}, {len(colours)} colours")
     while len(queens) < n:
         if rule_singleton():
             show_board()
@@ -884,9 +964,6 @@ def solve_stepwise(
             show_board()
             continue
         if rule_double_block():
-            show_board()
-            continue
-        if rule_lookahead():
             show_board()
             continue
         if rule_search():

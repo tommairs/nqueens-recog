@@ -373,13 +373,13 @@ def test_stepwise_shadow_l_shape(capsys) -> None:
 
 
 def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
-    """Community level 113 (7×7): forced row/col, n-group col line, and lookahead all fire.
+    """Community level 113 (7×7): forced row/col and n-group col line fire.
 
     After A is placed as region singleton:
       forced row  → B confined to row 1, D confined to row 2
       n-group col → cols {6} exclusive to E; cols {5} exclusive to F
       forced col  → C confined to col 1
-      lookahead   → G(4,3) contradicts after propagation → eliminated
+      search      → resolves the remaining queens
     Source: https://queensgame.vercel.app/community-level/113
     """
     board = [
@@ -398,7 +398,6 @@ def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "confined to col" in out     # rule_forced_row_col col branch
     assert "n-group: cols" in out       # rule_n_group col line perspective
-    assert "lookahead [" in out          # rule_lookahead fires
 
 
 @pytest.mark.slow
@@ -460,12 +459,11 @@ def test_stepwise_lookahead_10x10(capsys) -> None:
 
 
 def test_stepwise_xwing_with_lookahead(capsys) -> None:
-    """Community level 578 (8×8): forced row, n-group colour perspective, x-wing, and lookahead all fire.
+    """Community level 578 (8×8): forced row, n-group colour perspective, and x-wing all fire.
 
     D candidates are confined to row 2 → forced row fires.
     {E,F} candidates span exactly rows {0,1} → n-group claims those rows.
-    x-wing fires twice, and lookahead eliminates three A candidates before
-    singletons resolve the board without backtracking.
+    x-wing fires twice; search resolves the remaining queens.
     Source: https://queensgame.vercel.app/community-level/578
     """
     board = [
@@ -485,7 +483,49 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "claims rows" in out         # rule_n_group colour perspective (rows)
     assert "x-wing:" in out             # rule_x_wing fires
-    assert "lookahead [" in out          # rule_lookahead fires
+
+
+def test_stepwise_641_no_search(capsys) -> None:
+    """Community level 641 (18×18): solved entirely by deduction — no backtracking.
+
+    Key rule firings:
+      forced row/col → M confined to row 15, N to row 14, R to col 3
+      n-group colour perspective → {A,B,J,K,L,P,R} claims rows 0–6
+      x-wing → {A,B,C,D} confined to rows {0,17} ∪ cols {0,17}
+      shadow → [E] and [F] each eliminate one cell
+      x-wing → {E,I,J,K} confined to rows {1,16} ∪ cols {1,16}
+      n-group line perspective → col 7 exclusive to G; cols {5,8,9} to {F,M,O}
+    Source: https://queensgame.vercel.app/community-level/641
+    """
+    board = [
+        ["A","A","A","E","E","E","E","E","E","E","B","B","B","B","B","B","B","B"],
+        ["A","K","K","K","K","O","O","O","O","L","L","L","L","L","J","J","J","B"],
+        ["A","K","L","R","O","O","H","H","O","O","O","P","P","L","L","L","J","E"],
+        ["A","K","L","R","O","H","H","H","H","H","O","O","P","P","P","L","J","E"],
+        ["E","K","L","R","O","O","O","O","H","H","H","O","O","P","P","L","J","E"],
+        ["E","K","L","O","G","G","G","O","O","O","H","H","O","O","P","L","Q","E"],
+        ["E","K","L","O","O","O","G","G","G","O","O","H","H","O","O","Q","Q","E"],
+        ["E","Q","Q","O","F","F","O","G","G","G","O","O","H","H","O","O","Q","E"],
+        ["E","Q","Q","O","F","F","O","G","G","G","G","O","O","H","H","O","Q","E"],
+        ["E","Q","O","G","O","O","G","G","G","O","O","G","O","H","H","O","O","E"],
+        ["E","Q","O","G","G","G","G","G","O","F","F","O","O","O","H","H","O","E"],
+        ["E","E","O","G","G","G","G","G","O","F","F","O","G","O","H","H","O","D"],
+        ["E","E","O","G","G","G","G","G","G","O","O","G","G","O","H","O","O","D"],
+        ["E","O","G","G","O","O","G","G","G","G","G","G","G","O","O","O","I","D"],
+        ["E","O","G","O","F","F","O","G","O","O","O","O","O","N","N","N","I","D"],
+        ["C","O","G","O","F","O","O","O","M","M","M","M","M","M","M","N","I","D"],
+        ["C","O","O","O","O","E","E","I","I","I","I","I","I","I","I","I","I","D"],
+        ["C","C","C","C","C","C","E","E","E","E","E","E","E","E","E","D","D","D"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    _assert_matches_solver(board, result)
+    assert "search" not in out          # solved purely by deduction
+    assert "confined to row" in out     # rule_forced_row_col
+    assert "x-wing:" in out             # rule_x_wing fires
+    assert "n-group:" in out            # rule_n_group fires
+    assert "shadow:" in out             # rule_shadow fires
 
 
 # ---------------------------------------------------------------------------
