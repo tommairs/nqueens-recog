@@ -244,6 +244,21 @@ def test_solver_finds_one_solution(image_path: Path, label: str, expected_cols: 
 
 
 # ---------------------------------------------------------------------------
+# Stepwise solver helpers
+# ---------------------------------------------------------------------------
+
+def _assert_matches_solver(board: list[list[str]], stepwise_result: dict[int, int] | None) -> None:
+    """Cross-validate: stepwise result must agree with the unique exhaustive solution."""
+    solutions = solve(board, quiet=True)
+    if len(solutions) != 1:
+        return  # only cross-validate when there is exactly one solution
+    expected = {y: x for x, y in solutions[0]}
+    assert stepwise_result == expected, (
+        f"stepwise={stepwise_result} != solver={expected}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Stepwise solver: X-Wing rule
 # ---------------------------------------------------------------------------
 
@@ -263,19 +278,20 @@ def test_stepwise_x_wing_fires(capsys) -> None:
     ]
     result = solve_stepwise(board)
     assert result is not None
+    _assert_matches_solver(board, result)
     assert "x-wing:" in capsys.readouterr().out
 
 
 def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
-    """All three rule_singleton variants, n-group line perspective, and the stuck path.
+    """Region singleton, squeeze, row singleton, and the stuck path.
 
     A has exactly one cell → region singleton fires first.  Placing A(0,0)
-    eliminates all of B's candidates (row 0 + diagonal), so the board has no
-    valid solution.  Before search gives up the trace visits:
+    eliminates all of B's candidates (row 0 + diagonal), leaving no valid
+    solution.  Before search gives up the trace visits:
       region singleton → A(0,0)
-      n-group line     → rows {1} exclusive to {C}
-      col singleton    → C placed (only candidate remaining in col 3)
+      squeeze          → row 1 (cols 2–3) eliminates in adjacent rows
       row singleton    → D placed (only candidate remaining in row 2)
+      row singleton    → C placed (only candidate remaining in row 3)
       search exhausted → solve_stepwise returns None  (stuck path)
     """
     board = [
@@ -288,9 +304,9 @@ def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
     out = capsys.readouterr().out
     assert result is None                   # stuck path → return None
     assert "region singleton" in out        # rule_singleton region branch
-    assert "n-group:" in out               # rule_n_group line perspective
-    assert "col 3 singleton" in out        # rule_singleton col branch
+    assert "squeeze:" in out               # rule_squeeze fires
     assert "row 2 singleton" in out        # rule_singleton row branch
+    assert "row 3 singleton" in out        # rule_singleton row branch
 
 
 # ---------------------------------------------------------------------------
@@ -298,11 +314,10 @@ def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
 # ---------------------------------------------------------------------------
 
 def test_stepwise_ngroup_colour_perspective(capsys) -> None:
-    """Community level 150 (7×7): n-group colour perspective fires for both rows and cols.
+    """Community level 150 (7×7): shadow and forced row/col solve without backtracking.
 
-    {B,E} candidates span exactly rows {4,5} → claims those rows (eliminates A from them).
-    {B,F} candidates span exactly cols {5,6} → claims those cols (eliminates A from them).
-    Board is fully solvable without backtracking after those eliminations.
+    shadow eliminates candidates for B, C, E before forced col fires for D and B.
+    Board is fully solvable by deduction alone.
     Source: https://queensgame.vercel.app/community-level/150
     """
     board = [
@@ -317,8 +332,9 @@ def test_stepwise_ngroup_colour_perspective(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
-    assert "claims rows" in out     # rule_n_group colour perspective (rows)
-    assert "claims cols" in out     # rule_n_group colour perspective (cols)
+    _assert_matches_solver(board, result)
+    assert "shadow:" in out             # rule_shadow fires
+    assert "confined to col" in out     # rule_forced_row_col col branch
 
 
 def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
@@ -343,6 +359,7 @@ def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
+    _assert_matches_solver(board, result)
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "confined to col" in out     # rule_forced_row_col col branch
     assert "n-group: cols" in out       # rule_n_group col line perspective
@@ -374,6 +391,7 @@ def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
+    _assert_matches_solver(board, result)
     assert "claims rows" in out     # rule_n_group colour perspective (rows)
     assert "claims cols" in out     # rule_n_group colour perspective (cols)
     assert "lookahead:" in out      # rule_lookahead fires
@@ -402,6 +420,7 @@ def test_stepwise_lookahead_10x10(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
+    _assert_matches_solver(board, result)
     assert "lookahead:" in out      # rule_lookahead fires
 
 
@@ -427,6 +446,7 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
+    _assert_matches_solver(board, result)
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "claims rows" in out         # rule_n_group colour perspective (rows)
     assert "x-wing:" in out             # rule_x_wing fires

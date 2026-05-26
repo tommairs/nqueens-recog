@@ -4,7 +4,7 @@ Instead of backtracking exhaustively, this module applies a sequence of
 logical elimination rules — the same techniques a human would use — and
 prints a trace of each deduction as it works.
 
-Rule names follow https://www.caterbum.com/blog/linkedin-queens-game-solver:
+Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-queens-game-solver:
 
   1. **Region singleton** — a region (or row, or column) has been narrowed
      to exactly one candidate cell; place the queen there.  This is the
@@ -17,28 +17,34 @@ Rule names follow https://www.caterbum.com/blog/linkedin-queens-game-solver:
      zone in both adjacent rows (or columns); eliminate candidates there.
      E.g. two candidates in consecutive columns eliminate 2 cells in each
      adjacent row; three consecutive candidates eliminate 1 cell each.
-  4. **N-group** (generalised from caterbum: "triple-check") — when k regions
+  4. **Shadow** — for each colour, find every cell (outside that colour's
+     region) that is attacked by all of the colour's active candidates —
+     same row, same column, or diagonally adjacent.  Since the colour's
+     queen must land on one of those candidates, every shadowed cell is
+     certain to be blocked and can be eliminated.  Generalises Squeeze to
+     arbitrary region shapes (L-shapes, 2×2, 2×3, 3×3 blocks, …).
+  5. **N-group** (generalised from caterbum: "triple-check") — when k regions
      together have all their candidates confined to exactly k rows (or
      columns), those lines are reserved; eliminate any other region's
      candidates on them.
-  5. **X-Wing** — when c colours have all their candidates within the union
+  6. **X-Wing** — when c colours have all their candidates within the union
      of a rows R and b columns C (a+b=c), those c queens must collectively
      claim every row in R and every column in C; eliminate other colours'
      candidates from those rows and columns.  The typical case is c=4,
      a=b=2 (two pairs of colours forming a cross pattern).
-  6. **Double-block** — tentatively place a queen at a candidate cell and
+  7. **Double-block** — tentatively place a queen at a candidate cell and
      fast-forward forced eliminations; if two regions are then left with
      all their remaining candidates on the *same* row or column (an
      impossible collision) that cell is eliminated.
-  7. **Elimination** — if placing a queen at a candidate cell would leave
+  8. **Elimination** — if placing a queen at a candidate cell would leave
      some other region with no remaining candidates at all, that cell is
      ruled out (one-step lookahead).
-  8. **Lookahead** — for small regions, trial-place a queen in every
+  9. **Lookahead** — for small regions, trial-place a queen in every
      candidate cell; remove any candidate that leads to a contradiction.
-  9. **Search** — last resort: pick the most-constrained region, guess,
+  10. **Search** — last resort: pick the most-constrained region, guess,
      and recurse with backtracking.
 
-All nine rules are implemented. The trace uses plain text so it can be
+All ten rules are implemented. The trace uses plain text so it can be
 piped or saved alongside the solutions produced by ``--solve``.
 """
 
@@ -228,6 +234,10 @@ def solve_stepwise(
         r_max − r_min ≤ 2 (i.e. confined to 2 or 3 consecutive rows), every
         row in [r_max-1, r_min+1] of the immediately adjacent columns is
         eliminated.
+
+        Note: unlike rule_shadow, this rule is colour-agnostic — it fires based
+        on the geometric spread of all candidates in a line, regardless of which
+        colour regions they belong to.
         """
         # Row perspective
         for r in range(n):
@@ -272,6 +282,42 @@ def solve_stepwise(
                         count += 1
             if count:
                 out(f"  squeeze: col {c} rows {r_min}–{r_max} → {count} cell(s) eliminated in adjacent cols")
+                return True
+        return False
+
+    # ------------------------------------------------------------------
+    # Rule — Shadow
+    # ------------------------------------------------------------------
+
+    def rule_shadow() -> bool:
+        """Eliminate cells in the universal attack shadow of each colour.
+
+        For each unsolved colour C, a non-C cell is eliminated if it is
+        attacked (same row, same column, or diagonally adjacent) by every
+        active candidate of C.  Since C's queen must occupy one of those
+        candidates, such cells are guaranteed to be blocked.
+        """
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            cands = active_for_colour(colour)
+            if len(cands) < 2:
+                continue
+            cand_set = set(cands)
+            count = 0
+            for r in range(n):
+                for c in range(n):
+                    if not candidates[r][c] or (r, c) in cand_set:
+                        continue
+                    if all(
+                        r == pr or c == pc or
+                        (abs(r - pr) == 1 and abs(c - pc) == 1)
+                        for pr, pc in cands
+                    ):
+                        eliminate(r, c, trace=False)
+                        count += 1
+            if count:
+                out(f"  shadow: [{colour}] ({len(cands)} candidates) → {count} cell(s) eliminated")
                 return True
         return False
 
@@ -791,6 +837,9 @@ def solve_stepwise(
             show_board()
             continue
         if rule_squeeze():
+            show_board()
+            continue
+        if rule_shadow():
             show_board()
             continue
         if rule_n_group():
