@@ -1,0 +1,724 @@
+"""Stepwise human-like solver for the N-Queens (queensgame) puzzle.
+
+Instead of backtracking exhaustively, this module applies a sequence of
+logical elimination rules — the same techniques a human would use — and
+prints a trace of each deduction as it works.
+
+Rule names follow https://www.caterbum.com/blog/linkedin-queens-game-solver:
+
+  1. **Region singleton** — a region (or row, or column) has been narrowed
+     to exactly one candidate cell; place the queen there.  This is the
+     terminal action that rules 2–6 work toward by eliminating candidates.
+  2. **Region forced row/col** — all candidates for a region fall on the
+     same row (or column); claim that line and eliminate every other
+     region's candidates on it.
+  3. **N-group** (generalised from caterbum: "triple-check") — when k regions
+     together have all their candidates confined to exactly k rows (or
+     columns), those lines are reserved; eliminate any other region's
+     candidates on them.
+  4. **X-Wing** — when c colours have all their candidates within the union
+     of a rows R and b columns C (a+b=c), those c queens must collectively
+     claim every row in R and every column in C; eliminate other colours'
+     candidates from those rows and columns.  The typical case is c=4,
+     a=b=2 (two pairs of colours forming a cross pattern).
+  5. **Double-block** — tentatively place a queen at a candidate cell and
+     fast-forward forced eliminations; if two regions are then left with
+     all their remaining candidates on the *same* row or column (an
+     impossible collision) that cell is eliminated.
+  6. **Elimination** — if placing a queen at a candidate cell would leave
+     some other region with no remaining candidates at all, that cell is
+     ruled out (one-step lookahead).
+  7. **Lookahead** — for small regions, trial-place a queen in every
+     candidate cell; remove any candidate that leads to a contradiction.
+  8. **Search** — last resort: pick the most-constrained region, guess,
+     and recurse with backtracking.
+
+All eight rules are implemented. The trace uses plain text so it can be
+piped or saved alongside the solutions produced by ``--solve``.
+"""
+
+from __future__ import annotations
+
+from itertools import combinations
+
+from .solver import is_diagonally_adjacent
+
+
+def solve_stepwise(
+    board: list[list[str]], quiet: bool = False
+) -> dict[int, int] | None:
+    """Apply elimination rules to *board*, printing a trace of each step.
+
+    Returns a ``{row: col}`` dict (0-indexed) when the puzzle is solved by
+    deduction alone, or ``None`` if the rules were insufficient.
+    """
+    n = len(board)
+    candidates: list[list[bool]] = [[True] * n for _ in range(n)]
+    queens: dict[int, int] = {}
+    colours = sorted({board[r][c] for r in range(n) for c in range(n)})
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    def out(msg: str) -> None:
+        if not quiet:
+            print(msg)
+
+    def colour_at(r: int, c: int) -> str:
+        return board[r][c]
+
+    region_of: dict[str, list[tuple[int, int]]] = {
+        colour: [(r, c) for r in range(n) for c in range(n) if board[r][c] == colour]
+        for colour in colours
+    }
+
+    def region_cells(colour: str) -> list[tuple[int, int]]:
+        return region_of[colour]
+
+    solved_colours: set[str] = set()
+
+    def colour_is_solved(colour: str) -> bool:
+        return colour in solved_colours
+
+    def active_for_colour(colour: str) -> list[tuple[int, int]]:
+        return [(r, c) for r, c in region_cells(colour) if candidates[r][c]]
+
+    def active_in_row(r: int) -> list[int]:
+        return [c for c in range(n) if candidates[r][c]]
+
+    def active_in_col(c: int) -> list[int]:
+        return [r for r in range(n) if candidates[r][c]]
+
+    def eliminate(r: int, c: int, *, trace: bool = True) -> None:
+        if candidates[r][c]:
+            candidates[r][c] = False
+            if trace:
+                out(f"  eliminate ({r},{c}) [{colour_at(r, c)}]")
+
+    def place_queen(r: int, c: int, reason: str) -> None:
+        queens[r] = c
+        colour = colour_at(r, c)
+        solved_colours.add(colour)
+        elim = 0
+        for cc in range(n):
+            if cc != c and candidates[r][cc]:
+                candidates[r][cc] = False
+                elim += 1
+        for rr in range(n):
+            if rr != r and candidates[rr][c]:
+                candidates[rr][c] = False
+                elim += 1
+        for rr, cc in region_cells(colour):
+            if (rr != r or cc != c) and candidates[rr][cc]:
+                candidates[rr][cc] = False
+                elim += 1
+        placed = [(c, r)]
+        for rr in range(n):
+            for cc in range(n):
+                if is_diagonally_adjacent(cc, rr, placed) and candidates[rr][cc]:
+                    candidates[rr][cc] = False
+                    elim += 1
+        out(f"  QUEEN ({r},{c}) [{colour}]: {reason}")
+        out(f"    eliminating row {r}, col {c}, region [{colour}], diagonal adjacents"
+            f" → {elim} cell(s)")
+
+    # ------------------------------------------------------------------
+    # Rule — Region / row / col singleton
+    # ------------------------------------------------------------------
+
+    def rule_singleton() -> bool:
+        """Place a queen wherever exactly one candidate remains."""
+        changed = False
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            cands = active_for_colour(colour)
+            if len(cands) == 1:
+                r, c = cands[0]
+                if r not in queens:
+                    place_queen(r, c, f"region singleton [{colour}]")
+                    changed = True
+        for r in range(n):
+            if r in queens:
+                continue
+            cands = active_in_row(r)
+            if len(cands) == 1:
+                place_queen(r, cands[0], f"row {r} singleton")
+                changed = True
+        for c in range(n):
+            if c in queens.values():
+                continue
+            cands = active_in_col(c)
+            if len(cands) == 1:
+                r = cands[0]
+                if r not in queens:
+                    place_queen(r, c, f"col {c} singleton")
+                    changed = True
+        return changed
+
+    # ------------------------------------------------------------------
+    # Rule — Region forced row / col
+    # ------------------------------------------------------------------
+
+    def rule_forced_row_col() -> bool:
+        """Claim a line when all of a region's candidates lie on it."""
+        changed = False
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            cands = active_for_colour(colour)
+            if len(cands) <= 1:
+                continue
+            rows = {r for r, _ in cands}
+            if len(rows) == 1:
+                r = next(iter(rows))
+                count = sum(
+                    1 for cc in range(n)
+                    if board[r][cc] != colour and candidates[r][cc]
+                )
+                if count:
+                    for cc in range(n):
+                        if board[r][cc] != colour:
+                            eliminate(r, cc, trace=False)
+                    out(f"  forced: [{colour}] confined to row {r} → {count} cell(s) eliminated")
+                    changed = True
+            cols = {c for _, c in cands}
+            if len(cols) == 1:
+                col = next(iter(cols))
+                count = sum(
+                    1 for rr in range(n)
+                    if board[rr][col] != colour and candidates[rr][col]
+                )
+                if count:
+                    for rr in range(n):
+                        if board[rr][col] != colour:
+                            eliminate(rr, col, trace=False)
+                    out(f"  forced: [{colour}] confined to col {col} → {count} cell(s) eliminated")
+                    changed = True
+        return changed
+
+    # ------------------------------------------------------------------
+    # Rule — N-group (generalised triple-check)
+    # ------------------------------------------------------------------
+
+    def rule_n_group() -> bool:
+        """Eliminate when k regions' candidates are confined to exactly k lines.
+
+        At each group size k (ascending) two complementary perspectives are tried:
+
+          Colour perspective (k ≥ 2): k colours whose candidates span exactly k
+            rows/cols → eliminate other colours' candidates from those lines.
+          Line perspective  (k ≥ 1): k rows/cols whose candidates come from
+            exactly k colours → eliminate those colours' candidates elsewhere.
+
+        Starting with the line perspective at k=1 catches the case where a
+        single row or column is entirely one colour, e.g. a bottom row that is
+        all-J immediately tells us J must go there.
+        """
+        unsolved = [c for c in colours if not colour_is_solved(c)]
+        cands_by_colour: dict[str, list[tuple[int, int]]] = {
+            c: active_for_colour(c) for c in unsolved
+        }
+        unsolved_set = set(unsolved)
+        free_rows = [r for r in range(n) if r not in queens]
+        free_cols = [c for c in range(n) if c not in queens.values()]
+        # Precompute which unsolved colours appear in each free row / col.
+        colours_in_row: dict[int, set[str]] = {
+            r: {board[r][c] for c in range(n)
+                if candidates[r][c] and board[r][c] in unsolved_set}
+            for r in free_rows
+        }
+        colours_in_col: dict[int, set[str]] = {
+            col: {board[r][col] for r in range(n)
+                  if candidates[r][col] and board[r][col] in unsolved_set}
+            for col in free_cols
+        }
+
+        for k in range(1, len(unsolved)):
+            # ----------------------------------------------------------
+            # Line perspective: k rows/cols exclusive to exactly k colours
+            # ----------------------------------------------------------
+            for row_group in combinations(free_rows, k):
+                colours_here: set[str] = set()
+                for r in row_group:
+                    colours_here |= colours_in_row[r]
+                    if len(colours_here) > k:
+                        break
+                if len(colours_here) == k:
+                    row_set = set(row_group)
+                    count = sum(
+                        1 for colour in colours_here
+                        for r2, c2 in cands_by_colour[colour]
+                        if r2 not in row_set
+                    )
+                    if count:
+                        for colour in colours_here:
+                            for r2, c2 in cands_by_colour[colour]:
+                                if r2 not in row_set:
+                                    eliminate(r2, c2, trace=False)
+                        rows_str = ",".join(str(r) for r in sorted(row_group))
+                        clabel = "{" + ",".join(sorted(colours_here)) + "}"
+                        out(f"  n-group: rows {{{rows_str}}} exclusive to {clabel}"
+                            f" → {count} cell(s) eliminated")
+                        return True
+            for col_group in combinations(free_cols, k):
+                colours_here = set()
+                for c in col_group:
+                    colours_here |= colours_in_col[c]
+                    if len(colours_here) > k:
+                        break
+                if len(colours_here) == k:
+                    col_set = set(col_group)
+                    count = sum(
+                        1 for colour in colours_here
+                        for r2, c2 in cands_by_colour[colour]
+                        if c2 not in col_set
+                    )
+                    if count:
+                        for colour in colours_here:
+                            for r2, c2 in cands_by_colour[colour]:
+                                if c2 not in col_set:
+                                    eliminate(r2, c2, trace=False)
+                        cols_str = ",".join(str(c) for c in sorted(col_group))
+                        clabel = "{" + ",".join(sorted(colours_here)) + "}"
+                        out(f"  n-group: cols {{{cols_str}}} exclusive to {clabel}"
+                            f" → {count} cell(s) eliminated")
+                        return True
+
+            if k < 2:
+                continue  # colour perspective starts at k=2 (k=1 is forced-row/col)
+
+            # ----------------------------------------------------------
+            # Colour perspective: k colours confined to exactly k rows/cols
+            # ----------------------------------------------------------
+            for group in combinations(unsolved, k):
+                group_set = set(group)
+                label = "{" + ",".join(sorted(group_set)) + "}"
+                rows: set[int] = set()
+                for colour in group:
+                    rows.update(r for r, _ in cands_by_colour[colour])
+                if len(rows) == k:
+                    count = sum(
+                        1 for r in rows for cc in range(n)
+                        if board[r][cc] not in group_set and candidates[r][cc]
+                    )
+                    if count:
+                        for r in rows:
+                            for cc in range(n):
+                                if board[r][cc] not in group_set:
+                                    eliminate(r, cc, trace=False)
+                        rows_str = ",".join(str(r) for r in sorted(rows))
+                        out(f"  n-group: {label} claims rows {rows_str}"
+                            f" → {count} cell(s) eliminated")
+                        return True
+                cols: set[int] = set()
+                for colour in group:
+                    cols.update(c for _, c in cands_by_colour[colour])
+                if len(cols) == k:
+                    count = sum(
+                        1 for col in cols for rr in range(n)
+                        if board[rr][col] not in group_set and candidates[rr][col]
+                    )
+                    if count:
+                        for col in cols:
+                            for rr in range(n):
+                                if board[rr][col] not in group_set:
+                                    eliminate(rr, col, trace=False)
+                        cols_str = ",".join(str(c) for c in sorted(cols))
+                        out(f"  n-group: {label} claims cols {cols_str}"
+                            f" → {count} cell(s) eliminated")
+                        return True
+        return False
+
+    # ------------------------------------------------------------------
+    # Rule — X-Wing
+    # ------------------------------------------------------------------
+
+    def rule_x_wing() -> bool:
+        """Eliminate when c colors are confined to a rows ∪ b columns (a+b=c).
+
+        If every active candidate of a set of c colours lies within the union
+        of some a rows R and b columns C (where a+b=c), the c queens must
+        collectively claim all a rows and all b columns.  Therefore no other
+        colour can place its queen in any of those rows or columns.
+
+        This captures the community "X-Wing" technique (typically c=4, a=b=2)
+        and generalises it to any (a, b) split.
+        """
+        unsolved = [col for col in colours if not colour_is_solved(col)]
+        cands_by = {col: active_for_colour(col) for col in unsolved}
+
+        for c in range(2, min(len(unsolved), 7)):
+            for group in combinations(unsolved, c):
+                cell_set: set[tuple[int, int]] = set()
+                for col in group:
+                    cell_set.update(cands_by[col])
+                if not cell_set:
+                    continue
+                rows_used = sorted({r for r, _ in cell_set})
+                group_set = set(group)
+                label = "{" + ",".join(sorted(group_set)) + "}"
+
+                for a in range(1, c):
+                    b = c - a
+                    if len(rows_used) < a:
+                        break  # fewer rows than needed; larger a won't help
+                    for row_subset in combinations(rows_used, a):
+                        row_set = set(row_subset)
+                        needed_cols = frozenset(
+                            cc for r2, cc in cell_set if r2 not in row_set
+                        )
+                        if len(needed_cols) != b:
+                            continue
+                        # X-Wing confirmed — eliminate non-group from R and C
+                        count = 0
+                        for r2 in row_subset:
+                            for cc in range(n):
+                                if board[r2][cc] not in group_set and candidates[r2][cc]:
+                                    eliminate(r2, cc, trace=False)
+                                    count += 1
+                        for cc in needed_cols:
+                            for r2 in range(n):
+                                if board[r2][cc] not in group_set and candidates[r2][cc]:
+                                    eliminate(r2, cc, trace=False)
+                                    count += 1
+                        if count:
+                            rows_str = ",".join(str(r2) for r2 in sorted(row_subset))
+                            cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
+                            out(
+                                f"  x-wing: {label} confined to"
+                                f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}"
+                                f" → {count} cell(s) eliminated"
+                            )
+                            return True
+        return False
+
+    # ------------------------------------------------------------------
+    # Simulation helpers — shared by rules 5–8
+    # ------------------------------------------------------------------
+
+    def _sim_place(sc: list[list[bool]], sq: dict[int, int], r_t: int, c_t: int) -> None:
+        """Apply placement effects to a simulation state (sc, sq) in place."""
+        col = board[r_t][c_t]
+        sq[r_t] = c_t
+        for cc in range(n):
+            if cc != c_t:
+                sc[r_t][cc] = False
+        for rr in range(n):
+            if rr != r_t:
+                sc[rr][c_t] = False
+        for rr, cc in region_cells(col):
+            sc[rr][cc] = False
+        pl = [(c_t, r_t)]
+        for rr in range(n):
+            for cc in range(n):
+                if is_diagonally_adjacent(cc, rr, pl):
+                    sc[rr][cc] = False
+
+    def _sim_active(
+        sc: list[list[bool]], sq: dict[int, int], col: str
+    ) -> list[tuple[int, int]]:
+        return [(r, c) for r, c in region_cells(col) if r not in sq and sc[r][c]]
+
+    def _sim_solved(sq: dict[int, int], col: str) -> bool:
+        return any(board[r][sq[r]] == col for r in sq)
+
+    def _contradiction(sc: list[list[bool]], sq: dict[int, int]) -> bool:
+        return any(
+            not _sim_solved(sq, col) and not _sim_active(sc, sq, col)
+            for col in colours
+        )
+
+    def _propagate_sim(sc: list[list[bool]], sq: dict[int, int]) -> bool:
+        """Apply rules 1–3 to (sc, sq) until stable. Returns False if contradicted."""
+        if _contradiction(sc, sq):
+            return False
+        while len(sq) < n:
+            prog = False
+            occ_cols = set(sq.values())
+            # Singletons
+            for col in colours:
+                if _sim_solved(sq, col):
+                    continue
+                ca = _sim_active(sc, sq, col)
+                if len(ca) == 1:
+                    r2, c2 = ca[0]
+                    if r2 not in sq:
+                        _sim_place(sc, sq, r2, c2)
+                        prog = True
+            for r2 in range(n):
+                if r2 in sq:
+                    continue
+                ca = [c2 for c2 in range(n) if sc[r2][c2]]
+                if len(ca) == 1:
+                    _sim_place(sc, sq, r2, ca[0])
+                    prog = True
+            for c2 in range(n):
+                if c2 in occ_cols:
+                    continue
+                ca = [r2 for r2 in range(n) if sc[r2][c2]]
+                if len(ca) == 1 and ca[0] not in sq:
+                    _sim_place(sc, sq, ca[0], c2)
+                    prog = True
+            if _contradiction(sc, sq):
+                return False
+            if prog:
+                continue
+            # Forced row/col
+            for col in colours:
+                if _sim_solved(sq, col):
+                    continue
+                ca = _sim_active(sc, sq, col)
+                if len(ca) <= 1:
+                    continue
+                rs = {r2 for r2, _ in ca}
+                if len(rs) == 1:
+                    r2 = next(iter(rs))
+                    for c2 in range(n):
+                        if board[r2][c2] != col and sc[r2][c2]:
+                            sc[r2][c2] = False
+                            prog = True
+                cs = {c2 for _, c2 in ca}
+                if len(cs) == 1:
+                    c2 = next(iter(cs))
+                    for r2 in range(n):
+                        if board[r2][c2] != col and sc[r2][c2]:
+                            sc[r2][c2] = False
+                            prog = True
+            if _contradiction(sc, sq):
+                return False
+            if prog:
+                continue
+            # N-group (both perspectives)
+            un2 = [col for col in colours if not _sim_solved(sq, col)]
+            if not un2:
+                break
+            cbc2 = {col: _sim_active(sc, sq, col) for col in un2}
+            uset2 = set(un2)
+            fr2 = [r2 for r2 in range(n) if r2 not in sq]
+            fc2 = [c2 for c2 in range(n) if c2 not in occ_cols]
+            cir2 = {
+                r2: {board[r2][c2] for c2 in range(n)
+                     if sc[r2][c2] and board[r2][c2] in uset2}
+                for r2 in fr2
+            }
+            cic2 = {
+                c2: {board[r2][c2] for r2 in range(n)
+                     if sc[r2][c2] and board[r2][c2] in uset2}
+                for c2 in fc2
+            }
+            r3p = False
+            for k in range(1, len(un2)):
+                if r3p:
+                    break
+                for rg in combinations(fr2, k):
+                    ch: set[str] = set()
+                    for r2 in rg:
+                        ch |= cir2[r2]
+                        if len(ch) > k:
+                            break
+                    if len(ch) == k:
+                        rs2 = set(rg)
+                        for col in ch:
+                            for r2, c2 in cbc2[col]:
+                                if r2 not in rs2 and sc[r2][c2]:
+                                    sc[r2][c2] = False
+                                    r3p = True
+                if r3p:
+                    break
+                for cg in combinations(fc2, k):
+                    ch = set()
+                    for c2 in cg:
+                        ch |= cic2[c2]
+                        if len(ch) > k:
+                            break
+                    if len(ch) == k:
+                        cs2 = set(cg)
+                        for col in ch:
+                            for r2, c2 in cbc2[col]:
+                                if c2 not in cs2 and sc[r2][c2]:
+                                    sc[r2][c2] = False
+                                    r3p = True
+                if r3p:
+                    break
+                if k >= 2:
+                    for grp in combinations(un2, k):
+                        gs = set(grp)
+                        rows3 = {r2 for col in grp for r2, _ in cbc2[col]}
+                        if len(rows3) == k:
+                            for r2 in rows3:
+                                for c2 in range(n):
+                                    if board[r2][c2] not in gs and sc[r2][c2]:
+                                        sc[r2][c2] = False
+                                        r3p = True
+                        cols3 = {c2 for col in grp for _, c2 in cbc2[col]}
+                        if len(cols3) == k:
+                            for c2 in cols3:
+                                for r2 in range(n):
+                                    if board[r2][c2] not in gs and sc[r2][c2]:
+                                        sc[r2][c2] = False
+                                        r3p = True
+            prog = r3p
+            if _contradiction(sc, sq):
+                return False
+            if not prog:
+                break
+        return not _contradiction(sc, sq)
+
+    def _backtrack(
+        sc: list[list[bool]], sq: dict[int, int]
+    ) -> dict[int, int] | None:
+        """Recursive backtracking with rules 1–3 propagation at each node."""
+        if not _propagate_sim(sc, sq):
+            return None
+        if len(sq) == n:
+            return dict(sq)
+        un = [col for col in colours if not _sim_solved(sq, col)]
+        best_col = min(un, key=lambda col: len(_sim_active(sc, sq, col)))
+        for r_t, c_t in _sim_active(sc, sq, best_col):
+            nsc = [row[:] for row in sc]
+            nsq = dict(sq)
+            _sim_place(nsc, nsq, r_t, c_t)
+            result = _backtrack(nsc, nsq)
+            if result is not None:
+                return result
+        return None
+
+    # ------------------------------------------------------------------
+    # Rule — Double-block
+    # ------------------------------------------------------------------
+
+    def rule_double_block() -> bool:
+        """Eliminate if placement + propagation forces two regions to the same line."""
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            for r, c in active_for_colour(colour):
+                sc = [row[:] for row in candidates]
+                sq = dict(queens)
+                _sim_place(sc, sq, r, c)
+                if not _propagate_sim(sc, sq):
+                    continue  # general contradiction; elimination/lookahead handles it
+                forced_rows: dict[int, str] = {}
+                forced_cols: dict[int, str] = {}
+                for col2 in colours:
+                    if col2 == colour or _sim_solved(sq, col2):
+                        continue
+                    ca = _sim_active(sc, sq, col2)
+                    if not ca:
+                        continue
+                    rs2 = {r2 for r2, _ in ca}
+                    if len(rs2) == 1:
+                        row2 = next(iter(rs2))
+                        if row2 in forced_rows:
+                            eliminate(r, c, trace=False)
+                            out(f"  double-block: ({r},{c}) [{colour}]: [{col2}]+[{forced_rows[row2]}]"
+                                f" both forced to row {row2} → 1 cell eliminated")
+                            return True
+                        forced_rows[row2] = col2
+                    cs2 = {c2 for _, c2 in ca}
+                    if len(cs2) == 1:
+                        col_v = next(iter(cs2))
+                        if col_v in forced_cols:
+                            eliminate(r, c, trace=False)
+                            out(f"  double-block: ({r},{c}) [{colour}]: [{col2}]+[{forced_cols[col_v]}]"
+                                f" both forced to col {col_v} → 1 cell eliminated")
+                            return True
+                        forced_cols[col_v] = col2
+        return False
+
+    # ------------------------------------------------------------------
+    # Rule — Elimination
+    # ------------------------------------------------------------------
+
+    def rule_elimination() -> bool:
+        """Eliminate if placement immediately strands another region (no propagation)."""
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            for r, c in active_for_colour(colour):
+                sc = [row[:] for row in candidates]
+                sq = dict(queens)
+                _sim_place(sc, sq, r, c)
+                for col2 in colours:
+                    if col2 == colour or _sim_solved(sq, col2):
+                        continue
+                    if not _sim_active(sc, sq, col2):
+                        eliminate(r, c, trace=False)
+                        out(f"  eliminate: ({r},{c}) [{colour}]: immediately strands"
+                            f" [{col2}] → 1 cell eliminated")
+                        return True
+        return False
+
+    # ------------------------------------------------------------------
+    # Rule — Lookahead
+    # ------------------------------------------------------------------
+
+    def rule_lookahead() -> bool:
+        """Eliminate if placement leads to any contradiction after full propagation."""
+        for colour in colours:
+            if colour_is_solved(colour):
+                continue
+            for r, c in active_for_colour(colour):
+                sc = [row[:] for row in candidates]
+                sq = dict(queens)
+                _sim_place(sc, sq, r, c)
+                if not _propagate_sim(sc, sq):
+                    eliminate(r, c, trace=False)
+                    out(f"  lookahead: ({r},{c}) [{colour}]: contradicts after"
+                        f" propagation → 1 cell eliminated")
+                    return True
+        return False
+
+    # ------------------------------------------------------------------
+    # Rule — Search
+    # ------------------------------------------------------------------
+
+    def rule_search() -> bool:
+        """Last resort: backtracking search from the current state."""
+        un = [col for col in colours if not colour_is_solved(col)]
+        best = min(un, key=lambda col: len(active_for_colour(col)))
+        out(f"  search: [{best}]"
+            f" ({len(active_for_colour(best))} cands) ...")
+        sc = [row[:] for row in candidates]
+        sq = dict(queens)
+        result = _backtrack(sc, sq)
+        if result is None:
+            out("  search: exhausted — no solution")
+            return False
+        for r_t in sorted(result):
+            if r_t not in queens:
+                place_queen(r_t, result[r_t], "search")
+        return True
+
+    # ------------------------------------------------------------------
+    # Main loop — apply rules in priority order, restart on any change
+    # ------------------------------------------------------------------
+
+    out(f"Board: {n}×{n}, {len(colours)} colours")
+    while len(queens) < n:
+        if rule_singleton():
+            continue
+        if rule_forced_row_col():
+            continue
+        if rule_n_group():
+            continue
+        if rule_x_wing():
+            continue
+        if rule_elimination():
+            continue
+        if rule_double_block():
+            continue
+        if rule_lookahead():
+            continue
+        if rule_search():
+            continue
+        break
+
+    if len(queens) == n:
+        out(f"Solved: {n} queens placed.")
+        return dict(queens)
+
+    out(f"Stuck: {len(queens)}/{n} queens placed.")
+    return None

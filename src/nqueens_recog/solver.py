@@ -12,6 +12,11 @@ Rules (LinkedIn / queensgame variant):
 from .display import print_board
 
 
+def is_diagonally_adjacent(x: int, y: int, queens: list[tuple[int, int]]) -> bool:
+    """Return True if (x, y) touches any queen in *queens* corner-to-corner."""
+    return any(abs(qx - x) == 1 and abs(qy - y) == 1 for qx, qy in queens)
+
+
 def solve(
     board: list[list[str]], verbose: bool = True, quiet: bool = False
 ) -> list[list[tuple[int, int]]]:
@@ -26,11 +31,6 @@ def solve(
     """
     size = len(board)
     all_solutions: list[list[tuple[int, int]]] = []
-
-    def is_diagonally_adjacent(
-        x: int, y: int, queens: list[tuple[int, int]]
-    ) -> bool:
-        return any(abs(qx - x) == 1 and abs(qy - y) == 1 for qx, qy in queens)
 
     def solve_from(
         y: int,

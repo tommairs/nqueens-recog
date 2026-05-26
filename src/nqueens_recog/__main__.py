@@ -18,10 +18,16 @@ def main() -> None:
         metavar="IMAGE_OR_URL",
         help="Path to a puzzle screenshot, or a queensgame community-level URL.",
     )
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--solve",
         action="store_true",
         help="Solve the puzzle and print the solution board.",
+    )
+    mode.add_argument(
+        "--stepwise",
+        action="store_true",
+        help="Apply human-like elimination rules step by step, printing a trace.",
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -62,6 +68,10 @@ def main() -> None:
         solutions = solve(board, verbose=args.verbose)
         elapsed = time.monotonic() - t0
         print(f"Total solutions found: {len(solutions)}  ({elapsed:.1f}s)")
+
+    if args.stepwise:
+        from .stepwise import solve_stepwise
+        solve_stepwise(board)
 
 
 if __name__ == "__main__":
