@@ -746,7 +746,23 @@ def solve_stepwise(
             ]
             chain = " → " + ", ".join(deduced) if deduced else ""
             if not prop_ok:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → ✗")
+                occ_cols = set(nsq.values())
+                reason = "empty"
+                for col2 in colours:
+                    if not _sim_solved(nsq, col2) and not _sim_active(nsc, nsq, col2):
+                        reason = f"[{col2}] empty ✗"
+                        break
+                if reason == "empty":
+                    for r2 in range(n):
+                        if r2 not in nsq and not any(nsc[r2][c2] for c2 in range(n)):
+                            reason = f"row {r2} empty ✗"
+                            break
+                if reason == "empty":
+                    for c2 in range(n):
+                        if c2 not in occ_cols and not any(nsc[r2][c2] for r2 in range(n)):
+                            reason = f"col {c2} empty ✗"
+                            break
+                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → {reason}")
                 continue
             if len(nsq) == n:
                 lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")

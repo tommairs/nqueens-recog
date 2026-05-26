@@ -485,6 +485,7 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     assert "x-wing:" in out             # rule_x_wing fires
 
 
+@pytest.mark.slow
 def test_stepwise_641_no_search(capsys) -> None:
     """Community level 641 (18×18): solved entirely by deduction — no backtracking.
 
@@ -756,7 +757,7 @@ class TestGridReaderInternals:
     (PUZZLE_657, "657", [16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1]),
 ])
 def test_stepwise_solves_puzzle(image_path: Path, label: str, expected_cols: list[int]) -> None:
-    """All seven rules must fully solve each sample puzzle."""
+    """All rules must fully solve each sample puzzle."""
     board = [list(row) for row in grid_to_letters(read_grid(str(image_path)))]
     result = solve_stepwise(board, quiet=True)
     assert result is not None, f"Puzzle {label}: stepwise solver got stuck"
