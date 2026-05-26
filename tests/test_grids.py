@@ -266,6 +266,173 @@ def test_stepwise_x_wing_fires(capsys) -> None:
     assert "x-wing:" in capsys.readouterr().out
 
 
+def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
+    """All three rule_singleton variants, n-group line perspective, and the stuck path.
+
+    A has exactly one cell → region singleton fires first.  Placing A(0,0)
+    eliminates all of B's candidates (row 0 + diagonal), so the board has no
+    valid solution.  Before search gives up the trace visits:
+      region singleton → A(0,0)
+      n-group line     → rows {1} exclusive to {C}
+      col singleton    → C placed (only candidate remaining in col 3)
+      row singleton    → D placed (only candidate remaining in row 2)
+      search exhausted → solve_stepwise returns None  (stuck path)
+    """
+    board = [
+        ["A", "B", "B", "B"],
+        ["C", "B", "C", "C"],
+        ["C", "D", "D", "C"],
+        ["C", "D", "D", "C"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is None                   # stuck path → return None
+    assert "region singleton" in out        # rule_singleton region branch
+    assert "n-group:" in out               # rule_n_group line perspective
+    assert "col 3 singleton" in out        # rule_singleton col branch
+    assert "row 2 singleton" in out        # rule_singleton row branch
+
+
+# ---------------------------------------------------------------------------
+# Stepwise solver: community levels (boards embedded; no network at test time)
+# ---------------------------------------------------------------------------
+
+def test_stepwise_ngroup_colour_perspective(capsys) -> None:
+    """Community level 150 (7×7): n-group colour perspective fires for both rows and cols.
+
+    {B,E} candidates span exactly rows {4,5} → claims those rows (eliminates A from them).
+    {B,F} candidates span exactly cols {5,6} → claims those cols (eliminates A from them).
+    Board is fully solvable without backtracking after those eliminations.
+    Source: https://queensgame.vercel.app/community-level/150
+    """
+    board = [
+        ["A", "A", "C", "C", "A", "A", "F"],
+        ["A", "D", "D", "C", "A", "F", "F"],
+        ["A", "D", "C", "C", "A", "A", "F"],
+        ["G", "A", "C", "A", "A", "A", "A"],
+        ["G", "A", "C", "E", "E", "B", "B"],
+        ["G", "A", "A", "A", "E", "A", "B"],
+        ["G", "G", "G", "A", "A", "A", "A"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    assert "claims rows" in out     # rule_n_group colour perspective (rows)
+    assert "claims cols" in out     # rule_n_group colour perspective (cols)
+
+
+def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
+    """Community level 113 (7×7): forced row/col, n-group col line, and lookahead all fire.
+
+    After A is placed as region singleton:
+      forced row  → B confined to row 1, D confined to row 2
+      n-group col → cols {6} exclusive to E; cols {5} exclusive to F
+      forced col  → C confined to col 1
+      lookahead   → G(4,3) contradicts after propagation → eliminated
+    Source: https://queensgame.vercel.app/community-level/113
+    """
+    board = [
+        ["A", "B", "B", "B", "D", "E", "E"],
+        ["C", "B", "B", "B", "D", "F", "E"],
+        ["C", "D", "D", "D", "D", "F", "E"],
+        ["C", "C", "C", "G", "F", "F", "E"],
+        ["C", "C", "C", "G", "E", "F", "E"],
+        ["C", "G", "G", "G", "E", "F", "E"],
+        ["C", "G", "G", "G", "E", "E", "E"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    assert "confined to row" in out     # rule_forced_row_col row branch
+    assert "confined to col" in out     # rule_forced_row_col col branch
+    assert "n-group: cols" in out       # rule_n_group col line perspective
+    assert "lookahead:" in out          # rule_lookahead fires
+
+
+@pytest.mark.slow
+def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
+    """Community level 114 (11×11): n-group colour perspective + lookahead on a larger board.
+
+    {B,K} candidates span rows {8,9} → claims those rows.
+    {H,J} candidates span cols {0,1} → claims those cols.
+    Two H placements eliminated by lookahead before backtracking completes the solve.
+    Source: https://queensgame.vercel.app/community-level/114
+    """
+    board = [
+        ["H", "H", "D", "D", "D", "D", "D", "D", "I", "I", "I"],
+        ["H", "H", "F", "F", "D", "D", "D", "F", "F", "I", "I"],
+        ["H", "F", "G", "G", "F", "D", "F", "G", "G", "F", "I"],
+        ["H", "F", "G", "G", "G", "F", "G", "G", "G", "F", "I"],
+        ["H", "F", "C", "C", "C", "C", "C", "C", "C", "F", "I"],
+        ["H", "H", "F", "C", "C", "C", "C", "C", "F", "I", "A"],
+        ["A", "A", "A", "F", "E", "E", "E", "F", "A", "A", "A"],
+        ["J", "J", "A", "A", "F", "F", "F", "E", "E", "B", "B"],
+        ["G", "K", "K", "K", "K", "F", "B", "B", "B", "B", "G"],
+        ["G", "K", "K", "K", "K", "B", "B", "B", "B", "B", "G"],
+        ["G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    assert "claims rows" in out     # rule_n_group colour perspective (rows)
+    assert "claims cols" in out     # rule_n_group colour perspective (cols)
+    assert "lookahead:" in out      # rule_lookahead fires
+
+
+@pytest.mark.slow
+def test_stepwise_lookahead_10x10(capsys) -> None:
+    """Community level 108 (10×10): rule_lookahead fires twice before backtracking solves.
+
+    Two placements (E at (5,1) and H at (5,6)) each lead to a contradiction
+    after propagation and are eliminated by lookahead before search takes over.
+    Source: https://queensgame.vercel.app/community-level/108
+    """
+    board = [
+        ["E", "D", "D", "D", "D", "C", "A", "A", "A", "A"],
+        ["E", "D", "C", "C", "C", "C", "A", "A", "A", "A"],
+        ["E", "D", "D", "D", "D", "C", "B", "B", "A", "B"],
+        ["E", "E", "E", "E", "D", "D", "B", "B", "A", "B"],
+        ["F", "F", "F", "E", "D", "B", "B", "B", "B", "B"],
+        ["F", "E", "E", "E", "D", "H", "H", "I", "I", "J"],
+        ["F", "E", "F", "F", "F", "H", "H", "I", "I", "J"],
+        ["F", "F", "F", "G", "F", "F", "H", "I", "I", "J"],
+        ["G", "G", "G", "G", "F", "F", "H", "J", "J", "J"],
+        ["H", "H", "H", "H", "H", "H", "H", "J", "J", "J"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    assert "lookahead:" in out      # rule_lookahead fires
+
+
+def test_stepwise_xwing_with_lookahead(capsys) -> None:
+    """Community level 578 (8×8): forced row, n-group colour perspective, x-wing, and lookahead all fire.
+
+    D candidates are confined to row 2 → forced row fires.
+    {E,F} candidates span exactly rows {0,1} → n-group claims those rows.
+    x-wing fires twice, and lookahead eliminates three A candidates before
+    singletons resolve the board without backtracking.
+    Source: https://queensgame.vercel.app/community-level/578
+    """
+    board = [
+        ["F", "F", "A", "A", "A", "E", "E", "E"],
+        ["F", "A", "A", "C", "A", "A", "A", "E"],
+        ["A", "A", "C", "C", "D", "D", "A", "E"],
+        ["A", "C", "C", "C", "C", "C", "A", "A"],
+        ["A", "A", "B", "B", "C", "C", "C", "A"],
+        ["G", "A", "B", "B", "B", "B", "A", "A"],
+        ["G", "A", "A", "A", "B", "A", "A", "H"],
+        ["G", "G", "G", "A", "A", "A", "H", "H"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    assert "confined to row" in out     # rule_forced_row_col row branch
+    assert "claims rows" in out         # rule_n_group colour perspective (rows)
+    assert "x-wing:" in out             # rule_x_wing fires
+    assert "lookahead:" in out          # rule_lookahead fires
+
+
 # ---------------------------------------------------------------------------
 # Solver unit tests (no images needed)
 # ---------------------------------------------------------------------------
