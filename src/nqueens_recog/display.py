@@ -18,9 +18,9 @@ def print_board(
     When *queens* is ``None`` (default) each cell shows its region letter.
     When *queens* is provided, queen positions show 👑 and empty cells show
     a blank — matching the same 4-column cell width in both cases.
-    When *candidates* is provided, eliminated cells show ✖️ on their own
+    When *candidates* is provided, eliminated cells show ✖ on their own
     background; active cells show their region letter; queens show 👑.
-    When *newly_eliminated* is provided, those cells show ❌ instead of ✖️
+    When *newly_eliminated* is provided, those cells show ❌ instead of ✖
     to highlight the most recent round of eliminations.
     """
     RESET = "\033[0m"
@@ -38,7 +38,7 @@ def print_board(
             elif eliminated and (x, y) in new_set:
                 cell = " ❌ "  # ❌ is 2-wide → 4 cols total
             elif eliminated:
-                cell = " ✖️  "  # ✖️ is 1-wide, so 2 trailing spaces → 4 cols total
+                cell = "  ✖ "  # ✖ (U+2716, no variation selector) is 1-wide → 4 cols total
             elif queens is None or candidates is not None:
                 cell = f"  {board[y][x]} "  # 4 cols: matches queen/blank width
             else:
