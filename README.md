@@ -163,6 +163,25 @@ Example output:
   Written: all_solutions/level_641.html
 ```
 
+### Running under PyPy
+
+Levels that fall back to **search** (the stepwise solver's own backtracking)
+can be slow, because each node re-runs the full deduction pipeline. PyPy's JIT
+gives a meaningful speedup for these cases (e.g. level 702, 15×15: 79 s → 36 s
+after a cold start, faster still over a longer batch run).
+
+OpenCV is not available for PyPy, so the image-recognition path is disabled;
+URL-based solving works fine.
+
+```bash
+# One-time setup
+pypy3 -m venv .venv-pypy
+.venv-pypy/bin/pip install -e . --no-deps --ignore-requires-python
+
+# Run
+.venv-pypy/bin/python chk_stepwise.py 700 710
+```
+
 ## How the image recognition works
 
 1. **Perspective correction** — find the four-corner contour of the grid and
