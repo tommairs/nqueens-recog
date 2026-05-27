@@ -439,7 +439,6 @@ def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
     assert "n-group: cols" in out       # rule_n_group col line perspective
 
 
-@pytest.mark.slow
 def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
     """Community level 114 (11×11): n-group colour perspective on a larger board.
 
