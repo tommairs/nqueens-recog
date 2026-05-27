@@ -39,7 +39,7 @@ Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-qu
   8. **Elimination** — if placing a queen at a candidate cell would leave
      some other region with no remaining candidates at all, that cell is
      ruled out (one-step lookahead).
-  9. **Lookahead** — for small regions, trial-place a queen in every
+  9. **Lookahead** (not active yet) — for small regions, trial-place a queen in every
      candidate cell; remove any candidate that leads to a contradiction.
   10. **Search** — last resort: pick the most-constrained region, guess,
      and recurse with backtracking.

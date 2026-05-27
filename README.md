@@ -91,16 +91,15 @@ showing region letters for active candidates, `✖` for eliminated cells, and
 Ten rules are applied in order of increasing cost:
 
 1. **Region singleton** — a region/row/column narrowed to one cell; place the queen.
-1. **Region forced row/col** — all candidates for a region share a row or column; claim it.
-1. **Squeeze** — a row/col's candidates span ≤ 2 cells, so the queen always diagonally attacks the overlap zone in adjacent rows/cols.
-1. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
-1. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
-1. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); claim all those lines.
-1. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
-1. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
-1. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
-
-> _TODO: lookahead without full backtrack_
+2. **Region forced row/col** — all candidates for a region share a row or column; claim it.
+3. **Squeeze** — a row/col's candidates span ≤ 2 cells, so the queen always diagonally attacks the overlap zone in adjacent rows/cols.
+4. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
+5. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
+6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); claim all those lines.
+7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
+8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
+9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
+10. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
 
 ### HTML output
 

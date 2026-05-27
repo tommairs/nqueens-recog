@@ -282,6 +282,20 @@ def test_stepwise_x_wing_fires(capsys) -> None:
     assert "x-wing:" in capsys.readouterr().out
 
 
+def test_stepwise_verbose_show_board(capsys) -> None:
+    """verbose=True causes show_board() to call print_board after each rule step."""
+    board = [
+        ["A", "A", "B", "B"],
+        ["A", "C", "C", "C"],
+        ["B", "D", "D", "D"],
+        ["C", "C", "D", "D"],
+    ]
+    result = solve_stepwise(board, verbose=True)
+    assert result is not None
+    out = capsys.readouterr().out
+    assert "\033[" in out  # ANSI escape codes emitted by print_board
+
+
 def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
     """Region singleton, squeeze, row singleton, and the stuck path.
 
