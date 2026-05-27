@@ -21,7 +21,6 @@ import contextlib
 import subprocess
 import sys
 import time
-import urllib.error
 from io import StringIO
 from multiprocessing import Pool
 from pathlib import Path
@@ -29,7 +28,6 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Imports from the installed package (run from project root with venv active)
 # ---------------------------------------------------------------------------
-from nqueens_recog.solver import solve
 from nqueens_recog.stepwise import solve_stepwise
 from nqueens_recog.url_reader import read_community_level_info
 
@@ -87,11 +85,6 @@ def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
             if abs(x1 - x2) == 1 and abs(y1 - y2) == 1:
                 errors.append(f"diagonal adjacency ({y1},{x1})↔({y2},{x2})")
     return errors
-
-
-def _solution_as_row_col(solution: list[tuple[int, int]]) -> dict[int, int]:
-    """Convert a recursive-solver solution (list of (col, row)) to {row: col}."""
-    return {row: col for col, row in solution}
 
 
 def _rules_used(trace: str) -> list[str]:
@@ -161,43 +154,17 @@ def _check_level(level: int, delay: float, out_dir: Path) -> None:
     trace = buf.getvalue()
     rules = _rules_used(trace)
 
-    if not unique:
-        # Multi-solution level: validate and report, but skip recursive cross-check.
-        if step_result is None:
-            p_stderr(f"  Stepwise: stuck (returned None) [stepwise {step_elapsed:.3f}s]")
-        else:
-            errors = _validate(board, step_result)
-            if errors:
-                p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
-            else:
-                print(f"  Stepwise: ok (multi-solution) [stepwise {step_elapsed:.3f}s]"
-                      f" — rules used: {', '.join(rules) if rules else '(none)'}")
+    timing = f"stepwise {step_elapsed:.3f}s"
+    tag = "" if unique else " (multi-solution)"
+
+    if step_result is None:
+        p_stderr(f"  Stepwise: stuck (returned None) [{timing}]")
     else:
-        # --- Recursive solver ---
-        t0 = time.perf_counter()
-        rec_solutions = solve(board, quiet=True, verbose=False, max_solutions=1)
-        rec_elapsed = time.perf_counter() - t0
-
-        timing = f"stepwise {step_elapsed:.3f}s, recursive {rec_elapsed:.3f}s"
-
-        # --- Compare / validate ---
-        if step_result is None:
-            p_stderr(f"  Stepwise: stuck (returned None) [{timing}]")
+        errors = _validate(board, step_result)
+        if errors:
+            p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
         else:
-            errors = _validate(board, step_result)
-            if errors:
-                p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
-            elif not rec_solutions:
-                p_stderr(f"!! RECURSIVE found no solution for level {level}")
-            else:
-                rec_result = _solution_as_row_col(rec_solutions[0])
-                if step_result != rec_result:
-                    p_stderr(
-                        f"!! DIVERGE level {level}: "
-                        f"recursive={rec_result} stepwise={step_result}",
-                    )
-                else:
-                    print(f"  Stepwise: ok [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
+            print(f"  Stepwise: ok{tag} [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
 
     # --- Write HTML ---
     _write_html(level, url, out_dir)
