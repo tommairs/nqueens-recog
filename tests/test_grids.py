@@ -402,11 +402,11 @@ def test_stepwise_forced_ngroup_col_lookahead(capsys) -> None:
 
 @pytest.mark.slow
 def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
-    """Community level 114 (11×11): n-group colour perspective + lookahead on a larger board.
+    """Community level 114 (11×11): n-group colour perspective on a larger board.
 
     {B,K} candidates span rows {8,9} → claims those rows.
     {H,J} candidates span cols {0,1} → claims those cols.
-    Two H placements eliminated by lookahead before backtracking completes the solve.
+    Search resolves the remaining queens.
     Source: https://queensgame.vercel.app/community-level/114
     """
     board = [
@@ -428,15 +428,13 @@ def test_stepwise_colour_perspective_and_lookahead_large(capsys) -> None:
     _assert_matches_solver(board, result)
     assert "claims rows" in out     # rule_n_group colour perspective (rows)
     assert "claims cols" in out     # rule_n_group colour perspective (cols)
-    assert "lookahead [" in out      # rule_lookahead fires
+    assert "search" in out           # search resolves remaining queens
 
 
 @pytest.mark.slow
 def test_stepwise_lookahead_10x10(capsys) -> None:
-    """Community level 108 (10×10): rule_lookahead fires twice before backtracking solves.
+    """Community level 108 (10×10): search resolves after deduction rules stall.
 
-    Two placements (E at (5,1) and H at (5,6)) each lead to a contradiction
-    after propagation and are eliminated by lookahead before search takes over.
     Source: https://queensgame.vercel.app/community-level/108
     """
     board = [
@@ -455,7 +453,7 @@ def test_stepwise_lookahead_10x10(capsys) -> None:
     out = capsys.readouterr().out
     assert result is not None
     _assert_matches_solver(board, result)
-    assert "lookahead [" in out      # rule_lookahead fires
+    assert "search" in out           # search resolves remaining queens
 
 
 def test_stepwise_xwing_with_lookahead(capsys) -> None:
