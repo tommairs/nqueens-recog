@@ -75,6 +75,44 @@ tests/
     test_grids.py    # grid recognition, URL reader, and solver tests
 ```
 
+## Stepwise solver
+
+`--stepwise` applies human-like logical elimination rules and prints a trace
+of each deduction, rather than backtracking exhaustively:
+
+```bash
+nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise
+```
+
+Add `-v` / `--verbose` to also render the board state after each rule fires,
+showing region letters for active candidates, `✖` for eliminated cells, and
+👑 for placed queens (newly-eliminated cells are highlighted in red).
+
+Ten rules are applied in order of increasing cost:
+
+1. **Region singleton** — a region/row/column narrowed to one cell; place the queen.
+2. **Region forced row/col** — all candidates for a region share a row or column; claim it.
+3. **Squeeze** — a row/col's candidates span ≤ 2 cells, so the queen always diagonally attacks the overlap zone in adjacent rows/cols.
+4. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
+5. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
+6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); claim all those lines.
+7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
+8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
+9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
+10. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
+
+### HTML output
+
+`solve_html.sh` renders a single level's stepwise trace as a styled HTML file
+(requires [`aha`](https://github.com/theZiz/aha): `brew install aha`):
+
+```bash
+./solve_html.sh 705          # → all_solutions/level_705.html
+```
+
+The HTML uses fixed-width coloured cells so the board renders cleanly in any
+browser regardless of font.
+
 ## Batch solve all community levels
 
 `solve_all.sh` iterates over all known community levels (1–692) and writes
