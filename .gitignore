@@ -18,11 +18,7 @@ notebooks/.ipynb_checkpoints/
 # VS Code
 .vscode/
 
-# Generated output — exclude all files but allow specific committed examples
-all_solutions/*
-!all_solutions/level_641.html
-!all_solutions/level_705.html
-!all_solutions/level_707.html
+# now allow generated output
 
 # macOS
 .DS_Store

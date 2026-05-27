@@ -1,0 +1,1488 @@
+=== Level 1 ===
+  Board: 6×6, solutionsCount=14
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: forced, shadow, n-group, search
+  Written: all_solutions/level_1.html
+=== Level 2 ===
+  Board: 9×9, solutionsCount=6
+  Stepwise: ok (multi-solution) [stepwise 0.006s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_2.html
+=== Level 3 ===
+  Board: 7×7, solutionsCount=7
+  Stepwise: ok (multi-solution) [stepwise 0.009s] — rules used: singleton, forced, shadow, n-group, search
+  Written: all_solutions/level_3.html
+=== Level 4 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced
+  Written: all_solutions/level_4.html
+=== Level 5 ===
+  Board: 10×10, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_5.html
+=== Level 6 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.009s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_6.html
+=== Level 7 ===
+  Board: 11×11, solutionsCount=104045
+  Stepwise: ok (multi-solution) [stepwise 2.478s] — rules used: search
+  Written: all_solutions/level_7.html
+=== Level 8 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_8.html
+=== Level 9 ===
+  Board: 7×7, solutionsCount=26
+  Stepwise: ok (multi-solution) [stepwise 0.024s] — rules used: shadow, search
+  Written: all_solutions/level_9.html
+=== Level 10 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_10.html
+=== Level 11 ===
+  Board: 11×11, solutionsCount=51948
+  Stepwise: ok (multi-solution) [stepwise 2.736s] — rules used: search
+  Written: all_solutions/level_11.html
+=== Level 12 ===
+  Board: 7×7, solutionsCount=4
+  Stepwise: ok (multi-solution) [stepwise 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_12.html
+=== Level 13 ===
+  Board: 10×10, solutionsCount=5839
+  Stepwise: ok (multi-solution) [stepwise 0.877s] — rules used: shadow, search
+  Written: all_solutions/level_13.html
+=== Level 14 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_14.html
+=== Level 15 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_15.html
+=== Level 16 ===
+  Board: 11×11, solutionsCount=56
+  Stepwise: ok (multi-solution) [stepwise 2.870s] — rules used: shadow, search
+  Written: all_solutions/level_16.html
+=== Level 17 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_17.html
+=== Level 18 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.005s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_18.html
+=== Level 19 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.026s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_19.html
+=== Level 20 ===
+  Board: 11×11, solutionsCount=196
+  Stepwise: ok (multi-solution) [stepwise 0.692s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_20.html
+=== Level 21 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_21.html
+=== Level 22 ===
+  Board: 8×8, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_22.html
+=== Level 23 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_23.html
+=== Level 24 ===
+  Board: 8×8, solutionsCount=195
+  Stepwise: ok (multi-solution) [stepwise 0.061s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_24.html
+=== Level 25 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.360s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_25.html
+=== Level 26 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_26.html
+=== Level 27 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.047s] — rules used: singleton, forced
+  Written: all_solutions/level_27.html
+=== Level 28 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_28.html
+=== Level 29 ===
+  Board: 11×11, solutionsCount=7884
+  Stepwise: ok (multi-solution) [stepwise 1.834s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_29.html
+=== Level 30 ===
+  Board: 7×7, solutionsCount=28
+  Stepwise: ok (multi-solution) [stepwise 0.017s] — rules used: squeeze, shadow, n-group, search
+  Written: all_solutions/level_30.html
+=== Level 31 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_31.html
+=== Level 32 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_32.html
+=== Level 33 ===
+  Board: 9×9, solutionsCount=103
+  Stepwise: ok (multi-solution) [stepwise 0.197s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_33.html
+=== Level 34 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_34.html
+=== Level 35 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.552s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_35.html
+=== Level 36 ===
+  Board: 7×7, solutionsCount=27
+  Stepwise: ok (multi-solution) [stepwise 0.018s] — rules used: forced, squeeze, search
+  Written: all_solutions/level_36.html
+=== Level 37 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.004s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_37.html
+=== Level 38 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.023s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_38.html
+=== Level 39 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_39.html
+=== Level 40 ===
+  Board: 11×11, solutionsCount=1395
+  Stepwise: ok (multi-solution) [stepwise 0.830s] — rules used: squeeze, shadow, n-group, search
+  Written: all_solutions/level_40.html
+=== Level 41 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_41.html
+=== Level 42 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_42.html
+=== Level 43 ===
+  Board: 7×7, solutionsCount=109
+  Stepwise: ok (multi-solution) [stepwise 0.023s] — rules used: forced, search
+  Written: all_solutions/level_43.html
+=== Level 44 ===
+  Board: 11×11, solutionsCount=15559
+  Stepwise: ok (multi-solution) [stepwise 1.306s] — rules used: forced, search
+  Written: all_solutions/level_44.html
+=== Level 45 ===
+  Board: 7×7, solutionsCount=49
+  Stepwise: ok (multi-solution) [stepwise 0.018s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_45.html
+=== Level 46 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_46.html
+=== Level 47 ===
+  Board: 7×7, solutionsCount=3
+  Stepwise: ok (multi-solution) [stepwise 0.004s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_47.html
+=== Level 48 ===
+  Board: 9×9, solutionsCount=898
+  Stepwise: ok (multi-solution) [stepwise 0.140s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_48.html
+=== Level 49 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.002s] — rules used: singleton, forced
+  Written: all_solutions/level_49.html
+=== Level 50 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.003s] — rules used: singleton, forced
+  Written: all_solutions/level_50.html
+=== Level 51 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_51.html
+=== Level 52 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_52.html
+=== Level 53 ===
+  Board: 7×7, solutionsCount=4
+  Stepwise: ok (multi-solution) [stepwise 0.008s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_53.html
+=== Level 54 ===
+  Board: 7×7, solutionsCount=7
+  Stepwise: ok (multi-solution) [stepwise 0.041s] — rules used: shadow, search
+  Written: all_solutions/level_54.html
+=== Level 55 ===
+  Board: 9×9, solutionsCount=8
+  Stepwise: ok (multi-solution) [stepwise 0.012s] — rules used: singleton, forced, squeeze, search
+  Written: all_solutions/level_55.html
+=== Level 56 ===
+  Board: 8×8, solutionsCount=18
+  Stepwise: ok (multi-solution) [stepwise 0.078s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_56.html
+=== Level 57 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.013s] — rules used: singleton, forced
+  Written: all_solutions/level_57.html
+=== Level 58 ===
+  Board: 7×7, solutionsCount=10
+  Stepwise: ok (multi-solution) [stepwise 0.044s] — rules used: shadow, search
+  Written: all_solutions/level_58.html
+=== Level 59 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.004s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_59.html
+=== Level 60 ===
+  Board: 7×7, solutionsCount=29
+  Stepwise: ok (multi-solution) [stepwise 0.021s] — rules used: singleton, forced, squeeze, n-group, search
+  Written: all_solutions/level_60.html
+=== Level 61 ===
+  Board: 8×8, solutionsCount=257
+  Stepwise: ok (multi-solution) [stepwise 0.108s] — rules used: shadow, search
+  Written: all_solutions/level_61.html
+=== Level 62 ===
+  Board: 7×7, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_62.html
+=== Level 63 ===
+  Board: 7×7, solutionsCount=15
+  Stepwise: ok (multi-solution) [stepwise 0.034s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_63.html
+=== Level 64 ===
+  Board: 7×7, solutionsCount=10
+  Stepwise: ok (multi-solution) [stepwise 0.029s] — rules used: forced, shadow, n-group, search
+  Written: all_solutions/level_64.html
+=== Level 65 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.015s] — rules used: singleton, forced
+  Written: all_solutions/level_65.html
+=== Level 66 ===
+  Board: 9×9, solutionsCount=24
+  Stepwise: ok (multi-solution) [stepwise 0.022s] — rules used: singleton, forced, squeeze, search
+  Written: all_solutions/level_66.html
+=== Level 67 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_67.html
+=== Level 68 ===
+  Board: 7×7, solutionsCount=29
+  Stepwise: ok (multi-solution) [stepwise 0.020s] — rules used: singleton, forced, n-group, search
+  Written: all_solutions/level_68.html
+=== Level 69 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_69.html
+=== Level 70 ===
+  Board: 6×6, solutionsCount=19
+  Stepwise: ok (multi-solution) [stepwise 0.019s] — rules used: forced, search
+  Written: all_solutions/level_70.html
+=== Level 71 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.005s] — rules used: singleton, forced
+  Written: all_solutions/level_71.html
+=== Level 72 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.499s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_72.html
+=== Level 73 ===
+  Board: 7×7, solutionsCount=13
+  Stepwise: ok (multi-solution) [stepwise 0.011s] — rules used: forced, squeeze, n-group, search
+  Written: all_solutions/level_73.html
+=== Level 74 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.005s] — rules used: singleton
+  Written: all_solutions/level_74.html
+=== Level 75 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.010s] — rules used: singleton, forced
+  Written: all_solutions/level_75.html
+=== Level 76 ===
+  Board: 11×11, solutionsCount=34
+  Stepwise: ok (multi-solution) [stepwise 0.045s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_76.html
+=== Level 77 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_77.html
+=== Level 78 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton
+  Written: all_solutions/level_78.html
+=== Level 79 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_79.html
+=== Level 80 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_80.html
+=== Level 81 ===
+  Board: 11×11, solutionsCount=12
+  Stepwise: ok (multi-solution) [stepwise 0.017s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_81.html
+=== Level 82 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_82.html
+=== Level 83 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_83.html
+=== Level 84 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_84.html
+=== Level 85 ===
+  Board: 7×7, solutionsCount=18
+  Stepwise: ok (multi-solution) [stepwise 0.016s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_85.html
+=== Level 86 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.004s] — rules used: singleton, forced
+  Written: all_solutions/level_86.html
+=== Level 87 ===
+  Board: 7×7, solutionsCount=4
+  Stepwise: ok (multi-solution) [stepwise 0.031s] — rules used: shadow, x-wing, search
+  Written: all_solutions/level_87.html
+=== Level 88 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_88.html
+=== Level 89 ===
+  Board: 10×10, solutionsCount=781
+  Stepwise: ok (multi-solution) [stepwise 0.738s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_89.html
+=== Level 90 ===
+  Board: 6×6, solutionsCount=5
+  Stepwise: ok (multi-solution) [stepwise 0.004s] — rules used: forced, squeeze, search
+  Written: all_solutions/level_90.html
+=== Level 91 ===
+  Board: 7×7, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.003s] — rules used: singleton, forced, squeeze, search
+  Written: all_solutions/level_91.html
+=== Level 92 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.008s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_92.html
+=== Level 93 ===
+  Board: 7×7, solutionsCount=34
+  Stepwise: ok (multi-solution) [stepwise 0.031s] — rules used: forced, squeeze, n-group, search
+  Written: all_solutions/level_93.html
+=== Level 94 ===
+  Board: 9×9, solutionsCount=76
+  Stepwise: ok (multi-solution) [stepwise 0.259s] — rules used: shadow, n-group, x-wing, search
+  Written: all_solutions/level_94.html
+=== Level 95 ===
+  Board: 8×8, solutionsCount=45
+  Stepwise: ok (multi-solution) [stepwise 0.062s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_95.html
+=== Level 96 ===
+  Board: 9×9, solutionsCount=26
+  Stepwise: ok (multi-solution) [stepwise 0.139s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_96.html
+=== Level 97 ===
+  Board: 7×7, solutionsCount=16
+  Stepwise: ok (multi-solution) [stepwise 0.037s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_97.html
+=== Level 98 ===
+  Board: 7×7, solutionsCount=45
+  Stepwise: ok (multi-solution) [stepwise 0.041s] — rules used: squeeze, shadow, n-group, search
+  Written: all_solutions/level_98.html
+=== Level 99 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.027s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_99.html
+=== Level 100 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.063s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_100.html
+=== Level 101 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_101.html
+=== Level 102 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_102.html
+=== Level 103 ===
+  Board: 11×11, solutionsCount=176
+  Stepwise: ok (multi-solution) [stepwise 0.654s] — rules used: singleton, forced, shadow, n-group, search
+  Written: all_solutions/level_103.html
+=== Level 104 ===
+  Board: 7×7, solutionsCount=26
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: forced, shadow, n-group, search
+  Written: all_solutions/level_104.html
+=== Level 105 ===
+  Board: 10×10, solutionsCount=22
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: singleton, forced, squeeze, n-group, search
+  Written: all_solutions/level_105.html
+=== Level 106 ===
+  Board: 11×11, solutionsCount=112812
+  Stepwise: ok (multi-solution) [stepwise 1.618s] — rules used: n-group, search
+  Written: all_solutions/level_106.html
+=== Level 107 ===
+  Board: 11×11, solutionsCount=120
+  Stepwise: ok (multi-solution) [stepwise 0.624s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing, search
+  Written: all_solutions/level_107.html
+=== Level 108 ===
+  Board: 10×10, solutionsCount=1965
+  Stepwise: ok (multi-solution) [stepwise 0.821s] — rules used: shadow, search
+  Written: all_solutions/level_108.html
+=== Level 109 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_109.html
+=== Level 110 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.009s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_110.html
+=== Level 111 ===
+  Board: 7×7, solutionsCount=19
+  Stepwise: ok (multi-solution) [stepwise 0.021s] — rules used: forced, shadow, search
+  Written: all_solutions/level_111.html
+=== Level 112 ===
+  Board: 8×8, solutionsCount=6
+  Stepwise: ok (multi-solution) [stepwise 0.053s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_112.html
+=== Level 113 ===
+  Board: 7×7, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_113.html
+=== Level 114 ===
+  Board: 11×11, solutionsCount=383
+  Stepwise: ok (multi-solution) [stepwise 0.255s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_114.html
+=== Level 115 ===
+  Board: 8×8, solutionsCount=8
+  Stepwise: ok (multi-solution) [stepwise 0.004s] — rules used: singleton, forced, squeeze, shadow, search
+  Written: all_solutions/level_115.html
+=== Level 116 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_116.html
+=== Level 117 ===
+  Board: 8×8, solutionsCount=15
+  Stepwise: ok (multi-solution) [stepwise 0.060s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_117.html
+=== Level 118 ===
+  Board: 6×6, solutionsCount=2
+  Stepwise: ok (multi-solution) [stepwise 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_118.html
+=== Level 119 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_119.html
+=== Level 120 ===
+  Board: 7×7, solutionsCount=8
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: forced, squeeze, n-group, x-wing, search
+  Written: all_solutions/level_120.html
+=== Level 121 ===
+  Board: 11×11, solutionsCount=1401
+  Stepwise: ok (multi-solution) [stepwise 2.083s] — rules used: forced, squeeze, n-group, search
+  Written: all_solutions/level_121.html
+=== Level 122 ===
+  Board: 7×7, solutionsCount=32
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: squeeze, shadow, n-group, search
+  Written: all_solutions/level_122.html
+=== Level 123 ===
+  Board: 7×7, solutionsCount=26
+  Stepwise: ok (multi-solution) [stepwise 0.015s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_123.html
+=== Level 124 ===
+  Board: 9×9, solutionsCount=82
+  Stepwise: ok (multi-solution) [stepwise 0.056s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_124.html
+=== Level 125 ===
+  Board: 7×7, solutionsCount=56
+  Stepwise: ok (multi-solution) [stepwise 0.026s] — rules used: search
+  Written: all_solutions/level_125.html
+=== Level 126 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_126.html
+=== Level 127 ===
+  Board: 8×8, solutionsCount=50
+  Stepwise: ok (multi-solution) [stepwise 0.064s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_127.html
+=== Level 128 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.002s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_128.html
+=== Level 129 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_129.html
+=== Level 130 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.002s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_130.html
+=== Level 131 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.006s] — rules used: singleton, forced, shadow
+  Written: all_solutions/level_131.html
+=== Level 132 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.011s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_132.html
+=== Level 133 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.027s] — rules used: singleton, forced, shadow
+  Written: all_solutions/level_133.html
+=== Level 134 ===
+  Board: 9×9, solutionsCount=34
+  Stepwise: ok (multi-solution) [stepwise 0.030s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_134.html
+=== Level 135 ===
+  Board: 7×7, solutionsCount=4
+  Stepwise: ok (multi-solution) [stepwise 0.007s] — rules used: singleton, forced, search
+  Written: all_solutions/level_135.html
+=== Level 136 ===
+  Board: 11×11, solutionsCount=22230
+  Stepwise: ok (multi-solution) [stepwise 2.672s] — rules used: shadow, search
+  Written: all_solutions/level_136.html
+=== Level 137 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_137.html
+=== Level 138 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_138.html
+=== Level 139 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.000s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_139.html
+=== Level 140 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_140.html
+=== Level 141 ===
+  Board: 9×9, solutionsCount=423
+  Stepwise: ok (multi-solution) [stepwise 0.248s] — rules used: search
+  Written: all_solutions/level_141.html
+=== Level 142 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.046s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_142.html
+=== Level 143 ===
+  Board: 11×11, solutionsCount=3941
+  Stepwise: ok (multi-solution) [stepwise 1.236s] — rules used: forced, shadow, n-group, search
+  Written: all_solutions/level_143.html
+=== Level 144 ===
+  Board: 8×8, solutionsCount=87
+  Stepwise: ok (multi-solution) [stepwise 0.052s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_144.html
+=== Level 145 ===
+  Board: 7×7, solutionsCount=57
+  Stepwise: ok (multi-solution) [stepwise 0.018s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_145.html
+=== Level 146 ===
+  Board: 9×9, solutionsCount=40
+  Stepwise: ok (multi-solution) [stepwise 0.142s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_146.html
+=== Level 147 ===
+  Board: 7×7, solutionsCount=26
+  Stepwise: ok (multi-solution) [stepwise 0.008s] — rules used: singleton, forced, squeeze, n-group, search
+  Written: all_solutions/level_147.html
+=== Level 148 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_148.html
+=== Level 149 ===
+  Board: 11×11, solutionsCount=2769
+  Stepwise: ok (multi-solution) [stepwise 2.015s] — rules used: forced, shadow, search
+  Written: all_solutions/level_149.html
+=== Level 150 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_150.html
+=== Level 151 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_151.html
+=== Level 152 ===
+  Board: 7×7, solutionsCount=14
+  Stepwise: ok (multi-solution) [stepwise 0.016s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_152.html
+=== Level 153 ===
+  Board: 7×7, solutionsCount=18
+  Stepwise: ok (multi-solution) [stepwise 0.014s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_153.html
+=== Level 154 ===
+  Board: 7×7, solutionsCount=40
+  Stepwise: ok (multi-solution) [stepwise 0.013s] — rules used: forced, shadow, n-group, search
+  Written: all_solutions/level_154.html
+=== Level 155 ===
+  Board: 11×11, solutionsCount=1863
+  Stepwise: ok (multi-solution) [stepwise 1.220s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_155.html
+=== Level 156 ===
+  Board: 10×10, solutionsCount=1213
+  Stepwise: ok (multi-solution) [stepwise 0.590s] — rules used: forced, squeeze, n-group, search
+  Written: all_solutions/level_156.html
+=== Level 157 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_157.html
+=== Level 158 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.023s, recursive 0.000s] — rules used: search
+  Written: all_solutions/level_158.html
+=== Level 159 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_159.html
+=== Level 160 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_160.html
+=== Level 161 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.003s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_161.html
+=== Level 162 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.058s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_162.html
+=== Level 163 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.074s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_163.html
+=== Level 164 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.127s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_164.html
+=== Level 165 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_165.html
+=== Level 166 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_166.html
+=== Level 167 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_167.html
+=== Level 168 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.006s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_168.html
+=== Level 169 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_169.html
+=== Level 170 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.042s, recursive 0.000s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_170.html
+=== Level 171 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_171.html
+=== Level 172 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.137s, recursive 0.000s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_172.html
+=== Level 173 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_173.html
+=== Level 174 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.007s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_174.html
+=== Level 175 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_175.html
+=== Level 176 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.003s] — rules used: singleton, squeeze
+  Written: all_solutions/level_176.html
+=== Level 177 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.002s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_177.html
+=== Level 178 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_178.html
+=== Level 179 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.001s] — rules used: singleton, squeeze, shadow, n-group
+  Written: all_solutions/level_179.html
+=== Level 180 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.009s, recursive 0.031s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_180.html
+=== Level 181 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.009s, recursive 0.081s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_181.html
+=== Level 182 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.027s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_182.html
+=== Level 183 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.014s, recursive 0.000s] — rules used: squeeze, n-group, search
+  Written: all_solutions/level_183.html
+=== Level 184 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.305s] — rules used: singleton, shadow, n-group
+  Written: all_solutions/level_184.html
+=== Level 185 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_185.html
+=== Level 186 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_186.html
+=== Level 187 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.043s] — rules used: singleton, forced
+  Written: all_solutions/level_187.html
+=== Level 188 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.035s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_188.html
+=== Level 189 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.004s] — rules used: singleton, forced, shadow
+  Written: all_solutions/level_189.html
+=== Level 190 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.085s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_190.html
+=== Level 191 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.019s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_191.html
+=== Level 192 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.013s, recursive 0.000s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_192.html
+=== Level 193 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.104s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_193.html
+=== Level 194 ===
+  Board: 12×12, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.337s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_194.html
+=== Level 195 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.009s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_195.html
+=== Level 196 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.001s] — rules used: singleton, squeeze, shadow, n-group
+  Written: all_solutions/level_196.html
+=== Level 197 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.002s] — rules used: singleton, shadow, n-group
+  Written: all_solutions/level_197.html
+=== Level 198 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.025s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_198.html
+=== Level 199 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_199.html
+=== Level 200 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.128s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_200.html
+=== Level 201 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.025s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_201.html
+=== Level 202 ===
+  Board: 12×12, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.069s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_202.html
+=== Level 203 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.026s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_203.html
+=== Level 204 ===
+  Board: 12×12, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.083s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_204.html
+=== Level 205 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.015s, recursive 0.158s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_205.html
+=== Level 206 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_206.html
+=== Level 207 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_207.html
+=== Level 208 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.038s, recursive 0.011s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_208.html
+=== Level 209 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_209.html
+=== Level 210 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 0.024s, recursive 17.072s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_210.html
+=== Level 211 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_211.html
+=== Level 212 ===
+  Board: 14×14, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.303s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_212.html
+=== Level 213 ===
+  Board: 17×17, solutionsCount=1
+  Stepwise: ok [stepwise 0.012s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_213.html
+=== Level 214 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.178s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_214.html
+=== Level 215 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.011s, recursive 0.208s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_215.html
+=== Level 216 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.057s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_216.html
+=== Level 217 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.019s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_217.html
+=== Level 218 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_218.html
+=== Level 219 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_219.html
+=== Level 220 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_220.html
+=== Level 221 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.023s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_221.html
+=== Level 222 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_222.html
+=== Level 223 ===
+  Board: 12×12, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.155s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_223.html
+=== Level 224 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.039s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_224.html
+=== Level 225 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_225.html
+=== Level 226 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.293s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_226.html
+=== Level 227 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.017s, recursive 0.010s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
+  Written: all_solutions/level_227.html
+=== Level 228 ===
+  Board: 14×14, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.673s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_228.html
+=== Level 229 ===
+  Board: 18×18, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.063s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_229.html
+=== Level 230 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_230.html
+=== Level 231 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.844s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_231.html
+=== Level 232 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.085s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_232.html
+=== Level 233 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.006s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_233.html
+=== Level 234 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_234.html
+=== Level 235 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_235.html
+=== Level 236 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_236.html
+=== Level 237 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.060s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_237.html
+=== Level 238 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_238.html
+=== Level 239 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.012s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_239.html
+=== Level 240 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, squeeze
+  Written: all_solutions/level_240.html
+=== Level 241 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_241.html
+=== Level 242 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.050s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_242.html
+=== Level 243 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.010s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_243.html
+=== Level 244 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.011s, recursive 0.077s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_244.html
+=== Level 245 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.016s, recursive 0.101s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_245.html
+=== Level 246 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_246.html
+=== Level 247 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_247.html
+=== Level 248 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.013s, recursive 0.004s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_248.html
+=== Level 249 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_249.html
+=== Level 250 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.007s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_250.html
+=== Level 251 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.001s] — rules used: singleton, forced, squeeze, n-group
+  Written: all_solutions/level_251.html
+=== Level 252 ===
+  Board: 14×14, solutionsCount=1
+  Stepwise: ok [stepwise 0.011s, recursive 15.268s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_252.html
+=== Level 253 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 0.009s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_253.html
+=== Level 254 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_254.html
+=== Level 255 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_255.html
+=== Level 256 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.068s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_256.html
+=== Level 257 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_257.html
+=== Level 258 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.009s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_258.html
+=== Level 259 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_259.html
+=== Level 260 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.013s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_260.html
+=== Level 261 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.004s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_261.html
+=== Level 262 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_262.html
+=== Level 263 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.212s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_263.html
+=== Level 264 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_264.html
+=== Level 265 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_265.html
+=== Level 266 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_266.html
+=== Level 267 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_267.html
+=== Level 268 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.015s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_268.html
+=== Level 269 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.004s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_269.html
+=== Level 270 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.101s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
+  Written: all_solutions/level_270.html
+=== Level 271 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.008s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_271.html
+=== Level 272 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.010s] — rules used: singleton, forced
+  Written: all_solutions/level_272.html
+=== Level 273 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 12.023s, recursive 0.018s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_273.html
+=== Level 274 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.004s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_274.html
+=== Level 275 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_275.html
+=== Level 276 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.115s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_276.html
+=== Level 277 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_277.html
+=== Level 278 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.076s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_278.html
+=== Level 279 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_279.html
+=== Level 280 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.013s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_280.html
+=== Level 281 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 30.088s, recursive 0.372s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_281.html
+=== Level 282 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.013s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_282.html
+=== Level 283 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.006s] — rules used: singleton, forced
+  Written: all_solutions/level_283.html
+=== Level 284 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_284.html
+=== Level 285 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_285.html
+=== Level 286 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.013s, recursive 0.000s] — rules used: shadow, n-group, search
+  Written: all_solutions/level_286.html
+=== Level 287 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.105s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_287.html
+=== Level 288 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.433s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_288.html
+=== Level 289 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.038s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_289.html
+=== Level 290 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.114s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_290.html
+=== Level 291 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.034s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_291.html
+=== Level 292 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_292.html
+=== Level 293 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_293.html
+=== Level 294 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.124s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_294.html
+=== Level 295 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_295.html
+=== Level 296 ===
+  Board: 14×14, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.006s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_296.html
+=== Level 297 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.010s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_297.html
+=== Level 298 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_298.html
+=== Level 299 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.000s] — rules used: forced, squeeze, shadow, search
+  Written: all_solutions/level_299.html
+=== Level 300 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_300.html
+=== Level 301 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_301.html
+=== Level 302 ===
+  Board: 17×17, solutionsCount=1
+  Stepwise: ok [stepwise 7.618s, recursive 0.722s] — rules used: singleton, forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_302.html
+=== Level 303 ===
+  Board: 12×12, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 0.276s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_303.html
+=== Level 304 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 0.000s] — rules used: shadow, search
+  Written: all_solutions/level_304.html
+=== Level 305 ===
+  Board: 13×13, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_305.html
+=== Level 306 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.009s, recursive 0.066s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_306.html
+=== Level 307 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_307.html
+=== Level 308 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, squeeze, shadow, n-group
+  Written: all_solutions/level_308.html
+=== Level 309 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_309.html
+=== Level 310 ===
+  Board: 16×16, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_310.html
+=== Level 311 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.023s] — rules used: singleton
+  Written: all_solutions/level_311.html
+=== Level 312 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_312.html
+=== Level 313 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_313.html
+=== Level 314 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_314.html
+=== Level 315 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_315.html
+=== Level 316 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.006s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_316.html
+=== Level 317 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.005s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_317.html
+=== Level 318 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_318.html
+=== Level 319 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_319.html
+=== Level 320 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_320.html
+=== Level 321 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.007s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_321.html
+=== Level 322 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.021s, recursive 0.000s] — rules used: shadow, search
+  Written: all_solutions/level_322.html
+=== Level 323 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_323.html
+=== Level 324 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_324.html
+=== Level 325 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_325.html
+=== Level 326 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_326.html
+=== Level 327 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_327.html
+=== Level 328 ===
+  Board: 10×10, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.003s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_328.html
+=== Level 329 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_329.html
+=== Level 330 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.005s, recursive 0.073s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_330.html
+=== Level 331 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, shadow, n-group
+  Written: all_solutions/level_331.html
+=== Level 332 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_332.html
+=== Level 333 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.024s, recursive 0.001s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
+  Written: all_solutions/level_333.html
+=== Level 334 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.004s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_334.html
+=== Level 335 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_335.html
+=== Level 336 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.006s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_336.html
+=== Level 337 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_337.html
+=== Level 338 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_338.html
+=== Level 339 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_339.html
+=== Level 340 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_340.html
+=== Level 341 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.023s, recursive 0.000s] — rules used: shadow, search
+  Written: all_solutions/level_341.html
+=== Level 342 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, n-group
+  Written: all_solutions/level_342.html
+=== Level 343 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_343.html
+=== Level 344 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_344.html
+=== Level 345 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.012s, recursive 0.000s] — rules used: squeeze, shadow, x-wing, search
+  Written: all_solutions/level_345.html
+=== Level 346 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_346.html
+=== Level 347 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.010s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, x-wing
+  Written: all_solutions/level_347.html
+=== Level 348 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.036s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_348.html
+=== Level 349 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.026s, recursive 0.001s] — rules used: forced, squeeze, shadow, n-group, x-wing, search
+  Written: all_solutions/level_349.html
+=== Level 350 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, squeeze, shadow
+  Written: all_solutions/level_350.html
+=== Level 351 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_351.html
+=== Level 352 ===
+  Board: 9×9, solutionsCount=1
+  Stepwise: ok [stepwise 0.013s, recursive 0.011s] — rules used: singleton, squeeze, shadow, n-group, search
+  Written: all_solutions/level_352.html
+=== Level 353 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_353.html
+=== Level 354 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_354.html
+=== Level 355 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_355.html
+=== Level 356 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.003s, recursive 0.121s] — rules used: singleton, squeeze, shadow, n-group
+  Written: all_solutions/level_356.html
+=== Level 357 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.002s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_357.html
+=== Level 358 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_358.html
+=== Level 359 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_359.html
+=== Level 360 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.073s, recursive 0.000s] — rules used: search
+  Written: all_solutions/level_360.html
+=== Level 361 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton
+  Written: all_solutions/level_361.html
+=== Level 362 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_362.html
+=== Level 363 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced
+  Written: all_solutions/level_363.html
+=== Level 364 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.000s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_364.html
+=== Level 365 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.004s] — rules used: singleton, forced, squeeze
+  Written: all_solutions/level_365.html
+=== Level 366 ===
+  Board: 11×11, solutionsCount=1
+  Stepwise: ok [stepwise 0.001s, recursive 0.049s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_366.html
+=== Level 367 ===
+  Board: 18×18, solutionsCount=1
+  Stepwise: ok [stepwise 0.007s, recursive 773.180s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_367.html
+=== Level 368 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.001s] — rules used: singleton, forced
+  Written: all_solutions/level_368.html
+=== Level 369 ===
+  Board: 8×8, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_369.html
+=== Level 370 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.000s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow
+  Written: all_solutions/level_370.html
+=== Level 371 ===
+  Board: 15×15, solutionsCount=1
+  Stepwise: ok [stepwise 0.004s, recursive 1.112s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_371.html
+=== Level 372 ===
+  Board: 7×7, solutionsCount=1
+  Stepwise: ok [stepwise 0.014s, recursive 0.000s] — rules used: forced, squeeze, shadow, n-group, search
+  Written: all_solutions/level_372.html
