@@ -62,6 +62,11 @@ RULE_MARKERS: list[tuple[str, str]] = [
 
 # ---------------------------------------------------------------------------
 
+def p_stderr(*args, **kwargs) -> None:
+    """Print to stderr."""
+    print(*args, **kwargs, file=sys.stderr)
+
+
 def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
     """Return a list of constraint violations in *result* (empty = valid)."""
     n = len(board)
@@ -101,7 +106,7 @@ def _write_html(level: int, url: str, out_dir: Path) -> None:
             capture_output=True, text=True, check=True,
         )
     except subprocess.CalledProcessError as exc:
-        print(f"  [HTML] nqueens-recog failed: {exc.stderr.strip()}", file=sys.stderr)
+        p_stderr(f"  [HTML] nqueens-recog failed: {exc.stderr.strip()}")
         return
 
     try:
@@ -110,7 +115,7 @@ def _write_html(level: int, url: str, out_dir: Path) -> None:
             input=proc1.stdout, capture_output=True, text=True, check=True,
         )
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        print(f"  [HTML] aha failed: {exc}", file=sys.stderr)
+        p_stderr(f"  [HTML] aha failed: {exc}")
         return
 
     html = proc2.stdout.replace("</head>", f"{STYLE}</head>", 1)
@@ -139,9 +144,7 @@ def _check_level(level: int, delay: float, out_dir: Path) -> None:
     n = len(board)
     print(f"  Board: {n}×{n}, solutionsCount={solutions_count}")
 
-    if solutions_count != 1:
-        print("  Skip: not a single-solution level")
-        return
+    unique = solutions_count == 1
 
     # --- Stepwise solver (capture trace) ---
     buf = StringIO()
@@ -156,32 +159,43 @@ def _check_level(level: int, delay: float, out_dir: Path) -> None:
     trace = buf.getvalue()
     rules = _rules_used(trace)
 
-    # --- Recursive solver ---
-    t0 = time.perf_counter()
-    rec_solutions = solve(board, quiet=True, verbose=False, max_solutions=1)
-    rec_elapsed = time.perf_counter() - t0
-
-    timing = f"stepwise {step_elapsed:.3f}s, recursive {rec_elapsed:.3f}s"
-
-    # --- Compare / validate ---
-    if step_result is None:
-        print(f"  Stepwise: stuck (returned None) [{timing}]", file=sys.stderr)
-    else:
-        errors = _validate(board, step_result)
-        if errors:
-            print(f"!! INVALID solution level {level}: {'; '.join(errors)}", file=sys.stderr)
-        elif not rec_solutions:
-            print(f"!! RECURSIVE found no solution for level {level}", file=sys.stderr)
+    if not unique:
+        # Multi-solution level: validate and report, but skip recursive cross-check.
+        if step_result is None:
+            p_stderr(f"  Stepwise: stuck (returned None) [stepwise {step_elapsed:.3f}s]")
         else:
-            rec_result = _solution_as_row_col(rec_solutions[0])
-            if step_result != rec_result:
-                print(
-                    f"!! DIVERGE level {level}: "
-                    f"recursive={rec_result} stepwise={step_result}",
-                    file=sys.stderr,
-                )
+            errors = _validate(board, step_result)
+            if errors:
+                p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
             else:
-                print(f"  Stepwise: ok [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
+                print(f"  Stepwise: ok (multi-solution) [stepwise {step_elapsed:.3f}s]"
+                      f" — rules used: {', '.join(rules) if rules else '(none)'}")
+    else:
+        # --- Recursive solver ---
+        t0 = time.perf_counter()
+        rec_solutions = solve(board, quiet=True, verbose=False, max_solutions=1)
+        rec_elapsed = time.perf_counter() - t0
+
+        timing = f"stepwise {step_elapsed:.3f}s, recursive {rec_elapsed:.3f}s"
+
+        # --- Compare / validate ---
+        if step_result is None:
+            p_stderr(f"  Stepwise: stuck (returned None) [{timing}]")
+        else:
+            errors = _validate(board, step_result)
+            if errors:
+                p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
+            elif not rec_solutions:
+                p_stderr(f"!! RECURSIVE found no solution for level {level}")
+            else:
+                rec_result = _solution_as_row_col(rec_solutions[0])
+                if step_result != rec_result:
+                    p_stderr(
+                        f"!! DIVERGE level {level}: "
+                        f"recursive={rec_result} stepwise={step_result}",
+                    )
+                else:
+                    print(f"  Stepwise: ok [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
 
     # --- Write HTML ---
     _write_html(level, url, out_dir)
@@ -197,11 +211,11 @@ def main() -> None:
         last  = int(args[1]) if len(args) >= 2 else 10
         delay = float(args[2]) if len(args) >= 3 else 1.0
     except ValueError:
-        print(f"Usage: {sys.argv[0]} [FIRST [LAST [DELAY]]]", file=sys.stderr)
+        p_stderr(f"Usage: {sys.argv[0]} [FIRST [LAST [DELAY]]]")
         sys.exit(1)
 
     if first > last:
-        print(f"Error: FIRST ({first}) > LAST ({last})", file=sys.stderr)
+        p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
 
     out_dir = Path("all_solutions")
