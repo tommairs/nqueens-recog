@@ -2,10 +2,10 @@
 """Check stepwise solver against recursive solver for community levels.
 
 Usage:
-    python chk_stepwise.py [FIRST [LAST [DELAY]]]
+    python chk_stepwise.py [FIRST [LAST [WORKERS [RATE]]]]
 
-Defaults: FIRST=1, LAST=10, DELAY=1 (seconds between requests).
-Set DELAY=0 to disable.
+Defaults: FIRST=1, LAST=10, WORKERS=8, RATE=2 (submissions per second).
+Set RATE=0 to submit as fast as possible.
 
 For each level in [FIRST, LAST]:
   - Fetch the board from the queensgame GitHub source.
@@ -17,11 +17,13 @@ For each level in [FIRST, LAST]:
       - Write all_solutions/level_<N>.html via aha.
 """
 
+import contextlib
 import subprocess
 import sys
 import time
 import urllib.error
 from io import StringIO
+from multiprocessing import Pool
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -204,14 +206,25 @@ def _check_level(level: int, delay: float, out_dir: Path) -> None:
         time.sleep(delay)
 
 
+def _worker(args: tuple) -> tuple[str, str]:
+    """Run _check_level in a subprocess-safe way, capturing stdout and stderr."""
+    level, out_dir = args
+    stdout_buf = StringIO()
+    stderr_buf = StringIO()
+    with contextlib.redirect_stdout(stdout_buf), contextlib.redirect_stderr(stderr_buf):
+        _check_level(level, 0, out_dir)
+    return stdout_buf.getvalue(), stderr_buf.getvalue()
+
+
 def main() -> None:
     args = sys.argv[1:]
     try:
-        first = int(args[0]) if len(args) >= 1 else 1
-        last  = int(args[1]) if len(args) >= 2 else 10
-        delay = float(args[2]) if len(args) >= 3 else 1.0
+        first   = int(args[0])   if len(args) >= 1 else 1
+        last    = int(args[1])   if len(args) >= 2 else 10
+        workers = int(args[2])   if len(args) >= 3 else 8
+        rate    = float(args[3]) if len(args) >= 4 else 2.0
     except ValueError:
-        p_stderr(f"Usage: {sys.argv[0]} [FIRST [LAST [DELAY]]]")
+        p_stderr(f"Usage: {sys.argv[0]} [FIRST [LAST [WORKERS [RATE]]]]")
         sys.exit(1)
 
     if first > last:
@@ -221,8 +234,44 @@ def main() -> None:
     out_dir = Path("all_solutions")
     out_dir.mkdir(exist_ok=True)
 
-    for level in range(first, last + 1):
-        _check_level(level, delay, out_dir)
+    min_gap = 1.0 / rate if rate > 0 else 0.0
+
+    with Pool(workers) as pool:
+        futures_by_level: dict[int, object] = {}
+        buffered: dict[int, tuple[str, str]] = {}
+        next_to_print = first
+        levels = list(range(first, last + 1))
+        submit_idx = 0
+        next_submit_time = time.monotonic()
+
+        while next_to_print <= last:
+            now = time.monotonic()
+
+            # Submit the next level if the rate window has elapsed.
+            if submit_idx < len(levels) and now >= next_submit_time:
+                level = levels[submit_idx]
+                futures_by_level[level] = pool.apply_async(_worker, ((level, out_dir),))
+                submit_idx += 1
+                next_submit_time = now + min_gap
+
+            # Collect any newly completed futures.
+            for level, future in list(futures_by_level.items()):
+                if future.ready():
+                    buffered[level] = future.get()
+                    del futures_by_level[level]
+
+            # Flush consecutive completed levels in order.
+            while next_to_print in buffered:
+                stdout_text, stderr_text = buffered.pop(next_to_print)
+                sys.stdout.write(stdout_text)
+                sys.stdout.flush()
+                if stderr_text:
+                    sys.stderr.write(stderr_text)
+                    sys.stderr.flush()
+                next_to_print += 1
+
+            if next_to_print <= last:
+                time.sleep(0.05)
 
 
 if __name__ == "__main__":
