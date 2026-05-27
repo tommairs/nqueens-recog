@@ -194,6 +194,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
     rows = []
     for r in results:
         lvl = r["level"]
+        play_cell = f'<a href="https://queensgame.vercel.app/community-level/{lvl}">Play</a>'
         level_cell = (
             f'<a href="level_{lvl}.html">{lvl}</a>'
             if r["status"] != "skipped" else str(lvl)
@@ -205,7 +206,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         else:
             rules_cell = f'<em>{r["status"]}</em>'
         rows.append(
-            f"  <tr><td>{level_cell}</td><td>{multi}</td>"
+            f"  <tr><td>{play_cell}</td><td>{level_cell}</td><td>{multi}</td>"
             f"<td>{r['created_by']}</td><td>{runtime}</td><td>{rules_cell}</td></tr>"
         )
     rows_html = "\n".join(rows)
@@ -219,14 +220,14 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "th,td{padding:3px 10px;text-align:left;border-bottom:1px solid #ddd}\n"
         "th{background:#f5f5f5;cursor:pointer;user-select:none}\n"
         "th:hover{background:#e8e8e8}\n"
-        "td:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}\n"
+        "td:nth-child(5){text-align:right;font-variant-numeric:tabular-nums}\n"
         "</style>\n"
         "</head>\n<body>\n"
         "<input id=\"filter\" type=\"search\" placeholder=\"Filter\u2026\""
         " style=\"margin-bottom:8px;padding:4px 8px;font-size:14px;"
         "border:1px solid #ccc;border-radius:4px;width:300px\">\n"
         "<table>\n"
-        "<thead><tr><th>Level</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>\n"
+        "<thead><tr><th>Play</th><th>Stepwise solution</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>\n"
         "<tbody>\n"
         f"{rows_html}\n"
         "</tbody>\n</table>\n"
@@ -252,7 +253,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "    rows.sort(function(a,b){\n"
         "      var av=a.cells[col].textContent.trim();\n"
         "      var bv=b.cells[col].textContent.trim();\n"
-        "      if(col===0||col===3){\n"
+        "      if(col===1||col===4){\n"
         "        var an=parseFloat(av)||0,bn=parseFloat(bv)||0;\n"
         "        return sa?an-bn:bn-an;\n"
         "      }\n"
