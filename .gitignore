@@ -22,6 +22,7 @@ notebooks/.ipynb_checkpoints/
 all_solutions/*
 !all_solutions/level_641.html
 !all_solutions/level_705.html
+!all_solutions/level_707.html
 
 # macOS
 .DS_Store
