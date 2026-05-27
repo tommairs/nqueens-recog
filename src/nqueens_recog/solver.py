@@ -18,7 +18,8 @@ def is_diagonally_adjacent(x: int, y: int, queens: list[tuple[int, int]]) -> boo
 
 
 def solve(
-    board: list[list[str]], verbose: bool = True, quiet: bool = False
+    board: list[list[str]], verbose: bool = True, quiet: bool = False,
+    max_solutions: int = 0,
 ) -> list[list[tuple[int, int]]]:
     """Return all solutions for *board* as lists of (col, row) queen positions.
 
@@ -28,6 +29,9 @@ def solve(
     The ``Solution:`` spoiler line is always printed for each solution found
     unless *quiet* is true.  When *verbose* is true the coloured board is also
     printed (ignored when *quiet* is true).
+
+    If *max_solutions* is > 0, the search stops as soon as that many solutions
+    have been found (useful for quickly detecting non-unique puzzles).
     """
     size = len(board)
     all_solutions: list[list[tuple[int, int]]] = []
@@ -38,6 +42,8 @@ def solve(
         used_colors: set[str],
         queens: list[tuple[int, int]],
     ) -> None:
+        if max_solutions and len(all_solutions) >= max_solutions:
+            return
         if y == size:
             # queens is in row order: queens[i] = (col, row_i)
             cols = [x + 1 for x, _ in queens]
@@ -48,6 +54,8 @@ def solve(
             all_solutions.append(queens)
             return
         for x in range(size):
+            if max_solutions and len(all_solutions) >= max_solutions:
+                return
             color = board[y][x]
             if (
                 x not in used_columns

@@ -127,7 +127,43 @@ Each level prints a `=== Level N ===` header followed by the raw output from
 `nqueens-recog --solve`, including any errors. All output is also appended to
 `all_solutions/solutions.txt` (excluded from git).
 
-## How it works
+## Cross-check stepwise solver against recursive solver
+
+`chk_stepwise.py` fetches a range of community levels, checks the stepwise
+solver against the recursive solver on every level that has a unique solution,
+and writes an HTML file for each:
+
+```bash
+python chk_stepwise.py [FIRST [LAST [DELAY]]]
+
+python chk_stepwise.py 1 100      # levels 1-100, 1 s delay
+python chk_stepwise.py 578 642 0  # no delay
+```
+
+For each level in the range it:
+
+1. Fetches the board and reads `solutionsCount` from the TypeScript source (no solver run needed to check uniqueness).
+2. Skips levels with `solutionsCount != 1` or levels that cannot be fetched (404, parse errors).
+3. Runs the stepwise solver and captures its trace.
+4. **For all n**: cross-checks the stepwise result against the recursive solver (with early exit after the first solution is found).
+5. Reports any divergence or invalid solution on stderr with a `!! ` prefix.
+6. Prints elapsed time for each solver and which deduction rules the stepwise solver used.
+7. Writes `all_solutions/level_N.html` (requires `aha`: `brew install aha`).
+
+Example output:
+
+```
+=== Level 640 ===
+  Board: 6×6, solutionsCount=1
+  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Written: all_solutions/level_640.html
+=== Level 641 ===
+  Board: 18×18, solutionsCount=1
+  Stepwise: ok [stepwise 0.041s, recursive 2.847s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
+  Written: all_solutions/level_641.html
+```
+
+## How the image recognition works
 
 1. **Perspective correction** — find the four-corner contour of the grid and
    warp it to a rectangle.

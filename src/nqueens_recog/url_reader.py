@@ -23,6 +23,26 @@ def is_community_level_url(arg: str) -> bool:
     return bool(_LEVEL_URL_RE.match(arg.strip()))
 
 
+def _fetch_source(url: str) -> tuple[str, str]:
+    """Return (raw_typescript_source, level_number) for a community-level URL."""
+    match = _LEVEL_URL_RE.match(url.strip())
+    if not match:
+        raise ValueError(
+            f"Unrecognised URL. Expected a queensgame community-level URL, "
+            f"got: {url!r}"
+        )
+    level_number = match.group(1)
+    raw_url = _GITHUB_RAW.format(n=level_number)
+    try:
+        with urllib.request.urlopen(raw_url, timeout=10) as resp:
+            source = resp.read().decode("utf-8")
+    except URLError as exc:
+        raise RuntimeError(
+            f"Could not fetch level {level_number} from GitHub: {exc}"
+        ) from exc
+    return source, level_number
+
+
 def read_community_level(url: str) -> list[list[str]]:
     """Fetch a community level by URL and return its letter grid.
 
@@ -46,24 +66,21 @@ def read_community_level(url: str) -> list[list[str]]:
     RuntimeError
         If the GitHub fetch fails.
     """
-    match = _LEVEL_URL_RE.match(url.strip())
-    if not match:
-        raise ValueError(
-            f"Unrecognised URL. Expected a queensgame community-level URL, "
-            f"got: {url!r}"
-        )
-    level_number = match.group(1)
-    raw_url = _GITHUB_RAW.format(n=level_number)
-
-    try:
-        with urllib.request.urlopen(raw_url, timeout=10) as resp:
-            source = resp.read().decode("utf-8")
-    except URLError as exc:
-        raise RuntimeError(
-            f"Could not fetch level {level_number} from GitHub: {exc}"
-        ) from exc
-
+    source, level_number = _fetch_source(url)
     return _parse_color_regions(source, level_number)
+
+
+def read_community_level_info(url: str) -> tuple[list[list[str]], int]:
+    """Fetch a community level and return ``(board, solutions_count)``.
+
+    *solutions_count* is taken from the ``solutionsCount`` field in the
+    TypeScript source; returns 0 if the field is absent.
+    """
+    source, level_number = _fetch_source(url)
+    board = _parse_color_regions(source, level_number)
+    sc_match = re.search(r"\bsolutionsCount:\s*(\d+)", source)
+    solutions_count = int(sc_match.group(1)) if sc_match else 0
+    return board, solutions_count
 
 
 def _parse_color_regions(source: str, level_id: str = "?") -> list[list[str]]:
