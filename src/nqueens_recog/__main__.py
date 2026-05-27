@@ -3,8 +3,6 @@
 import argparse
 import sys
 
-from .grid_reader import read_grid
-from .palette import grid_to_letters
 from .url_reader import is_community_level_url, read_community_level
 
 
@@ -43,6 +41,8 @@ def main() -> None:
             print(f"Error: {exc}", file=sys.stderr)
             sys.exit(1)
     else:
+        from .grid_reader import read_grid
+        from .palette import grid_to_letters
         board = [list(row) for row in grid_to_letters(read_grid(args.input))]
 
     # Check board validity before attempting to solve.

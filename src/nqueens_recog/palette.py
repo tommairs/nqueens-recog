@@ -5,8 +5,13 @@ Source: src/hooks/useLevelBuilderLogic.ts  initialRegionColors
         https://github.com/samimsu/queens-game
 """
 
+from __future__ import annotations
+
 import string
-from .grid_reader import Grid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .grid_reader import Grid
 
 # ---------------------------------------------------------------------------
 # Palette – (letter, hex) pairs in game order

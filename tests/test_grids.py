@@ -698,8 +698,8 @@ class TestMain:
     def test_image_path_prints_grid_size(self, capsys):
         with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
              patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
-             patch("nqueens_recog.__main__.read_grid"), \
-             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+             patch("nqueens_recog.grid_reader.read_grid"), \
+             patch("nqueens_recog.palette.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
             main()
         assert "2 \u00d7 2" in capsys.readouterr().out
 
@@ -729,8 +729,8 @@ class TestMain:
     def test_non_square_board_exits(self):
         with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
              patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
-             patch("nqueens_recog.__main__.read_grid"), \
-             patch("nqueens_recog.__main__.grid_to_letters", return_value=["AB", "B"]):
+             patch("nqueens_recog.grid_reader.read_grid"), \
+             patch("nqueens_recog.palette.grid_to_letters", return_value=["AB", "B"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
         assert exc_info.value.code == 1
@@ -738,8 +738,8 @@ class TestMain:
     def test_wrong_color_count_exits(self):
         with patch("sys.argv", ["nqueens-recog", "fake.png"]), \
              patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
-             patch("nqueens_recog.__main__.read_grid"), \
-             patch("nqueens_recog.__main__.grid_to_letters", return_value=["AA", "AA"]):
+             patch("nqueens_recog.grid_reader.read_grid"), \
+             patch("nqueens_recog.palette.grid_to_letters", return_value=["AA", "AA"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
         assert exc_info.value.code == 1
@@ -747,16 +747,16 @@ class TestMain:
     def test_verbose_flag_prints_board(self, capsys):
         with patch("sys.argv", ["nqueens-recog", "--verbose", "fake.png"]), \
              patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
-             patch("nqueens_recog.__main__.read_grid"), \
-             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+             patch("nqueens_recog.grid_reader.read_grid"), \
+             patch("nqueens_recog.palette.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
             main()
         assert "\033[" in capsys.readouterr().out
 
     def test_solve_flag_prints_total(self, capsys):
         with patch("sys.argv", ["nqueens-recog", "--solve", "fake.png"]), \
              patch("nqueens_recog.__main__.is_community_level_url", return_value=False), \
-             patch("nqueens_recog.__main__.read_grid"), \
-             patch("nqueens_recog.__main__.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
+             patch("nqueens_recog.grid_reader.read_grid"), \
+             patch("nqueens_recog.palette.grid_to_letters", return_value=_SIMPLE_BOARD_STR):
             main()
         assert "Total solutions found:" in capsys.readouterr().out
 
