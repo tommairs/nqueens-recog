@@ -34,7 +34,10 @@ Prints `Grid: N × N, N colours`. Add `-v` / `--verbose` to also show the
 coloured board (ANSI background per region, region letter in each cell).
 
 Add `--solve` to run the backtracking solver and print the spoiler line of
-1-based column positions (one per row):
+1-based column positions (one per row).
+
+> \[!NOTE]
+> This is slow on large and complex levels. See "stepwise" solver below.
 
 ```
 > Solution: 16, 2, 13, 10, 8, 14, 12, 18, 7, 4, 6, 15, 5, 11, 9, 17, 3, 1
