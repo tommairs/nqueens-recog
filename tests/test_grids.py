@@ -296,6 +296,31 @@ def test_stepwise_verbose_show_board(capsys) -> None:
     assert "\033[" in out  # ANSI escape codes emitted by print_board
 
 
+def test_stepwise_ngroup_row_line_perspective(capsys) -> None:
+    """Row-line n-group: row 4 is entirely colour E, so E must be placed there.
+
+    Board rows 0-3 form a cyclic Latin square; row 4 is all E.  No region
+    has only one cell (no singleton), no colour is confined to a single
+    row/col (no forced_row_col), rows span all five columns (no squeeze),
+    and the diagonal scatter of A-D cells means shadow never fires.
+    Therefore rule_n_group fires first:
+      colours_in_row[4] == {E} and E has four candidates outside row 4
+      → n-group ROW line eliminates E from rows 0-3.
+    """
+    board = [
+        ["A", "B", "C", "D", "E"],
+        ["B", "C", "D", "E", "A"],
+        ["C", "D", "E", "A", "B"],
+        ["D", "E", "A", "B", "C"],
+        ["E", "E", "E", "E", "E"],
+    ]
+    result = solve_stepwise(board)
+    out = capsys.readouterr().out
+    assert result is not None
+    _assert_matches_solver(board, result)
+    assert "n-group: rows" in out      # rule_n_group row line perspective
+
+
 def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
     """Region singleton, squeeze, row singleton, and the stuck path.
 
