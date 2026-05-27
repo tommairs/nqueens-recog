@@ -127,40 +127,40 @@ Each level prints a `=== Level N ===` header followed by the raw output from
 `nqueens-recog --solve`, including any errors. All output is also appended to
 `all_solutions/solutions.txt` (excluded from git).
 
-## Cross-check stepwise solver against recursive solver
+## Batch stepwise solver
 
-`chk_stepwise.py` fetches a range of community levels, checks the stepwise
-solver against the recursive solver on every level that has a unique solution,
-and writes an HTML file for each:
+`chk_stepwise.py` fetches a range of community levels, runs the stepwise
+solver, validates each result, and writes an HTML file per level plus a
+summary index:
 
 ```bash
-python chk_stepwise.py [FIRST [LAST [DELAY]]]
+python chk_stepwise.py [--first N] [--last N] [--workers N] [--rate R]
 
-python chk_stepwise.py 1 100      # levels 1-100, 1 s delay
-python chk_stepwise.py 578 642 0  # no delay
+python chk_stepwise.py --first 1 --last 100             # levels 1–100, rate 2/s
+python chk_stepwise.py --first 578 --last 642 --rate 0  # unlimited rate
 ```
 
-For each level in the range it:
+For each level it:
 
-1. Fetches the board and reads `solutionsCount` from the TypeScript source (no solver run needed to check uniqueness).
-2. Skips levels with `solutionsCount != 1` or levels that cannot be fetched (404, parse errors).
-3. Runs the stepwise solver and captures its trace.
-4. **For all n**: cross-checks the stepwise result against the recursive solver (with early exit after the first solution is found).
-5. Reports any divergence or invalid solution on stderr with a `!! ` prefix.
-6. Prints elapsed time for each solver and which deduction rules the stepwise solver used.
-7. Writes `all_solutions/level_N.html` (requires `aha`: `brew install aha`).
+1. Fetches the board and reads `solutionsCount` and `createdBy` from the TypeScript source.
+2. Runs the stepwise solver and captures its trace.
+3. Validates the result; reports any invalid or stuck solution on stderr with a `!! ` prefix.
+4. Prints elapsed time and which deduction rules were used.
+5. Writes `all_solutions/level_N.html` with a `Level N — by <creator>` browser title (requires `aha`: `brew install aha`).
+6. Writes `all_solutions/index.html` — a summary table (level, multi-solution flag, creator, runtime, rules used).
 
 Example output:
 
 ```
 === Level 640 ===
-  Board: 6×6, solutionsCount=1
-  Stepwise: ok [stepwise 0.002s, recursive 0.000s] — rules used: singleton, forced, squeeze, shadow, n-group
+  Board: 6×6, solutionsCount=1, createdBy=colby_hurst
+  Stepwise: ok [stepwise 0.002s] — rules used: singleton, forced, squeeze, shadow, n-group
   Written: all_solutions/level_640.html
 === Level 641 ===
-  Board: 18×18, solutionsCount=1
-  Stepwise: ok [stepwise 0.041s, recursive 2.847s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
+  Board: 18×18, solutionsCount=1, createdBy=Jess
+  Stepwise: ok [stepwise 0.041s] — rules used: singleton, forced, squeeze, shadow, n-group, x-wing
   Written: all_solutions/level_641.html
+Written: all_solutions/index.html
 ```
 
 ### Running under PyPy
@@ -179,7 +179,7 @@ pypy3 -m venv .venv-pypy
 .venv-pypy/bin/pip install -e . --no-deps --ignore-requires-python
 
 # Run
-.venv-pypy/bin/python chk_stepwise.py 700 710
+.venv-pypy/bin/python chk_stepwise.py --first 700 --last 710
 ```
 
 ## How the image recognition works

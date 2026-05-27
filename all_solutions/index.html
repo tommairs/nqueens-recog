@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>N-Queens Solutions</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px}
+table{border-collapse:collapse}
+th,td{padding:3px 10px;text-align:left;border-bottom:1px solid #ddd}
+th{background:#f5f5f5;cursor:pointer;user-select:none}
+th:hover{background:#e8e8e8}
+td:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<input id="filter" type="search" placeholder="Filter…" style="margin-bottom:8px;padding:4px 8px;font-size:14px;border:1px solid #ccc;border-radius:4px;width:300px">
+<table>
+<thead><tr><th>Level</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>
+<tbody>
+  <tr><td><a href="level_1.html">1</a></td><td>Y</td><td>BradleyDE14</td><td>0.020s</td><td>forced, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_2.html">2</a></td><td>Y</td><td>joananana</td><td>0.011s</td><td>singleton, forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_3.html">3</a></td><td>Y</td><td>akraja1</td><td>0.009s</td><td>singleton, forced, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_4.html">4</a></td><td></td><td>AuraSponge</td><td>0.001s</td><td>singleton, forced</td></tr>
+  <tr><td><a href="level_5.html">5</a></td><td>Y</td><td>zimooo2</td><td>0.005s</td><td>singleton, forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_6.html">6</a></td><td></td><td>MoosesooM</td><td>0.018s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_7.html">7</a></td><td>Y</td><td>bigbert619</td><td>2.492s</td><td>search</td></tr>
+  <tr><td><a href="level_8.html">8</a></td><td></td><td>Ali Heskol</td><td>0.000s</td><td>singleton, forced, squeeze, shadow</td></tr>
+  <tr><td><a href="level_9.html">9</a></td><td>Y</td><td>nd6</td><td>0.024s</td><td>shadow, search</td></tr>
+  <tr><td><a href="level_10.html">10</a></td><td></td><td>dinobob4</td><td>0.000s</td><td>singleton, forced, squeeze, shadow</td></tr>
+  <tr><td><a href="level_11.html">11</a></td><td>Y</td><td>KoroKira</td><td>2.750s</td><td>search</td></tr>
+  <tr><td><a href="level_12.html">12</a></td><td>Y</td><td>Hewannnn</td><td>0.002s</td><td>singleton, forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_13.html">13</a></td><td>Y</td><td>Yakoy U'Kugura</td><td>0.884s</td><td>shadow, search</td></tr>
+  <tr><td><a href="level_14.html">14</a></td><td></td><td>DocUniverse</td><td>0.000s</td><td>singleton, forced, squeeze</td></tr>
+  <tr><td><a href="level_15.html">15</a></td><td></td><td>the_trademark</td><td>0.000s</td><td>singleton</td></tr>
+  <tr><td><a href="level_16.html">16</a></td><td>Y</td><td>trystan4861</td><td>2.913s</td><td>shadow, search</td></tr>
+  <tr><td><a href="level_17.html">17</a></td><td></td><td>John Queens</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_18.html">18</a></td><td></td><td>Bobinzo</td><td>0.001s</td><td>singleton, forced, squeeze</td></tr>
+  <tr><td><a href="level_19.html">19</a></td><td></td><td>TheGreatestPaul</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_20.html">20</a></td><td>Y</td><td>Lake</td><td>0.734s</td><td>shadow, n-group, search</td></tr>
+  <tr><td><a href="level_21.html">21</a></td><td></td><td>Evdav01</td><td>0.000s</td><td>singleton, forced, squeeze</td></tr>
+  <tr><td><a href="level_22.html">22</a></td><td>Y</td><td>caitlinellish</td><td>0.002s</td><td>singleton, forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_23.html">23</a></td><td></td><td>saletype</td><td>0.000s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_24.html">24</a></td><td>Y</td><td>khanhvd</td><td>0.061s</td><td>shadow, n-group, search</td></tr>
+  <tr><td><a href="level_25.html">25</a></td><td></td><td>AlephNaught</td><td>0.003s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_26.html">26</a></td><td></td><td>Brenda LL</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_27.html">27</a></td><td></td><td>Tim</td><td>0.001s</td><td>singleton, forced</td></tr>
+  <tr><td><a href="level_28.html">28</a></td><td></td><td>AlanT</td><td>0.005s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_29.html">29</a></td><td>Y</td><td>Speedster</td><td>1.817s</td><td>forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_30.html">30</a></td><td>Y</td><td>JECCCA96</td><td>0.018s</td><td>squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_31.html">31</a></td><td></td><td>zadirioz</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_32.html">32</a></td><td></td><td>Polo</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_33.html">33</a></td><td>Y</td><td>mckike</td><td>0.199s</td><td>forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_34.html">34</a></td><td></td><td>Hangel</td><td>0.001s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_35.html">35</a></td><td></td><td>Henners</td><td>0.003s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_36.html">36</a></td><td>Y</td><td>notaquestionmark</td><td>0.019s</td><td>forced, squeeze, search</td></tr>
+  <tr><td><a href="level_37.html">37</a></td><td></td><td>kopri</td><td>0.004s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_38.html">38</a></td><td></td><td>Nimaaa</td><td>0.006s</td><td>singleton, forced, squeeze, shadow, n-group</td></tr>
+  <tr><td><a href="level_39.html">39</a></td><td></td><td>ClaireF</td><td>0.001s</td><td>singleton, forced, squeeze</td></tr>
+  <tr><td><a href="level_40.html">40</a></td><td>Y</td><td>Jerry</td><td>0.841s</td><td>squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_41.html">41</a></td><td></td><td>egill8000</td><td>0.002s</td><td>singleton, forced, squeeze, shadow</td></tr>
+  <tr><td><a href="level_42.html">42</a></td><td></td><td>Gnr2bernstein</td><td>0.001s</td><td>singleton, forced, shadow, n-group</td></tr>
+  <tr><td><a href="level_43.html">43</a></td><td>Y</td><td>Shrynshk</td><td>0.023s</td><td>forced, search</td></tr>
+  <tr><td><a href="level_44.html">44</a></td><td>Y</td><td>Ayoub Naman</td><td>1.308s</td><td>forced, search</td></tr>
+  <tr><td><a href="level_45.html">45</a></td><td>Y</td><td>LittleFierceLovely</td><td>0.018s</td><td>forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_46.html">46</a></td><td></td><td>Barna</td><td>0.001s</td><td>singleton, forced, shadow, n-group</td></tr>
+  <tr><td><a href="level_47.html">47</a></td><td>Y</td><td>Lekan</td><td>0.004s</td><td>singleton, forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_48.html">48</a></td><td>Y</td><td>Squeeeksngiggles</td><td>0.140s</td><td>forced, squeeze, shadow, n-group, search</td></tr>
+  <tr><td><a href="level_49.html">49</a></td><td></td><td>egill8000</td><td>0.000s</td><td>singleton, forced</td></tr>
+  <tr><td><a href="level_50.html">50</a></td><td></td><td>egill8000</td><td>0.001s</td><td>singleton, forced</td></tr>
+</tbody>
+</table>
+<script>
+(function(){
+var inp=document.getElementById('filter');
+inp.addEventListener('input',function(){
+  var q=this.value.toLowerCase();
+  document.querySelectorAll('tbody tr').forEach(function(r){
+    r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+  });
+});
+var tbody=document.querySelector('tbody');
+var sc=-1,sa=true;
+document.querySelectorAll('thead th').forEach(function(th,col){
+  th.addEventListener('click',function(){
+    if(sc===col){sa=!sa;}else{sc=col;sa=true;}
+    document.querySelectorAll('thead th').forEach(function(h,i){
+      h.textContent=h.textContent.replace(/ [▲▼]$/,'');
+      if(i===col)h.textContent+=sa?' ▲':' ▼';
+    });
+    var rows=Array.from(tbody.querySelectorAll('tr'));
+    rows.sort(function(a,b){
+      var av=a.cells[col].textContent.trim();
+      var bv=b.cells[col].textContent.trim();
+      if(col===0||col===3){
+        var an=parseFloat(av)||0,bn=parseFloat(bv)||0;
+        return sa?an-bn:bn-an;
+      }
+      return sa?av.localeCompare(bv):bv.localeCompare(av);
+    });
+    rows.forEach(function(r){tbody.appendChild(r);});
+  });
+});
+})();
+</script>
+</body>
+</html>

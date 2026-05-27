@@ -70,17 +70,20 @@ def read_community_level(url: str) -> list[list[str]]:
     return _parse_color_regions(source, level_number)
 
 
-def read_community_level_info(url: str) -> tuple[list[list[str]], int]:
-    """Fetch a community level and return ``(board, solutions_count)``.
+def read_community_level_info(url: str) -> tuple[list[list[str]], int, str]:
+    """Fetch a community level and return ``(board, solutions_count, created_by)``.
 
     *solutions_count* is taken from the ``solutionsCount`` field in the
     TypeScript source; returns 0 if the field is absent.
+    *created_by* is taken from the ``createdBy`` field; returns "" if absent.
     """
     source, level_number = _fetch_source(url)
     board = _parse_color_regions(source, level_number)
     sc_match = re.search(r"\bsolutionsCount:\s*(\d+)", source)
     solutions_count = int(sc_match.group(1)) if sc_match else 0
-    return board, solutions_count
+    cb_match = re.search(r'\bcreatedBy:\s*"([^"]*)"', source)
+    created_by = cb_match.group(1) if cb_match else ""
+    return board, solutions_count, created_by
 
 
 def _parse_color_regions(source: str, level_id: str = "?") -> list[list[str]]:
