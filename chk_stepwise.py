@@ -28,7 +28,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Imports from the installed package (run from project root with venv active)
 # ---------------------------------------------------------------------------
-from nqueens_recog.stepwise import solve_stepwise
+from nqueens_recog.stepwise import solve_stepwise, compact_rules_used
 from nqueens_recog.url_reader import read_community_level_info
 
 # ---------------------------------------------------------------------------
@@ -45,20 +45,6 @@ STYLE = (
     'vertical-align:top;width:4ch}'
     '</style>'
 )
-
-# Substrings that appear in the stepwise trace for each rule, in the order
-# they are listed in the solver's main loop.
-RULE_MARKERS: list[tuple[str, str]] = [
-    ("singleton",    "singleton"),
-    ("forced",       "forced:"),
-    ("squeeze",      "squeeze:"),
-    ("shadow",       "shadow:"),
-    ("n-group",      "n-group:"),
-    ("x-wing",       "x-wing:"),
-    ("elimination",  "eliminate:"),
-    ("double-block", "double-block:"),
-    ("search",       "search ["),
-]
 
 # ---------------------------------------------------------------------------
 
@@ -85,11 +71,6 @@ def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
             if abs(x1 - x2) == 1 and abs(y1 - y2) == 1:
                 errors.append(f"diagonal adjacency ({y1},{x1})↔({y2},{x2})")
     return errors
-
-
-def _rules_used(trace: str) -> list[str]:
-    """Return the names of rules that fired, in definition order."""
-    return [name for name, marker in RULE_MARKERS if marker in trace]
 
 
 def _write_html(level: int, url: str, out_dir: Path, created_by: str = "") -> None:
@@ -148,12 +129,14 @@ def _check_level(level: int, delay: float, out_dir: Path) -> dict:
     sys.stdout = buf
     t0 = time.perf_counter()
     try:
-        step_result = solve_stepwise(board, quiet=False, verbose=False)
+        step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False)
     finally:
         sys.stdout = _stdout_orig
     step_elapsed = time.perf_counter() - t0
     trace = buf.getvalue()
-    rules = _rules_used(trace)
+
+    # Compact rules_used to unique rule names in declaration order using stepwise.py logic
+    rules = compact_rules_used(rules_used)
 
     timing = f"stepwise {step_elapsed:.3f}s"
     tag = "" if unique else " (multi-solution)"

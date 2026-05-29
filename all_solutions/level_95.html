@@ -58,25 +58,86 @@ Grid: 8 × 8, 8 colours
 <span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
 <span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
 
+  lookahead [G]:
+    try (5,2) → ok
+    try (5,5) → H(7,6), B(6,3), D(0,4), [F] empty → ✗ eliminated
+    try (5,6) → F(3,5), H(6,4), B(7,2), E(2,3) → ok
+    try (5,7) → ok
+    try (6,2) → ok
+    try (6,7) → H(5,4) → ok
+    try (7,7) → ok
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+
+  lookahead [D]:
+    try (0,2) → A(2,1), E(3,3), F(4,5), B(1,4), C(5,0), G(6,7), [H] empty → ✗ eliminated
+    try (0,3) → ok
+    try (0,4) → ok
+    try (0,5) → ok
+    try (0,6) → ok
+    try (0,7) → ok
+    try (1,6) → ok
+    try (1,7) → ok
+    try (2,7) → H(7,6), B(1,4), G(6,2), E(3,3), F(4,5), C(5,0), A(0,1) → ok
+    try (3,7) → F(4,5), E(2,3), A(1,1), C(5,0), row0 empty → ✗ eliminated
+    try (4,7) → H(7,6), B(1,4), F(3,5), [E] empty → ✗ eliminated
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;"> ❌ </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#acdda5;"> ❌ </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+
+  lookahead [B]:
+    try (1,2) → A(0,0), D(2,7), E(3,3), F(4,5), H(7,6), [C] empty → ✗ eliminated
+    try (1,3) → G(7,7), H(6,4), C(5,0), A(2,1), E(4,2) → ok
+    try (1,4) → E(3,3), H(7,6), F(4,5), G(6,2), C(5,0) → ok
+    try (1,5) → F(3,6), G(7,7), E(4,2), D(0,3), A(2,1), C(5,0), H(6,4) → ok
+    try (2,4) → D(0,3), A(1,1), C(5,0) → ok
+    try (3,4) → E(4,2), F(2,6), H(6,5), A(1,1), G(7,7), C(5,0), D(0,3) → ok
+    try (4,4) → H(6,5), G(7,7), E(3,2), D(0,3), F(2,6), A(1,1), C(5,0) → ok
+    try (5,3) → E(3,2), D(0,4), A(1,1), C(4,0), F(2,6), H(6,5), G(7,7) → ok
+    try (6,3) → H(7,6), D(0,4), G(5,7), A(1,1), row2 empty → ✗ eliminated
+    try (7,2) → ok
+    try (7,3) → ok
+    try (7,4) → H(6,6), G(5,2) → ok
+    try (7,5) → H(5,4) → ok
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  D </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  ✖ </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span>
+<span style="background-color:#3287bd;">  C </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  G </span>
+
   search [A] (4 cands):
     try (0,0) [A]
       try (3,1) [C] → E(2,3), F(4,5)
         try (7,2) [B] → G(5,7), H(6,4), D(1,6)
-  QUEEN (0,0) [A]: search: eliminating row 0, col 0, region [A], diagonal adjacents → 13 cell(s)
-  QUEEN (1,6) [D]: search: eliminating row 1, col 6, region [D], diagonal adjacents → 13 cell(s)
-  QUEEN (2,3) [E]: search: eliminating row 2, col 3, region [E], diagonal adjacents → 8 cell(s)
+  QUEEN (0,0) [A]: search: eliminating row 0, col 0, region [A], diagonal adjacents → 12 cell(s)
+  QUEEN (1,6) [D]: search: eliminating row 1, col 6, region [D], diagonal adjacents → 10 cell(s)
+  QUEEN (2,3) [E]: search: eliminating row 2, col 3, region [E], diagonal adjacents → 7 cell(s)
   QUEEN (3,1) [C]: search: eliminating row 3, col 1, region [C], diagonal adjacents → 2 cell(s)
-  QUEEN (4,5) [F]: search: eliminating row 4, col 5, region [F], diagonal adjacents → 5 cell(s)
+  QUEEN (4,5) [F]: search: eliminating row 4, col 5, region [F], diagonal adjacents → 4 cell(s)
   QUEEN (5,7) [G]: search: eliminating row 5, col 7, region [G], diagonal adjacents → 4 cell(s)
   QUEEN (6,4) [H]: search: eliminating row 6, col 4, region [H], diagonal adjacents → 1 cell(s)
   QUEEN (7,2) [B]: search: eliminating row 7, col 2, region [B], diagonal adjacents → 0 cell(s)
-<span style="background-color:#5e4fa2;"> 👑 </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span>
-<span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#acdda5;"> 👑 </span><span style="background-color:#acdda5;"> ❌ </span>
+<span style="background-color:#5e4fa2;"> 👑 </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span>
+<span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#acdda5;"> 👑 </span><span style="background-color:#acdda5;"> ❌ </span>
 <span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#6c7a89;"> 👑 </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span>
-<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> 👑 </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span>
-<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#d53e4f;"> 👑 </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#acdda5;"> ❌ </span>
-<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;"> 👑 </span>
-<span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span>
+<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> 👑 </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#acdda5;">  ✖ </span>
+<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#d53e4f;"> 👑 </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span>
+<span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;"> 👑 </span>
+<span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span>
 <span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#8e8875;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span>
 
 Solved: 8 queens placed.

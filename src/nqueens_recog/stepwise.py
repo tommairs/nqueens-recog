@@ -7,51 +7,47 @@ prints a trace of each deduction as it works.
 Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-queens-game-solver:
 
   1. **Region singleton** — a region (or row, or column) has been narrowed
-     to exactly one candidate cell; place the queen there.  This is the
-     terminal action that rules 2–6 work toward by eliminating candidates.
+      to exactly one candidate cell; place the queen there.  This is the
+      terminal action that rules 2–6 work toward by eliminating candidates.
   2. **Region forced row/col** — all candidates for a region fall on the
-     same row (or column); claim that line and eliminate every other
-     region's candidates on it.
+      same row (or column); claim that line and eliminate every other
+      region's candidates on it.
   3. **Squeeze** — when a row's (or column's) active candidates span ≤ 2
-     cells, the queen placed there will always diagonally attack the overlap
-     zone in both adjacent rows (or columns); eliminate candidates there.
-     E.g. two candidates in consecutive columns eliminate 2 cells in each
-     adjacent row; three consecutive candidates eliminate 1 cell each.
+      cells, the queen placed there will always diagonally attack the overlap
+      zone in both adjacent rows (or columns); eliminate candidates there.
+      E.g. two candidates in consecutive columns eliminate 2 cells in each
+      adjacent row; three consecutive candidates eliminate 1 cell each.
   4. **Shadow** — for each colour, find every cell (outside that colour's
-     region) that is attacked by all of the colour's active candidates —
-     same row, same column, or diagonally adjacent.  Since the colour's
-     queen must land on one of those candidates, every shadowed cell is
-     certain to be blocked and can be eliminated.  Generalises Squeeze to
-     arbitrary region shapes (L-shapes, 2×2, 2×3, 3×3 blocks, …).
+      region) that is attacked by all of the colour's active candidates —
+      same row, same column, or diagonally adjacent.  Since the colour's
+      queen must land on one of those candidates, every shadowed cell is
+      certain to be blocked and can be eliminated.  Generalises Squeeze to
+      arbitrary region shapes (L-shapes, 2×2, 2×3, 3×3 blocks, …).
   5. **N-group** (generalised from caterbum: "triple-check") — when k regions
-     together have all their candidates confined to exactly k rows (or
-     columns), those lines are reserved; eliminate any other region's
-     candidates on them.
+      together have all their candidates confined to exactly k rows (or
+      columns), those lines are reserved; eliminate any other region's
+      candidates on them.
   6. **X-Wing** — when c colours have all their candidates within the union
-     of a rows R and b columns C (a+b=c), those c queens must collectively
-     claim every row in R and every column in C; eliminate other colours'
-     candidates from those rows and columns.  The typical case is c=4,
-     a=b=2 (two pairs of colours forming a cross pattern).
+      of a rows R and b columns C (a+b=c), those c queens must collectively
+      claim every row in R and every column in C; eliminate other colours'
+      candidates from those rows and columns.  The typical case is c=4,
+      a=b=2 (two pairs of colours forming a cross pattern).
   7. **Double-block** — tentatively place a queen at a candidate cell and
-     fast-forward forced eliminations; if two regions are then left with
-     all their remaining candidates on the *same* row or column (an
-     impossible collision) that cell is eliminated.
+      fast-forward forced eliminations; if two regions are then left with
+      all their remaining candidates on the *same* row or column (an
+      impossible collision) that cell is eliminated.
   8. **Elimination** — if placing a queen at a candidate cell would leave
-     some other region with no remaining candidates at all, that cell is
-     ruled out (one-step lookahead).
+      some other region with no remaining candidates at all, that cell is
+      ruled out (one-step lookahead).
   9. **Lookahead** (not active yet) — for small regions, trial-place a queen in every
-     candidate cell; remove any candidate that leads to a contradiction.
+      candidate cell; remove any candidate that leads to a contradiction.
   10. **Search** — last resort: pick the most-constrained region, guess,
-     and recurse with backtracking.
+      and recurse with backtracking.
 
-All ten rules are implemented. The trace uses plain text so it can be
-piped or saved alongside the solutions produced by ``--solve``.
+The trace uses plain text so it can be piped or saved alongside the solutions produced by ``--solve``.
 """
 
-from __future__ import annotations
-
 from itertools import combinations
-
 from .solver import is_diagonally_adjacent
 
 
@@ -793,14 +789,14 @@ def solve_stepwise(
             occ_cols = set(sq.values())
             for col2 in colours:
                 if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
-                    return [f"[{col2}]\u2205"]
+                    return [f"[{col2}] empty"]
             for r2 in range(n):
                 if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
-                    return [f"row{r2}\u2205"]
+                    return [f"row{r2} empty"]
             for c2 in range(n):
                 if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
-                    return [f"col{c2}\u2205"]
-            return ["\u2205"]
+                    return [f"col{c2} empty"]
+            return ["empty"]
         if len(sq) == n:
             return None
         un = [col for col in colours if not _sim_solved(sq, col)]
@@ -815,7 +811,7 @@ def solve_stepwise(
                 return None  # found a solution
             if first_fail is None:
                 first_fail = [f"{board[r_t][c_t]}({r_t},{c_t})"] + result
-        return first_fail if first_fail is not None else ["\u2205"]
+        return first_fail if first_fail is not None else ["empty"]
 
     # ------------------------------------------------------------------
     # Rule — Double-block
@@ -914,17 +910,17 @@ def solve_stepwise(
                     occ_cols = set(sq.values())
                     for col2 in colours:
                         if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
-                            deduced.append(f"[{col2}]\u2205")
+                            deduced.append(f"[{col2}] empty")
                             break
                     else:
                         for r2 in range(n):
                             if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
-                                deduced.append(f"row{r2}\u2205")
+                                deduced.append(f"row{r2} empty")
                                 break
                         else:
                             for c2 in range(n):
                                 if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
-                                    deduced.append(f"col{c2}\u2205")
+                                    deduced.append(f"col{c2} empty")
                                     break
                     ok = False
                 else:
@@ -972,39 +968,60 @@ def solve_stepwise(
     # Main loop — apply rules in priority order, restart on any change
     # ------------------------------------------------------------------
 
+    global rule_functions
+    rule_functions = [
+        rule_singleton,
+        rule_forced_row_col,
+        rule_squeeze,
+        rule_shadow,
+        rule_n_group,
+        rule_x_wing,
+        rule_elimination,
+        rule_double_block,
+        rule_lookahead,
+        rule_search,
+    ]
+    rules_used: list[str] = []
     while len(queens) < n:
-        if rule_singleton():
-            show_board()
-            continue
-        if rule_forced_row_col():
-            show_board()
-            continue
-        if rule_squeeze():
-            show_board()
-            continue
-        if rule_shadow():
-            show_board()
-            continue
-        if rule_n_group():
-            show_board()
-            continue
-        if rule_x_wing():
-            show_board()
-            continue
-        if rule_elimination():
-            show_board()
-            continue
-        if rule_double_block():
-            show_board()
-            continue
-        if rule_search():
-            show_board()
-            continue
-        break
+        for rule_func in rule_functions:
+            if rule_func():
+                rules_used.append(rule_name(rule_func))
+                show_board()
+                break
+        else:
+            break
 
     if len(queens) == n:
         out(f"Solved: {n} queens placed.")
-        return dict(queens)
+        return dict(queens), rules_used
 
     out(f"Stuck: {len(queens)}/{n} queens placed.")
-    return None
+    return None, rules_used
+
+
+def rule_name(func) -> str:
+    """Return the canonical rule name for a rule function (without 'rule_' prefix), mapping some names for backward compatibility."""
+    mapped_names = {
+        "forced_row_col": "forced",
+    }
+    n = getattr(func, "__name__", str(func))
+    # Remove 'rule_' prefix if present
+    name = n[5:] if n.startswith("rule_") else n
+    # Use mapped name if present
+    if name in mapped_names:
+        name = mapped_names[name]
+    # Replace underscores with dashes
+    return name.replace("_", "-")
+
+
+def compact_rules_used(rules_used: list[str]) -> list[str]:
+    """Return unique rule names in the order declared in rule_functions """
+    # Use the canonical names from rule_functions order
+    declared = [rule_name(f) for f in rule_functions]
+    seen = set()
+    compacted = []
+    for name in declared:
+        if name in rules_used and name not in seen:
+            compacted.append(name)
+            seen.add(name)
+    return compacted

@@ -32,15 +32,33 @@ def _fetch_source(url: str) -> tuple[str, str]:
             f"got: {url!r}"
         )
     level_number = match.group(1)
+    import time
+    from urllib.error import HTTPError
+
     raw_url = _GITHUB_RAW.format(n=level_number)
-    try:
-        with urllib.request.urlopen(raw_url, timeout=10) as resp:
-            source = resp.read().decode("utf-8")
-    except URLError as exc:
-        raise RuntimeError(
-            f"Could not fetch level {level_number} from GitHub: {exc}"
-        ) from exc
-    return source, level_number
+    retries = 3
+    for attempt in range(1, retries + 1):
+        try:
+            with urllib.request.urlopen(raw_url, timeout=10) as resp:
+                source = resp.read().decode("utf-8")
+            return source, level_number
+        except HTTPError as exc:
+            if exc.code in (429, 403):
+                if attempt < retries:
+                    time.sleep(10)
+                    continue
+                else:
+                    raise RuntimeError(
+                        f"Rate limited by GitHub (HTTP {exc.code}) after {retries} attempts. Try again later."
+                    ) from exc
+            else:
+                raise RuntimeError(
+                    f"Could not fetch level {level_number} from GitHub: {exc}"
+                ) from exc
+        except URLError as exc:
+            raise RuntimeError(
+                f"Could not fetch level {level_number} from GitHub: {exc}"
+            ) from exc
 
 
 def read_community_level(url: str) -> list[list[str]]:
