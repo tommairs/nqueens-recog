@@ -557,7 +557,7 @@ def test_stepwise_641_no_search(capsys) -> None:
     result = solve_stepwise(board)
     out = capsys.readouterr().out
     assert result is not None
-    _assert_matches_solver(board, result)
+    _assert_matches_solver(board, result[0])
     assert "search" not in out          # solved purely by deduction
     assert "confined to row" in out     # rule_forced_row_col
     assert "x-wing:" in out             # rule_x_wing fires
