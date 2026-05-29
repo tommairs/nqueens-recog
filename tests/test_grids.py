@@ -341,7 +341,7 @@ def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
     ]
     result = solve_stepwise(board)
     out = capsys.readouterr().out
-    assert result is None                   # stuck path → return None
+    assert result[0] is None                # stuck path → return None
     assert "region singleton" in out        # rule_singleton region branch
     assert "squeeze:" in out               # rule_squeeze fires
     assert "row 2 singleton" in out        # rule_singleton row branch
@@ -370,8 +370,8 @@ def test_stepwise_ngroup_colour_perspective(capsys) -> None:
     ]
     result = solve_stepwise(board)
     out = capsys.readouterr().out
-    assert result is not None
-    _assert_matches_solver(board, result)
+    assert result[0] is not None
+    _assert_matches_solver(board, result[0])
     assert "shadow:" in out             # rule_shadow fires
     assert "confined to col" in out     # rule_forced_row_col col branch
 
@@ -403,8 +403,8 @@ def test_stepwise_shadow_l_shape(capsys) -> None:
     ]
     result = solve_stepwise(board)
     out = capsys.readouterr().out
-    assert result is not None
-    _assert_matches_solver(board, result)
+    assert result[0] is not None
+    _assert_matches_solver(board, result[0])
     assert "shadow: [E]" in out     # L-shape eliminates (1,6)
     assert "shadow: [F]" in out     # triangle eliminates (1,1)
     assert "shadow: [G]" in out     # L-shape eliminates (6,1)
@@ -514,8 +514,8 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     ]
     result = solve_stepwise(board)
     out = capsys.readouterr().out
-    assert result is not None
-    _assert_matches_solver(board, result)
+    assert result[0] is not None
+    _assert_matches_solver(board, result[0])
     assert "confined to row" in out     # rule_forced_row_col row branch
     assert "claims rows" in out         # rule_n_group colour perspective (rows)
     assert "x-wing:" in out             # rule_x_wing fires
