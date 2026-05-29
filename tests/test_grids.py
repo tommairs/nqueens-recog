@@ -796,8 +796,8 @@ def test_stepwise_solves_puzzle(image_path: Path, label: str, expected_cols: lis
     """All rules must fully solve each sample puzzle."""
     board = [list(row) for row in grid_to_letters(read_grid(str(image_path)))]
     result = solve_stepwise(board, quiet=True)
-    assert result is not None, f"Puzzle {label}: stepwise solver got stuck"
-    cols = [result[r] + 1 for r in range(len(board))]
+    assert result[0] is not None, f"Puzzle {label}: stepwise solver got stuck"
+    cols = [result[0][r] + 1 for r in range(len(board))]
     assert cols == expected_cols, (
         f"Puzzle {label}: stepwise solution {cols} != expected {expected_cols}"
     )
