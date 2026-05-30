@@ -134,20 +134,19 @@ Each level prints a `=== Level N ===` header followed by the raw output from
 
 ## Batch stepwise solver
 
-`chk_stepwise.py` fetches a range of community levels, runs the stepwise
-solver, validates each result, and writes an HTML file per level plus a
-summary index:
 
+The batch stepwise solver is now run from the scripts directory as a module. Example usage:
 
 ```bash
-python chk_stepwise.py [--first N --last N] [--workers N] [--rate R]
+cd src
+python -m scripts.chk_stepwise --help
 
 # Auto mode (default):
-python chk_stepwise.py                    # Solve all missing and new levels
+python -m scripts.chk_stepwise                    # Solve all missing and new levels
 
 # Range mode (specify both --first and --last):
-python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
-python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
+python -m scripts.chk_stepwise --first 1 --last 100             # Levels 1–100, rate 2/s
+python -m scripts.chk_stepwise --first 578 --last 642 --rate 0  # Unlimited rate
 ```
 
 Arguments:

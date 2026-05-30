@@ -37,6 +37,7 @@ def test_auto_mode_probes_beyond_index_html(tmp_path, monkeypatch):
     assert 20 in probed
     assert 21 in probed
     assert max(probed) == 21
+
 import tempfile
 import shutil
 import os
@@ -44,8 +45,7 @@ from pathlib import Path
 import pytest
 import sys
 import types
-
-import chk_stepwise
+import scripts.chk_stepwise as chk_stepwise
 
 def make_index_html(levels, missing=None, out_path=None):
     """Create a minimal index.html with given levels present, optionally omitting some."""
@@ -62,7 +62,9 @@ def make_index_html(levels, missing=None, out_path=None):
     </tbody></table></body></html>
     """
     if out_path:
-        Path(out_path).write_text(html, encoding="utf-8")
+        out_path = Path(out_path)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(html, encoding="utf-8")
     return html
 
 def run_auto_mode(tmp_path, index_html):
@@ -89,29 +91,43 @@ def test_missing_levels_middle_and_end(tmp_path):
     levels = list(range(1, 11))
     missing = {4, 7, 10}
     index_html = make_index_html(levels, missing)
-    out_html = run_auto_mode(tmp_path, index_html)
+    import io
+    import contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        out_html = run_auto_mode(tmp_path, index_html)
+    output = buf.getvalue()
     # Should print missing levels 4, 7, 10 and continue after 10
-    assert "Missing levels detected: [4, 7, 10]" in out_html or "Missing levels detected" in out_html
+    assert "Missing levels detected: [4, 7, 10]" in output or "Missing levels detected" in output
     # Should contain all levels 1-10 except missing, and new levels after 10
 
 def test_no_missing_levels(tmp_path):
     # Levels 1-5, none missing
     levels = list(range(1, 6))
     index_html = make_index_html(levels)
-    out_html = run_auto_mode(tmp_path, index_html)
-    assert "No missing levels detected" in out_html or "No missing levels detected" in out_html
+    import io
+    import contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        out_html = run_auto_mode(tmp_path, index_html)
+    output = buf.getvalue()
+    assert "No missing levels detected" in output or "No missing levels detected" in output
     # Should continue after 5
 
 def test_empty_index_html(tmp_path):
     # No index.html present
     out_dir = tmp_path / "all_solutions"
     out_dir.mkdir()
+    import io
+    import contextlib
     sys_argv_orig = sys.argv
     sys.argv = ["chk_stepwise.py"]
     orig_path = chk_stepwise.Path
     chk_stepwise.Path = lambda x: out_dir if x == "all_solutions" else orig_path(x)
+    buf = io.StringIO()
     try:
-        chk_stepwise.main()
+        with contextlib.redirect_stdout(buf):
+            chk_stepwise.main()
     finally:
         sys.argv = sys_argv_orig
         chk_stepwise.Path = orig_path
