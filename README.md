@@ -66,10 +66,9 @@ Ten rules are applied in order of increasing cost:
 This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any
 browser regardless of font. Also an index.html is created / updated as an easy way to view the solutions in a browser. 
 
-The batch stepwise solver is run from the scripts directory as a module. Example usage:
+The batch stepwise solver is run as a module from the project root. Example usage:
 
 ```bash
-cd src
 python -m scripts.chk_stepwise --help
 
 # Auto mode (default):
@@ -80,11 +79,13 @@ python -m scripts.chk_stepwise --first 1 --last 100             # Levels 1–100
 python -m scripts.chk_stepwise --first 578 --last 642 --rate 0  # Unlimited rate
 ```
 
-Arguments:
-   --first N   First level number (inclusive). Must be used with --last.
-   --last N    Last level number (inclusive). Must be used with --first.
-   --workers N Number of worker processes (default: 8).
-   --rate R    Submissions per second; 0 = unlimited (default: 2).
+
+**Arguments:**
+
+- `--first N`   — First level number (inclusive). Must be used with `--last`.
+- `--last N`    — Last level number (inclusive). Must be used with `--first`.
+- `--workers N` — Number of worker processes (default: 8).
+- `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 
 If neither --first nor --last is given, auto mode will:
    - Detect all missing levels in the existing index and solve them.
@@ -116,10 +117,8 @@ Written: all_solutions/index.html
 
 ### Running under PyPy
 
-Levels that fall back to **search** (the stepwise solver's own backtracking)
-can be slow, because each node re-runs the full deduction pipeline. PyPy's JIT
-gives a meaningful speedup for these cases (e.g. level 702, 15×15: 79 s → 36 s
-after a cold start, faster still over a longer batch run).
+Large levels, particularly those that need **lookahead** or **search** rules
+can be slow. PyPy's JIT gives a meaningful speedup
 
 OpenCV is not available for PyPy, so the image-recognition path is disabled;
 URL-based solving works fine.
@@ -130,7 +129,7 @@ pypy3 -m venv .venv-pypy
 .venv-pypy/bin/pip install -e . --no-deps --ignore-requires-python
 
 # Run
-.venv-pypy/bin/python chk_stepwise.py --first 700 --last 710
+.venv-pypy/bin/python src/scripts/chk_stepwise.py
 ```
 
 ## Test
