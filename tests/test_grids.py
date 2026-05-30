@@ -628,6 +628,77 @@ class TestPrintBoard:
 
 class TestReadCommunityLevelMocked:
     _valid_url = "https://queensgame.vercel.app/community-level/1"
+    def test_retries_and_raises_on_429(self):
+        from urllib.error import HTTPError
+        # Simulate HTTP 429 for all attempts
+        def raise_429(*a, **k):
+            raise HTTPError(url='u', code=429, msg='Too Many Requests', hdrs=None, fp=None)
+        with patch("nqueens_recog.url_reader.urllib.request.urlopen", side_effect=raise_429):
+            with pytest.raises(RuntimeError, match="Rate limited by GitHub.*429"):
+                read_community_level(self._valid_url)
+
+    def test_retries_and_raises_on_403(self):
+        from urllib.error import HTTPError
+        # Simulate HTTP 403 for all attempts
+        def raise_403(*a, **k):
+            raise HTTPError(url='u', code=403, msg='Forbidden', hdrs=None, fp=None)
+        with patch("nqueens_recog.url_reader.urllib.request.urlopen", side_effect=raise_403):
+            with pytest.raises(RuntimeError, match="Rate limited by GitHub.*403"):
+                read_community_level(self._valid_url)
+
+
+class TestReadCommunityLevelInfoMocked:
+    _valid_url = "https://queensgame.vercel.app/community-level/1"
+    _fake_ts_full = (
+        "const level = {\n"
+        "  size: 2,\n"
+        "  colorRegions: [\n"
+        '    ["A", "B"],\n'
+        '    ["B", "A"],\n'
+        "  ],\n"
+        "  regionColors: {},\n"
+        "  solutionsCount: 42,\n"
+        '  createdBy: "alice",\n'
+        "};\n"
+    )
+    _fake_ts_missing = (
+        "const level = {\n"
+        "  size: 2,\n"
+        "  colorRegions: [\n"
+        '    ["A", "B"],\n'
+        '    ["B", "A"],\n'
+        "  ],\n"
+        "  regionColors: {},\n"
+        "};\n"
+    )
+
+    def test_returns_full_info(self):
+        from nqueens_recog.url_reader import read_community_level_info
+        class _FakeResp:
+            def read(self):
+                return TestReadCommunityLevelInfoMocked._fake_ts_full.encode()
+            def __enter__(self): return self
+            def __exit__(self, *_): pass
+        with patch("nqueens_recog.url_reader.urllib.request.urlopen", return_value=_FakeResp()):
+            board, solutions_count, created_by = read_community_level_info(self._valid_url)
+        assert board == [["A", "B"], ["B", "A"]]
+        assert solutions_count == 42
+        assert created_by == "alice"
+
+    def test_returns_info_with_missing_fields(self):
+        from nqueens_recog.url_reader import read_community_level_info
+        class _FakeResp:
+            def read(self):
+                return TestReadCommunityLevelInfoMocked._fake_ts_missing.encode()
+            def __enter__(self): return self
+            def __exit__(self, *_): pass
+        with patch("nqueens_recog.url_reader.urllib.request.urlopen", return_value=_FakeResp()):
+            board, solutions_count, created_by = read_community_level_info(self._valid_url)
+        assert board == [["A", "B"], ["B", "A"]]
+        assert solutions_count == 0
+        assert created_by == ""
+        
+    _valid_url = "https://queensgame.vercel.app/community-level/1"
     _fake_ts = (
         "const level = {\n"
         "  size: 2,\n"
