@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+PYTHONPATH=src pytest -v --tb=short tests/test_chk_stepwise.py#!/usr/bin/env python3
 """Batch stepwise solver for community levels.
 
 Usage:
