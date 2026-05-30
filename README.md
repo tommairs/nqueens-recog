@@ -138,12 +138,28 @@ Each level prints a `=== Level N ===` header followed by the raw output from
 solver, validates each result, and writes an HTML file per level plus a
 summary index:
 
-```bash
-python chk_stepwise.py [--first N] [--last N] [--workers N] [--rate R]
 
-python chk_stepwise.py --first 1 --last 100             # levels 1–100, rate 2/s
-python chk_stepwise.py --first 578 --last 642 --rate 0  # unlimited rate
+```bash
+python chk_stepwise.py [--first N --last N] [--workers N] [--rate R]
+
+# Auto mode (default):
+python chk_stepwise.py                    # Solve all missing and new levels
+
+# Range mode (specify both --first and --last):
+python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
+python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 ```
+
+Arguments:
+   --first N   First level number (inclusive). Must be used with --last.
+   --last N    Last level number (inclusive). Must be used with --first.
+   --workers N Number of worker processes (default: 8).
+   --rate R    Submissions per second; 0 = unlimited (default: 2).
+
+If neither --first nor --last is given, auto mode will:
+   - Detect all missing levels in the existing index and solve them.
+   - Continue probing for new levels over HTTP until a 404 is returned.
+   - Update all_solutions/index.html with all results.
 
 For each level it:
 

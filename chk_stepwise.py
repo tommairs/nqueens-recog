@@ -254,53 +254,46 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
     print(f"Written: {index_path}")
 
 
-def main() -> None:
+def parse_args():
     parser = argparse.ArgumentParser(
         prog="chk_stepwise",
         description="Run the stepwise solver over community levels and write HTML output.",
     )
-    parser.add_argument("--first",   type=int,   default=1,   metavar="N", help="First level (default: 1)")
-    parser.add_argument("--last",    type=int,   default=10,  metavar="N", help="Last level (default: 10)")
-    parser.add_argument("--workers", type=int,   default=8,   metavar="N", help="Worker processes (default: 8)")
-    parser.add_argument("--rate",    type=float, default=2.0, metavar="R", help="Submissions per second; 0=unlimited (default: 2)")
+    group = parser.add_argument_group("level range (omit both for auto mode)")
+    group.add_argument("--first", type=int, metavar="N", help="First level number (inclusive)")
+    group.add_argument("--last", type=int, metavar="N", help="Last level number (inclusive)")
+    parser.add_argument("--workers", type=int, default=8, metavar="N", help="Worker processes (default: 8)")
+    parser.add_argument("--rate", type=float, default=2.0, metavar="R", help="Submissions per second; 0=unlimited (default: 2)")
     args = parser.parse_args()
-    first, last, workers, rate = args.first, args.last, args.workers, args.rate
+    if (args.first is not None) ^ (args.last is not None):
+        parser.error("--first and --last must be specified together, or both omitted for auto mode.")
+    return args
 
-    if first > last:
-        p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
-        sys.exit(1)
-
-    out_dir = Path("all_solutions")
-    out_dir.mkdir(exist_ok=True)
-
+def process_levels(levels, out_dir, workers, rate):
+    """Process a list of levels in parallel, with rate limiting. Returns list of results."""
     min_gap = 1.0 / rate if rate > 0 else 0.0
-
     with Pool(workers) as pool:
         futures_by_level: dict[int, object] = {}
         buffered: dict[int, tuple[str, str, dict]] = {}
         results: list[dict] = []
-        next_to_print = first
-        levels = list(range(first, last + 1))
+        next_to_print = min(levels) if levels else 0
         submit_idx = 0
         next_submit_time = time.monotonic()
-
-        while next_to_print <= last:
+        found_any = False
+        while submit_idx < len(levels) or buffered:
             now = time.monotonic()
-
-            # Submit the next level if the rate window has elapsed.
+            # Submit next level if within rate limit
             if submit_idx < len(levels) and now >= next_submit_time:
                 level = levels[submit_idx]
                 futures_by_level[level] = pool.apply_async(_worker, ((level, out_dir),))
                 submit_idx += 1
                 next_submit_time = now + min_gap
-
-            # Collect any newly completed futures.
+            # Collect completed
             for level, future in list(futures_by_level.items()):
                 if future.ready():
                     buffered[level] = future.get()
                     del futures_by_level[level]
-
-            # Flush consecutive completed levels in order.
+            # Print in order
             while next_to_print in buffered:
                 stdout_text, stderr_text, result = buffered.pop(next_to_print)
                 sys.stdout.write(stdout_text)
@@ -309,13 +302,144 @@ def main() -> None:
                     sys.stderr.write(stderr_text)
                     sys.stderr.flush()
                 results.append(result)
+                if result.get("status") == "ok":
+                    found_any = True
                 next_to_print += 1
-
-            if next_to_print <= last:
+            if submit_idx < len(levels) or buffered:
                 time.sleep(0.05)
+    return results
 
-    _write_index_html(results, out_dir)
+def run_auto_mode(out_dir, workers, rate):
+    import re
+    index_path = out_dir / "index.html"
+    max_level_index = 0
+    min_level = None
+    prev_results = {}
+    if index_path.exists():
+        from html import unescape
+        with index_path.open("r", encoding="utf-8") as f:
+            html_lines = f.readlines()
+        tbody = False
+        row_lines = []
+        for line in html_lines:
+            if '<tbody>' in line:
+                tbody = True
+                continue
+            if '</tbody>' in line:
+                break
+            if not tbody:
+                continue
+            if '<tr>' in line:
+                row_lines = [line]
+            elif row_lines:
+                row_lines.append(line)
+            if row_lines and '</tr>' in line:
+                row_html = ''.join(row_lines)
+                cols = re.findall(r'<td>(.*?)</td>', row_html, re.DOTALL)
+                if len(cols) == 6:
+                    m = re.search(r'>(\d+)<', cols[1]) or re.search(r'>(\d+)<', cols[1], re.IGNORECASE)
+                    if not m:
+                        try:
+                            n = int(cols[1])
+                        except Exception:
+                            continue
+                    else:
+                        n = int(m.group(1))
+                    prev_results[n] = {
+                        "level": n,
+                        "status": "ok" if not cols[5].startswith('<em>') else unescape(cols[5][4:-5]),
+                        "multi": cols[2].strip() == "Y",
+                        "created_by": cols[3],
+                        "elapsed": float(cols[4].replace('s','')) if cols[4] else None,
+                        "rules": [] if cols[5].startswith('<em>') else [r.strip() for r in cols[5].split(',')],
+                    }
+                    if n > max_level_index:
+                        max_level_index = n
+                    if min_level is None or n < min_level:
+                        min_level = n
+                row_lines = []
+    else:
+        print("No index.html found, starting from level 1.")
+    # Also scan all_solutions/level_*.html for highest level
+    import glob
+    level_files = glob.glob(str(out_dir / "level_*.html"))
+    max_level_files = 0
+    import re as _re
+    for f in level_files:
+        m = _re.search(r'level_(\d+)\.html$', f)
+        if m:
+            n = int(m.group(1))
+            if n > max_level_files:
+                max_level_files = n
+    max_level = max(max_level_index, max_level_files)
+    if min_level is None:
+        min_level = 1
+    solved_levels = set(prev_results.keys())
+    all_in_range = set(range(min_level, max_level + 1))
+    missing_levels = sorted(all_in_range - solved_levels)
+    if missing_levels:
+        print(f"Missing levels detected: {missing_levels}")
+    else:
+        print("No missing levels detected in existing index.html.")
+    results = []
+    found_any = False
+    # Process missing levels (gaps)
+    if missing_levels:
+        results.extend(process_levels(missing_levels, out_dir, workers, rate))
+        found_any = any(r.get("status") == "ok" for r in results)
+    # Then, continue with new levels after max_level
+    level = max_level + 1
+    new_results = []
+    while True:
+        res = process_levels([level], out_dir, workers, rate)
+        if not res:
+            break
+        r = res[0]
+        new_results.append(r)
+        sys.stdout.flush()
+        if r.get("status") == "ok":
+            found_any = True
+            level += 1
+        elif r.get("status") == "skipped":
+            # Check if this was a 404 (not found)
+            # (stdout/stderr already printed)
+            break
+        else:
+            level += 1
+    results.extend(new_results)
+    merged = {r["level"]: r for r in results if r.get("status") == "ok"}
+    for n, r in prev_results.items():
+        if n not in merged:
+            merged[n] = r
+    merged_results = [merged[n] for n in sorted(merged)]
+    if found_any or merged_results:
+        _write_index_html(merged_results, out_dir)
+    else:
+        print("No new levels found to solve.")
 
+def run_range_mode(first, last, out_dir, workers, rate):
+    if first > last:
+        p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
+        sys.exit(1)
+    levels = list(range(first, last + 1))
+    results = process_levels(levels, out_dir, workers, rate)
+    found_any = any(r.get("status") == "ok" for r in results)
+    if found_any:
+        _write_index_html(results, out_dir)
+    else:
+        print("No new levels found to solve.")
+
+def main():
+    args = parse_args()
+    out_dir = Path("all_solutions")
+    out_dir.mkdir(exist_ok=True)
+    workers, rate = args.workers, args.rate
+    if args.first is None and args.last is None:
+        run_auto_mode(out_dir, workers, rate)
+    else:
+        first = args.first
+        last = args.last
+        run_range_mode(first, last, out_dir, workers, rate)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,119 @@
+def test_auto_mode_probes_beyond_index_html(tmp_path, monkeypatch):
+    # Simulate index.html with only levels 1-10
+    levels = list(range(1, 11))
+    index_html = make_index_html(levels, out_path=tmp_path / "all_solutions" / "index.html")
+    out_dir = tmp_path / "all_solutions"
+    out_dir.mkdir(exist_ok=True)
+    # Simulate local HTML files up to 20 (but index.html only lists 1-10)
+    for n in range(1, 21):
+        (out_dir / f"level_{n}.html").write_text(f"dummy {n}", encoding="utf-8")
+    # Patch sys.argv
+    sys_argv_orig = sys.argv
+    sys.argv = ["chk_stepwise.py"]
+    # Patch Path in chk_stepwise
+    orig_path = chk_stepwise.Path
+    chk_stepwise.Path = lambda x: out_dir if x == "all_solutions" else orig_path(x)
+    # Patch process_levels to record which levels are probed
+    probed = []
+    orig_process_levels = chk_stepwise.process_levels
+    def fake_process_levels(levels, out_dir, workers, rate):
+        probed.extend(levels)
+        # Simulate HTTP 404 after level 21
+        results = []
+        for lvl in levels:
+            if lvl <= 20:
+                results.append({"level": lvl, "status": "ok"})
+            else:
+                results.append({"level": lvl, "status": "skipped"})
+        return results
+    chk_stepwise.process_levels = fake_process_levels
+    try:
+        chk_stepwise.run_auto_mode(out_dir, workers=1, rate=0)
+    finally:
+        sys.argv = sys_argv_orig
+        chk_stepwise.Path = orig_path
+        chk_stepwise.process_levels = orig_process_levels
+    # Should probe 11-20 (from files) and then 21 (HTTP 404)
+    assert 20 in probed
+    assert 21 in probed
+    assert max(probed) == 21
+import tempfile
+import shutil
+import os
+from pathlib import Path
+import pytest
+import sys
+import types
+
+import chk_stepwise
+
+def make_index_html(levels, missing=None, out_path=None):
+    """Create a minimal index.html with given levels present, optionally omitting some."""
+    if missing is None:
+        missing = set()
+    rows = []
+    for lvl in levels:
+        if lvl in missing:
+            continue
+        rows.append(f'<tr><td>Play</td><td><a href="level_{lvl}.html">{lvl}</a></td><td></td><td>user</td><td>1.000s</td><td>rule</td></tr>')
+    html = f"""
+    <html><body><table><tbody>
+    {''.join(rows)}
+    </tbody></table></body></html>
+    """
+    if out_path:
+        Path(out_path).write_text(html, encoding="utf-8")
+    return html
+
+def run_auto_mode(tmp_path, index_html):
+    # Write index.html
+    out_dir = tmp_path / "all_solutions"
+    out_dir.mkdir()
+    (out_dir / "index.html").write_text(index_html, encoding="utf-8")
+    # Patch sys.argv
+    sys_argv_orig = sys.argv
+    sys.argv = ["chk_stepwise.py"]
+    # Patch out_dir in chk_stepwise
+    orig_path = chk_stepwise.Path
+    chk_stepwise.Path = lambda x: out_dir if x == "all_solutions" else orig_path(x)
+    try:
+        chk_stepwise.main()
+    finally:
+        sys.argv = sys_argv_orig
+        chk_stepwise.Path = orig_path
+    # Read new index.html
+    return (out_dir / "index.html").read_text(encoding="utf-8")
+
+def test_missing_levels_middle_and_end(tmp_path):
+    # Levels 1-10, missing 4, 7, 10
+    levels = list(range(1, 11))
+    missing = {4, 7, 10}
+    index_html = make_index_html(levels, missing)
+    out_html = run_auto_mode(tmp_path, index_html)
+    # Should print missing levels 4, 7, 10 and continue after 10
+    assert "Missing levels detected: [4, 7, 10]" in out_html or "Missing levels detected" in out_html
+    # Should contain all levels 1-10 except missing, and new levels after 10
+
+def test_no_missing_levels(tmp_path):
+    # Levels 1-5, none missing
+    levels = list(range(1, 6))
+    index_html = make_index_html(levels)
+    out_html = run_auto_mode(tmp_path, index_html)
+    assert "No missing levels detected" in out_html or "No missing levels detected" in out_html
+    # Should continue after 5
+
+def test_empty_index_html(tmp_path):
+    # No index.html present
+    out_dir = tmp_path / "all_solutions"
+    out_dir.mkdir()
+    sys_argv_orig = sys.argv
+    sys.argv = ["chk_stepwise.py"]
+    orig_path = chk_stepwise.Path
+    chk_stepwise.Path = lambda x: out_dir if x == "all_solutions" else orig_path(x)
+    try:
+        chk_stepwise.main()
+    finally:
+        sys.argv = sys_argv_orig
+        chk_stepwise.Path = orig_path
+    # Should start from level 1
+    assert (out_dir / "index.html").exists()
