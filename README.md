@@ -129,15 +129,18 @@ pypy3 -m venv .venv-pypy
 .venv-pypy/bin/pip install -e . --no-deps --ignore-requires-python
 
 # Run
-.venv-pypy/bin/python src/scripts/chk_stepwise.py
+.venv-pypy/bin/python -m scripts.chk_stepwise
 ```
 
 ## Test
 
 ```bash
-pytest           # fast tests (image recognition, palette, URL parser)
-pytest --slow    # also runs the solver against all three sample images
-pytest --network # also cross-validates image recognition against GitHub level data
+# fast tests (image recognition, palette, URL parser). 
+pytest
+# also runs the solver against all three sample images
+pytest --slow
+# also cross-validates image recognition against GitHub level data
+pytest --network
 ```
 
 ## Project layout
