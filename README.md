@@ -61,8 +61,51 @@ Ten rules are applied in order of increasing cost:
 9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
 10. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
 
-## Batch stepwise solver
+### What is X-Wing?
 
+From [jess334](https://github.com/jess334)'s explanation across levels [593](https://queensgame.vercel.app/community-level/593), [600](https://queensgame.vercel.app/community-level/600), [641](https://queensgame.vercel.app/community-level/641):
+
+
+Suppose you have $k$ colours (regions) whose candidates are all confined to the union of a set of rows $R$ and columns $C$, where $|R| + |C| = k$. This forms a cross or "#" shape on the board.
+
+
+Because each colour must be placed in a unique row and column:
+
+- At least $|C|$ of the queens must be placed in rows outside $R$, so their columns must be in $C$ (using up all those columns).
+- The remaining $|R|$ queens are placed in rows $R$ (using up all those rows).
+
+
+**Conclusion:**
+
+All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. Therefore, any candidate in those rows or columns that is not one of the $k$ colours can be eliminated.
+
+**Typical case:**
+4 colours confined to 2 rows and 2 columns ($|R|=2$, $|C|=2$, $k=4$), forming a cross or "#". 
+It can also work for other values of $k$>2:
+
+| $k$ | `R` | `C` | Shape | Elimination effect | Note |
+|-|-|-|-|-|-|
+| 2   | 1         \| 1         | 1 row, 1 col  | Eliminate non-colours in row/col   | This is just the region forced row/col rule  |
+| 3   | 1         \| 2         | 1 row, 2 cols | Eliminate non-colours in lines     | True X-Wing starts at $k=3$                  |
+| 3   | 2         \| 1         | 2 rows, 1 col | Eliminate non-colours in lines     \|                                            |
+| 4   | 2         \| 2         | 2 rows, 2 cols | Eliminate non-colours in lines; eliminate all crossing-points for all 4 colours | Classic X-Wing (cross/"#")                  |
+| 4+  | 2+        | 2+        | <code>R</code>R rows, C cols | Eliminate non-colours in lines; eliminate all crossing-points for all $k$ colours | Generalised X-Wing; applies for any $k$ with $|R|,|C|\geq2$ |
+| 4+  | 1 or $k$–1 | $k$–1 or 1 | 1 row, $k$–1 cols (or vice versa) | Eliminate non-colours in lines | No crossing-point elimination                |
+
+
+**Generalisation for $k \geq 4$:**
+
+- If $k$ colours are confined to $|R|$ rows and $|C|$ columns with $|R| + |C| = k$:
+   - All those rows and columns are claimed for those colours (eliminate other colours from those lines).
+   - If both $|R| \geq 2$ and $|C| \geq 2$, all $|R| \times |C|$ intersections (crossing-points) are also eliminated for all $k$ colours.
+   - If either $|R|=1$ or $|C|=1$, only line elimination applies—no crossing-points are eliminated.
+
+**Examples:**
+
+- $k=5$: $|R|=2$, $|C|=3$ (or $|R|=3$, $|C|=2$): all 6 crossing-points are eliminated for all 5 colours. $|R|=1$, $|C|=4$ (or vice versa): only line elimination applies.
+- $k=6$: $|R|=3$, $|C|=3$: all 9 crossing-points are eliminated for all 6 colours. $|R|=2$, $|C|=4$ (or vice versa): all 8 crossing-points are eliminated for all 6 colours. $|R|=1$, $|C|=5$ (or vice versa): only line elimination applies.
+
+## Batch stepwise solver
 
 This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any browser regardless of font. Also an index.html is created/updated as an easy way to view the solutions in a browser.
 
