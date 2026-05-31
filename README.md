@@ -87,6 +87,9 @@ python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 - `--workers N` — Number of worker processes (default: 8).
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 
+> \[!WARNING]
+> Weird multiprocessing bugs seen with more than 1 worker 
+
 If neither --first nor --last is given, auto mode will:
    - Detect all missing levels in the existing index and solve them.
    - Continue probing for new levels over HTTP until a 404 is returned.
