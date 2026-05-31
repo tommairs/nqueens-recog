@@ -86,15 +86,15 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 
 **Generalisation for $k \geq 4$:**
 
+> \[!NOTE]
+> Up to puzzle 707 there are none with k>4, and finding them seems difficult. This is merely a theoretical capability.
+
 - If $k$ colours are confined to $|R|$ rows and $|C|$ columns with $|R| + |C| = k$:
    - All those rows and columns are claimed for those colours (eliminate other colours from those lines).
    - If both $|R| \geq 2$ and $|C| \geq 2$, all $|R| \times |C|$ intersections (crossing-points) are also eliminated for all $k$ colours.
    - If either $|R|=1$ or $|C|=1$, only line elimination applies—no crossing-points are eliminated.
 
-**Examples:**
 
-- $k=5$: $|R|=2$, $|C|=3$ (or $|R|=3$, $|C|=2$): all 6 crossing-points are eliminated for all 5 colours. $|R|=1$, $|C|=4$ (or vice versa): only line elimination applies.
-- $k=6$: $|R|=3$, $|C|=3$: all 9 crossing-points are eliminated for all 6 colours. $|R|=2$, $|C|=4$ (or vice versa): all 8 crossing-points are eliminated for all 6 colours. $|R|=1$, $|C|=5$ (or vice versa): only line elimination applies.
 
 ## Batch stepwise solver
 

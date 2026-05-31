@@ -874,3 +874,34 @@ def test_stepwise_solves_puzzle(image_path: Path, label: str, expected_cols: lis
     assert cols == expected_cols, (
         f"Puzzle {label}: stepwise solution {cols} != expected {expected_cols}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Experimental k=5 X-wing - not yet working
+# ---------------------------------------------------------------------------
+
+# @pytest.mark.skip(reason="Experimental k=5 X-Wing test - not for general runs")
+# def test_stepwise_solves_puzzle() -> None:
+#         # 10x10 board with a k=5 X-Wing for A–E in rows/cols 0–4
+#         board = [
+#             ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+#             ["B", "C", "D", "E", "A", "G", "H", "I", "J", "F"],
+#             ["C", "D", "E", "A", "B", "H", "I", "J", "F", "G"],
+#             ["D", "E", "A", "B", "C", "I", "J", "F", "G", "H"],
+#             ["E", "A", "B", "C", "D", "J", "F", "G", "H", "I"],
+#             ["F", "G", "H", "I", "J", "A", "B", "C", "D", "E"],
+#             ["G", "H", "I", "J", "F", "B", "C", "D", "E", "A"],
+#             ["H", "I", "J", "F", "G", "C", "D", "E", "A", "B"],
+#             ["I", "J", "F", "G", "H", "D", "E", "A", "B", "C"],
+#             ["J", "F", "G", "H", "I", "E", "A", "B", "C", "D"],
+#         ]
+#         import io
+#         import contextlib
+#         buf = io.StringIO()
+#         with contextlib.redirect_stdout(buf):
+#             result = solve_stepwise(board, verbose=True)
+#         verbose_output = buf.getvalue()
+#         with open("stepwise_result.txt", "w") as f:
+#             f.write(verbose_output)
+#             f.write(f"\nStepwise result: {result}\n")
+#         assert result is not None
