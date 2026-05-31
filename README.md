@@ -68,26 +68,21 @@ From [jess334](https://github.com/jess334)'s explanation across levels [593](htt
 
 Suppose you have $k$ colours (regions) whose candidates are all confined to the union of a set of rows $R$ and columns $C$, where $|R| + |C| = k$. This forms a cross or "#" shape on the board.
 
-
 Because each colour must be placed in a unique row and column:
 
 - At least $|C|$ of the queens must be placed in rows outside $R$, so their columns must be in $C$ (using up all those columns).
 - The remaining $|R|$ queens are placed in rows $R$ (using up all those rows).
 
-
-**Conclusion:**
-
-All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. Therefore, any candidate in those rows or columns that is not one of the $k$ colours can be eliminated.
+All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. Therefore, any candidate in those rows or columns that is not one of the $k$ colours can be eliminated. This works for various geometries:
 
 | $k$ | `R` | `C` | Shape | Elimination effect | Note |
 |-|-|-|-|-|-|
 | 2 | 1 | 1 | 1 row, 1 col | Only non-colours eliminated from row/col | This is just the region forced row/col rule |
 | 3 | 1 | 2 | 1 row, 2 cols | Non-colours eliminated from lines | True X-Wing starts at k=3 |
 | 3 | 2 | 1 | 2 rows, 1 col | Non-colours eliminated from lines | |
-| 4 | 2 | 2 | 2 rows, 2 cols (cross) | Non-colours eliminated from lines; all 4 colours eliminated from crossing-points | **Classic X-Wing (cross/#)** |
-| 4+ | 2+ | 2+ | R rows, C cols (cross) | Non-colours eliminated from lines; all k colours eliminated from all crossing-points | Generalised X-Wing; applies for any k with R,C ≥ 2 |
-| 4+ | 1 or k–1 | k–1 or 1 | 1 row, k–1 cols (or vice versa) | Only non-colours eliminated from lines | No crossing-point elimination |
-
+| 4 | 2 | 2 | 2 rows, 2 cols (cross) | Non-colours eliminated from lines; all 4 colours _also eliminated from crossing-points_ | **Classic X-Wing (cross/#)** |
+| ≥4 | ≥2 | ≥2 | R rows, C cols (cross) | Non-colours eliminated from lines; all k _also eliminated from crossing-points_ | Larger shapes, with crossing-point elimination|
+| ≥4 | 1 or k–1 | k–1 or 1 | 1 row, k–1 cols (or vice versa) | Only non-colours eliminated from lines | Larger shapes, no crossing-point elimination |
 
 **Generalisation for $k \geq 4$:**
 
