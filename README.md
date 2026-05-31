@@ -63,20 +63,20 @@ Ten rules are applied in order of increasing cost:
 
 ## Batch stepwise solver
 
-This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any
-browser regardless of font. Also an index.html is created / updated as an easy way to view the solutions in a browser. 
 
-The batch stepwise solver is run as a module from the project root. Example usage:
+This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any browser regardless of font. Also an index.html is created/updated as an easy way to view the solutions in a browser.
+
+**Run the batch stepwise solver from the project root:**
 
 ```bash
-python -m scripts.chk_stepwise --help
+python chk_stepwise.py --help
 
-# Auto mode (default):
-python -m scripts.chk_stepwise                    # Solve all missing and new levels
+# Auto mode (default) - solve all missing and new levels
+python chk_stepwise.py
 
 # Range mode (specify both --first and --last):
-python -m scripts.chk_stepwise --first 1 --last 100             # Levels 1–100, rate 2/s
-python -m scripts.chk_stepwise --first 578 --last 642 --rate 0  # Unlimited rate
+python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
+python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 ```
 
 
@@ -115,33 +115,27 @@ Example output:
 Written: all_solutions/index.html
 ```
 
-### Running under PyPy
+### Running under PyPy - not recommended
 
-Large levels, particularly those that need **lookahead** or **search** rules
-can be slow. PyPy's JIT gives a meaningful speedup
+The multiprocessing used for faster batch solving does not seem reliable under Pypy - tested with
+- Python 3.10.14 (39dc8d3c85a7, Nov 09 2024, 22:49:03)
+- [PyPy 7.3.17 with GCC Apple LLVM 16.0.0 (clang-1600.0.26.4)]
 
-OpenCV is not available for PyPy, so the image-recognition path is disabled;
-URL-based solving works fine.
-
-```bash
-# One-time setup
-pypy3 -m venv .venv-pypy
-.venv-pypy/bin/pip install -e . --no-deps --ignore-requires-python
-
-# Run
-.venv-pypy/bin/python -m scripts.chk_stepwise
-```
+OpenCV is not available for PyPy, so the image-recognition is not possible either.
 
 ## Test
 
+
+Run tests from the project root with the virtual environment activated:
+
 ```bash
-# fast tests (image recognition, palette, URL parser). 
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pytest
-# also runs the solver against all three sample images
 pytest --slow
-# also cross-validates image recognition against GitHub level data
 pytest --network
 ```
+
+If you see import errors, make sure you are running pytest from the root directory (where README.md is located) and that your virtual environment is active. This ensures all local imports and dependencies are resolved correctly.
 
 ## Project layout
 

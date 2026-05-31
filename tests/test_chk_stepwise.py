@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
 def test_auto_mode_probes_beyond_index_html(tmp_path, monkeypatch):
     # Simulate index.html with only levels 1-10
     levels = list(range(1, 11))
@@ -50,7 +54,7 @@ from pathlib import Path
 import pytest
 import sys
 import types
-import scripts.chk_stepwise as chk_stepwise
+import chk_stepwise
 
 def make_index_html(levels, missing=None, out_path=None):
     """Create a minimal index.html with given levels present, optionally omitting some."""

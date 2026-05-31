@@ -101,74 +101,85 @@ def _write_html(level: int, url: str, out_dir: Path, created_by: str = "") -> No
 
 
 def _check_level(level: int, delay: float, out_dir: Path) -> dict:
+    import traceback
     url = BASE_URL.format(n=level)
     print(f"=== Level {level} ===")
-
-    # --- Fetch (board + solutionsCount from TypeScript source) ---
     try:
-        board, solutions_count, created_by = read_community_level_info(url)
-    except ValueError:
-        print("  Skip: could not parse level source")
-        return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
-    except RuntimeError as exc:
-        msg = str(exc)
-        if "404" in msg or "Not Found" in msg:
-            print("  Skip: level not found (404)")
+        # --- Fetch (board + solutionsCount from TypeScript source) ---
+        try:
+            board, solutions_count, created_by = read_community_level_info(url)
+        except ValueError:
+            print("  Skip: could not parse level source")
+            return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+        except RuntimeError as exc:
+            msg = str(exc)
+            if "404" in msg or "Not Found" in msg:
+                print("  Skip: level not found (404)")
+            else:
+                print(f"  Skip: fetch error — {exc}")
+            return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+
+        n = len(board)
+        print(f"  Board: {n}×{n}, solutionsCount={solutions_count}, createdBy={created_by or '(unknown)'}")
+
+        unique = solutions_count == 1
+
+        # --- Stepwise solver (capture trace) ---
+        buf = StringIO()
+        _stdout_orig = sys.stdout
+        sys.stdout = buf
+        t0 = time.perf_counter()
+        try:
+            step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False)
+        finally:
+            sys.stdout = _stdout_orig
+        step_elapsed = time.perf_counter() - t0
+        trace = buf.getvalue()
+
+        # Compact rules_used to unique rule names in declaration order using stepwise.py logic
+        rules = compact_rules_used(rules_used)
+
+        timing = f"stepwise {step_elapsed:.3f}s"
+        tag = "" if unique else " (multi-solution)"
+
+        if step_result is None:
+            p_stderr(f"  Stepwise: stuck (returned None) [{timing}]")
+            status = "stuck"
         else:
-            print(f"  Skip: fetch error — {exc}")
-        return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+            errors = _validate(board, step_result)
+            if errors:
+                p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
+                status = "invalid"
+            else:
+                print(f"  Stepwise: ok{tag} [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
+                status = "ok"
 
-    n = len(board)
-    print(f"  Board: {n}×{n}, solutionsCount={solutions_count}, createdBy={created_by or '(unknown)'}")
+        # --- Write HTML ---
+        _write_html(level, url, out_dir, created_by)
 
-    unique = solutions_count == 1
+        if delay > 0:
+            time.sleep(delay)
 
-    # --- Stepwise solver (capture trace) ---
-    buf = StringIO()
-    _stdout_orig = sys.stdout
-    sys.stdout = buf
-    t0 = time.perf_counter()
-    try:
-        step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False)
-    finally:
-        sys.stdout = _stdout_orig
-    step_elapsed = time.perf_counter() - t0
-    trace = buf.getvalue()
-
-    # Compact rules_used to unique rule names in declaration order using stepwise.py logic
-    rules = compact_rules_used(rules_used)
-
-    timing = f"stepwise {step_elapsed:.3f}s"
-    tag = "" if unique else " (multi-solution)"
-
-    if step_result is None:
-        p_stderr(f"  Stepwise: stuck (returned None) [{timing}]")
-        status = "stuck"
-    else:
-        errors = _validate(board, step_result)
-        if errors:
-            p_stderr(f"!! INVALID solution level {level}: {'; '.join(errors)}")
-            status = "invalid"
-        else:
-            print(f"  Stepwise: ok{tag} [{timing}] — rules used: {', '.join(rules) if rules else '(none)'}")
-            status = "ok"
-
-    # --- Write HTML ---
-    _write_html(level, url, out_dir, created_by)
-
-    if delay > 0:
-        time.sleep(delay)
-
-    return {"level": level, "status": status, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
+        return {"level": level, "status": status, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
+    except Exception as exc:
+        print(f"[ERROR] Exception in _check_level for level {level}: {exc}")
+        traceback.print_exc()
+        return {"level": level, "status": "error", "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
 
 
 def _worker(args: tuple) -> tuple[str, str, dict]:
     """Run _check_level in a subprocess-safe way, capturing stdout and stderr."""
+    import traceback
     level, out_dir = args
     stdout_buf = StringIO()
     stderr_buf = StringIO()
-    with contextlib.redirect_stdout(stdout_buf), contextlib.redirect_stderr(stderr_buf):
-        result = _check_level(level, 0, out_dir)
+    try:
+        with contextlib.redirect_stdout(stdout_buf), contextlib.redirect_stderr(stderr_buf):
+            result = _check_level(level, 0, out_dir)
+    except Exception as exc:
+        print(f"[ERROR] Exception in _worker for level {level}: {exc}")
+        traceback.print_exc()
+        result = {"level": level, "status": "error", "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
     return stdout_buf.getvalue(), stderr_buf.getvalue(), result
 
 
@@ -270,44 +281,52 @@ def parse_args():
     return args
 
 def process_levels(levels, out_dir, workers, rate):
-    """Process a list of levels in parallel, with rate limiting. Returns list of results."""
     min_gap = 1.0 / rate if rate > 0 else 0.0
-    with Pool(workers) as pool:
-        futures_by_level: dict[int, object] = {}
-        buffered: dict[int, tuple[str, str, dict]] = {}
-        results: list[dict] = []
-        next_to_print = min(levels) if levels else 0
-        submit_idx = 0
-        next_submit_time = time.monotonic()
-        found_any = False
-        while submit_idx < len(levels) or buffered:
-            now = time.monotonic()
-            # Submit next level if within rate limit
-            if submit_idx < len(levels) and now >= next_submit_time:
-                level = levels[submit_idx]
-                futures_by_level[level] = pool.apply_async(_worker, ((level, out_dir),))
-                submit_idx += 1
-                next_submit_time = now + min_gap
-            # Collect completed
-            for level, future in list(futures_by_level.items()):
-                if future.ready():
-                    buffered[level] = future.get()
-                    del futures_by_level[level]
-            # Print in order
-            while next_to_print in buffered:
-                stdout_text, stderr_text, result = buffered.pop(next_to_print)
-                sys.stdout.write(stdout_text)
-                sys.stdout.flush()
-                if stderr_text:
-                    sys.stderr.write(stderr_text)
-                    sys.stderr.flush()
-                results.append(result)
-                if result.get("status") == "ok":
-                    found_any = True
-                next_to_print += 1
-            if submit_idx < len(levels) or buffered:
-                time.sleep(0.05)
-    return results
+    results: list[dict] = []
+    if workers == 1:
+        # Directly call _check_level in the main process, no multiprocessing
+        for level in levels:
+            result = _check_level(level, 0, out_dir)
+            results.append(result)
+            if min_gap > 0:
+                time.sleep(min_gap)
+        return results
+    else:
+        with Pool(workers) as pool:
+            futures_by_level: dict[int, object] = {}
+            buffered: dict[int, tuple[str, str, dict]] = {}
+            next_to_print = min(levels) if levels else 0
+            submit_idx = 0
+            next_submit_time = time.monotonic()
+            found_any = False
+            while submit_idx < len(levels) or buffered:
+                now = time.monotonic()
+                # Submit next level if within rate limit
+                if submit_idx < len(levels) and now >= next_submit_time:
+                    level = levels[submit_idx]
+                    futures_by_level[level] = pool.apply_async(_worker, ((level, out_dir),))
+                    submit_idx += 1
+                    next_submit_time = now + min_gap
+                # Collect completed
+                for level, future in list(futures_by_level.items()):
+                    if future.ready():
+                        buffered[level] = future.get()
+                        del futures_by_level[level]
+                # Print in order
+                while next_to_print in buffered:
+                    stdout_text, stderr_text, result = buffered.pop(next_to_print)
+                    sys.stdout.write(stdout_text)
+                    sys.stdout.flush()
+                    if stderr_text:
+                        sys.stderr.write(stderr_text)
+                        sys.stderr.flush()
+                    results.append(result)
+                    if result.get("status") == "ok":
+                        found_any = True
+                    next_to_print += 1
+                if submit_idx < len(levels) or buffered:
+                    time.sleep(0.05)
+        return results
 
 def run_auto_mode(out_dir, workers, rate):
     import re
@@ -360,18 +379,8 @@ def run_auto_mode(out_dir, workers, rate):
                 row_lines = []
     else:
         print("No index.html found, starting from level 1.")
-    # Also scan all_solutions/level_*.html for highest level
-    import glob
-    level_files = glob.glob(str(out_dir / "level_*.html"))
-    max_level_files = 0
-    import re as _re
-    for f in level_files:
-        m = _re.search(r'level_(\d+)\.html$', f)
-        if m:
-            n = int(m.group(1))
-            if n > max_level_files:
-                max_level_files = n
-    max_level = max(max_level_index, max_level_files)
+    # Only use index.html to determine solved/missing levels
+    max_level = max_level_index
     if min_level is None:
         min_level = 1
     solved_levels = set(prev_results.keys())
@@ -401,8 +410,6 @@ def run_auto_mode(out_dir, workers, rate):
             found_any = True
             level += 1
         elif r.get("status") == "skipped":
-            # Check if this was a 404 (not found)
-            # (stdout/stderr already printed)
             break
         else:
             level += 1
@@ -422,12 +429,14 @@ def run_range_mode(first, last, out_dir, workers, rate):
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
     levels = list(range(first, last + 1))
+    # Always process the requested levels, regardless of existing files
     results = process_levels(levels, out_dir, workers, rate)
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
         _write_index_html(results, out_dir)
     else:
         print("No new levels found to solve.")
+
 
 def main():
     args = parse_args()
@@ -441,5 +450,6 @@ def main():
         last = args.last
         run_range_mode(first, last, out_dir, workers, rate)
 
+        
 if __name__ == "__main__":
     main()
