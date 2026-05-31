@@ -2,9 +2,9 @@
 """Batch stepwise solver for community levels.
 
 Usage:
-    python chk_stepwise.py [--first N] [--last N] [--workers N] [--rate R]
+    python chk_stepwise.py [--first N] [--last N] [--rate R]
 
-Defaults: --first 1, --last 10, --workers 8, --rate 2 (submissions per second).
+Defaults: --first 1, --last 10, --rate 2 (submissions per second).
 Set --rate 0 to submit as fast as possible.
 
 For each level in [--first, --last]:
@@ -101,7 +101,6 @@ def _write_html(level: int, url: str, out_dir: Path, created_by: str = "") -> No
 
 
 def _check_level(level: int, delay: float, out_dir: Path) -> dict:
-    import traceback
     url = BASE_URL.format(n=level)
     print(f"=== Level {level} ===")
     try:
@@ -163,24 +162,7 @@ def _check_level(level: int, delay: float, out_dir: Path) -> dict:
         return {"level": level, "status": status, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
     except Exception as exc:
         print(f"[ERROR] Exception in _check_level for level {level}: {exc}")
-        traceback.print_exc()
         return {"level": level, "status": "error", "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
-
-
-def _worker(args: tuple) -> tuple[str, str, dict]:
-    """Run _check_level in a subprocess-safe way, capturing stdout and stderr."""
-    import traceback
-    level, out_dir = args
-    stdout_buf = StringIO()
-    stderr_buf = StringIO()
-    try:
-        with contextlib.redirect_stdout(stdout_buf), contextlib.redirect_stderr(stderr_buf):
-            result = _check_level(level, 0, out_dir)
-    except Exception as exc:
-        print(f"[ERROR] Exception in _worker for level {level}: {exc}")
-        traceback.print_exc()
-        result = {"level": level, "status": "error", "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
-    return stdout_buf.getvalue(), stderr_buf.getvalue(), result
 
 
 def _write_index_html(results: list[dict], out_dir: Path) -> None:
@@ -273,62 +255,25 @@ def parse_args():
     group = parser.add_argument_group("level range (omit both for auto mode)")
     group.add_argument("--first", type=int, metavar="N", help="First level number (inclusive)")
     group.add_argument("--last", type=int, metavar="N", help="Last level number (inclusive)")
-    parser.add_argument("--workers", type=int, default=8, metavar="N", help="Worker processes (default: 8)")
     parser.add_argument("--rate", type=float, default=2.0, metavar="R", help="Submissions per second; 0=unlimited (default: 2)")
     args = parser.parse_args()
     if (args.first is not None) ^ (args.last is not None):
         parser.error("--first and --last must be specified together, or both omitted for auto mode.")
     return args
 
-def process_levels(levels, out_dir, workers, rate):
+def process_levels(levels, out_dir, rate):
     min_gap = 1.0 / rate if rate > 0 else 0.0
     results: list[dict] = []
-    if workers == 1:
-        # Directly call _check_level in the main process, no multiprocessing
-        for level in levels:
-            result = _check_level(level, 0, out_dir)
-            results.append(result)
-            if min_gap > 0:
-                time.sleep(min_gap)
-        return results
-    else:
-        with Pool(workers) as pool:
-            futures_by_level: dict[int, object] = {}
-            buffered: dict[int, tuple[str, str, dict]] = {}
-            next_to_print = min(levels) if levels else 0
-            submit_idx = 0
-            next_submit_time = time.monotonic()
-            found_any = False
-            while submit_idx < len(levels) or buffered:
-                now = time.monotonic()
-                # Submit next level if within rate limit
-                if submit_idx < len(levels) and now >= next_submit_time:
-                    level = levels[submit_idx]
-                    futures_by_level[level] = pool.apply_async(_worker, ((level, out_dir),))
-                    submit_idx += 1
-                    next_submit_time = now + min_gap
-                # Collect completed
-                for level, future in list(futures_by_level.items()):
-                    if future.ready():
-                        buffered[level] = future.get()
-                        del futures_by_level[level]
-                # Print in order
-                while next_to_print in buffered:
-                    stdout_text, stderr_text, result = buffered.pop(next_to_print)
-                    sys.stdout.write(stdout_text)
-                    sys.stdout.flush()
-                    if stderr_text:
-                        sys.stderr.write(stderr_text)
-                        sys.stderr.flush()
-                    results.append(result)
-                    if result.get("status") == "ok":
-                        found_any = True
-                    next_to_print += 1
-                if submit_idx < len(levels) or buffered:
-                    time.sleep(0.05)
-        return results
+    # Directly call _check_level in the main process, no multiprocessing
+    for level in levels:
+        result = _check_level(level, 0, out_dir)
+        results.append(result)
+        if min_gap > 0:
+            time.sleep(min_gap)
+    return results
 
-def run_auto_mode(out_dir, workers, rate):
+
+def run_auto_mode(out_dir, rate):
     import re
     index_path = out_dir / "index.html"
     max_level_index = 0
@@ -394,17 +339,30 @@ def run_auto_mode(out_dir, workers, rate):
     found_any = False
     # Process missing levels (gaps)
     if missing_levels:
-        results.extend(process_levels(missing_levels, out_dir, workers, rate))
+        results.extend(process_levels(missing_levels, out_dir, rate))
         found_any = any(r.get("status") == "ok" for r in results)
     # Then, continue with new levels after max_level
     level = max_level + 1
-    new_results = []
+    print(f"Checking if new level {level} exists yet: ", end="")
     while True:
-        res = process_levels([level], out_dir, workers, rate)
+        url = BASE_URL.format(n=level)
+        try:
+            board, solutions_count, created_by = read_community_level_info(url)
+        except Exception as exc:
+            # If 404 or not found, stop searching for new levels
+            msg = str(exc)
+            if "404" in msg or "Not Found" in msg:
+                print("level not found (404)")
+                break
+            else:
+                print(f"fetch error — {exc}")
+                break
+        # If found, process it fully
+        res = process_levels([level], out_dir, rate)
         if not res:
             break
         r = res[0]
-        new_results.append(r)
+        results.append(r)
         sys.stdout.flush()
         if r.get("status") == "ok":
             found_any = True
@@ -413,7 +371,6 @@ def run_auto_mode(out_dir, workers, rate):
             break
         else:
             level += 1
-    results.extend(new_results)
     merged = {r["level"]: r for r in results if r.get("status") == "ok"}
     for n, r in prev_results.items():
         if n not in merged:
@@ -424,13 +381,13 @@ def run_auto_mode(out_dir, workers, rate):
     else:
         print("No new levels found to solve.")
 
-def run_range_mode(first, last, out_dir, workers, rate):
+def run_range_mode(first, last, out_dir, rate):
     if first > last:
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
     levels = list(range(first, last + 1))
     # Always process the requested levels, regardless of existing files
-    results = process_levels(levels, out_dir, workers, rate)
+    results = process_levels(levels, out_dir, rate)
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
         _write_index_html(results, out_dir)
@@ -442,14 +399,12 @@ def main():
     args = parse_args()
     out_dir = Path("all_solutions")
     out_dir.mkdir(exist_ok=True)
-    workers, rate = args.workers, args.rate
     if args.first is None and args.last is None:
-        run_auto_mode(out_dir, workers, rate)
+        run_auto_mode(out_dir, args.rate)
     else:
         first = args.first
         last = args.last
-        run_range_mode(first, last, out_dir, workers, rate)
+        run_range_mode(first, last, out_dir, args.rate)
 
-        
 if __name__ == "__main__":
     main()

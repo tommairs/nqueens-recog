@@ -84,11 +84,10 @@ python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 
 - `--first N`   — First level number (inclusive). Must be used with `--last`.
 - `--last N`    — Last level number (inclusive). Must be used with `--first`.
-- `--workers N` — Number of worker processes (default: 8).
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 
 > \[!WARNING]
-> Weird multiprocessing bugs seen with more than 1 worker 
+> Previous `--workers` option removed, as there are [weird Python multiprocessing bugs](https://sqlpey.com/python/solved-how-to-overcome-python-multiprocessing-crashes-on-macos/) with MacOS.
 
 If neither --first nor --last is given, auto mode will:
    - Detect all missing levels in the existing index and solve them.
