@@ -137,18 +137,18 @@ If you see import errors, make sure you are running pytest from the root directo
 ## Project layout
 
 ```
+chk_stepwise.py     # batch stepwise solver script (HTML output for all levels)
 src/nqueens_recog/
-    grid_reader.py   # image → Grid (perspective correct, line detect, k-means)
-    palette.py       # queensgame colour palette and nearest-colour matching
-    display.py       # ANSI terminal board renderer (letter view and queen view)
-    url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
-    solver.py        # backtracking solver; prints spoiler line + coloured board
-    __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
+   grid_reader.py   # image → Grid (perspective correct, line detect, k-means)
+   palette.py       # queensgame colour palette and nearest-colour matching
+   display.py       # ANSI terminal board renderer (letter view and queen view)
+   url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
+   solver.py        # backtracking solver; prints spoiler line + coloured board
+   __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
 img/
-    puzzle-*.png     # sample puzzle images (test fixtures)
+   puzzle-*.png     # sample puzzle images (test fixtures)
 tests/
-    conftest.py      # --network and --slow opt-in flags
-    test_grids.py    # grid recognition, URL reader, and solver tests
+   test_*.py        # pytest cases
 ```
 
 ## How the image recognition works
