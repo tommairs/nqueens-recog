@@ -628,6 +628,7 @@ class TestPrintBoard:
 
 class TestReadCommunityLevelMocked:
     _valid_url = "https://queensgame.vercel.app/community-level/1"
+    @pytest.mark.slow
     def test_retries_and_raises_on_429(self):
         from urllib.error import HTTPError
         # Simulate HTTP 429 for all attempts
@@ -637,6 +638,7 @@ class TestReadCommunityLevelMocked:
             with pytest.raises(RuntimeError, match="Rate limited by GitHub.*429"):
                 read_community_level(self._valid_url)
 
+    @pytest.mark.slow
     def test_retries_and_raises_on_403(self):
         from urllib.error import HTTPError
         # Simulate HTTP 403 for all attempts

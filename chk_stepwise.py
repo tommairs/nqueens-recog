@@ -17,12 +17,10 @@ Finally writes all_solutions/index.html with a summary table.
 """
 
 import argparse
-import contextlib
 import subprocess
 import sys
 import time
 from io import StringIO
-from multiprocessing import Pool
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
