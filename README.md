@@ -119,14 +119,9 @@ Written: all_solutions/index.html
 
 ### Running under PyPy - not recommended
 
-The multiprocessing used for faster batch solving does not seem reliable under Pypy - tested with
-- Python 3.10.14 (39dc8d3c85a7, Nov 09 2024, 22:49:03)
-- [PyPy 7.3.17 with GCC Apple LLVM 16.0.0 (clang-1600.0.26.4)]
-
 OpenCV is not available for PyPy, so the image-recognition is not possible either.
 
 ## Test
-
 
 Run tests from the project root with the virtual environment activated:
 
