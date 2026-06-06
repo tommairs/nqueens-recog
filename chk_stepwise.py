@@ -2,7 +2,7 @@
 """Batch stepwise solver for community levels.
 
 Usage:
-    python chk_stepwise.py [--first N] [--last N] [--rate R]
+    python chk_stepwise.py [--first N] [--last N] [--rate R] [--timestamps]
 
 Defaults: --first 1, --last 10, --rate 2 (submissions per second).
 Set --rate 0 to submit as fast as possible.
@@ -71,13 +71,16 @@ def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
     return errors
 
 
-def _write_html(level: int, url: str, out_dir: Path, created_by: str = "") -> None:
+def _write_html(level: int, url: str, out_dir: Path, created_by: str = "", timestamps: bool = False) -> None:
     """Run nqueens-recog --stepwise --verbose | aha and write the HTML file."""
     out_path = out_dir / f"level_{level}.html"
     title = f"Level {level}" + (f" \u2014 by {created_by}" if created_by else "")
     try:
+        cmd = [sys.executable, "-m", "nqueens_recog", url, "--stepwise", "--verbose"]
+        if timestamps:
+            cmd.append("--timestamps")
         proc1 = subprocess.run(
-            [sys.executable, "-m", "nqueens_recog", url, "--stepwise", "--verbose"],
+            cmd,
             capture_output=True, text=True, check=True,
         )
     except subprocess.CalledProcessError as exc:
@@ -98,7 +101,7 @@ def _write_html(level: int, url: str, out_dir: Path, created_by: str = "") -> No
     print(f"  Written: {out_path}")
 
 
-def _check_level(level: int, delay: float, out_dir: Path) -> dict:
+def _check_level(level: int, delay: float, out_dir: Path, timestamps: bool = False) -> dict:
     url = BASE_URL.format(n=level)
     print(f"=== Level {level} ===")
     try:
@@ -107,14 +110,14 @@ def _check_level(level: int, delay: float, out_dir: Path) -> dict:
             board, solutions_count, created_by = read_community_level_info(url)
         except ValueError:
             print("  Skip: could not parse level source")
-            return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": ""}
         except RuntimeError as exc:
             msg = str(exc)
             if "404" in msg or "Not Found" in msg:
                 print("  Skip: level not found (404)")
             else:
                 print(f"  Skip: fetch error — {exc}")
-            return {"level": level, "status": "skipped", "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": ""}
 
         n = len(board)
         print(f"  Board: {n}×{n}, solutionsCount={solutions_count}, createdBy={created_by or '(unknown)'}")
@@ -127,7 +130,7 @@ def _check_level(level: int, delay: float, out_dir: Path) -> dict:
         sys.stdout = buf
         t0 = time.perf_counter()
         try:
-            step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False)
+            step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False, timestamps=timestamps)
         finally:
             sys.stdout = _stdout_orig
         step_elapsed = time.perf_counter() - t0
@@ -152,15 +155,15 @@ def _check_level(level: int, delay: float, out_dir: Path) -> dict:
                 status = "ok"
 
         # --- Write HTML ---
-        _write_html(level, url, out_dir, created_by)
+        _write_html(level, url, out_dir, created_by, timestamps)
 
         if delay > 0:
             time.sleep(delay)
 
-        return {"level": level, "status": status, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
+        return {"level": level, "status": status, "size": n, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
     except Exception as exc:
         print(f"[ERROR] Exception in _check_level for level {level}: {exc}")
-        return {"level": level, "status": "error", "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
+        return {"level": level, "status": "error", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
 
 
 def _write_index_html(results: list[dict], out_dir: Path) -> None:
@@ -173,6 +176,8 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
             f'<a href="level_{lvl}.html">{lvl}</a>'
             if r["status"] != "skipped" else str(lvl)
         )
+        size = r.get("size")
+        size_cell = str(size) if size is not None else ""
         multi = "Y" if r["multi"] else ""
         runtime = f"{r['elapsed']:.3f}s" if r["elapsed"] is not None else ""
         if r["status"] == "ok":
@@ -180,7 +185,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         else:
             rules_cell = f'<em>{r["status"]}</em>'
         rows.append(
-            f"  <tr><td>{play_cell}</td><td>{level_cell}</td><td>{multi}</td>"
+            f"  <tr><td>{play_cell}</td><td>{level_cell}</td><td>{size_cell}</td><td>{multi}</td>"
             f"<td>{r['created_by']}</td><td>{runtime}</td><td>{rules_cell}</td></tr>"
         )
     rows_html = "\n".join(rows)
@@ -194,14 +199,14 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "th,td{padding:3px 10px;text-align:left;border-bottom:1px solid #ddd}\n"
         "th{background:#f5f5f5;cursor:pointer;user-select:none}\n"
         "th:hover{background:#e8e8e8}\n"
-        "td:nth-child(5){text-align:right;font-variant-numeric:tabular-nums}\n"
+        "td:nth-child(6){text-align:right;font-variant-numeric:tabular-nums}\n"
         "</style>\n"
         "</head>\n<body>\n"
         "<input id=\"filter\" type=\"search\" placeholder=\"Filter\u2026\""
         " style=\"margin-bottom:8px;padding:4px 8px;font-size:14px;"
         "border:1px solid #ccc;border-radius:4px;width:300px\">\n"
         "<table>\n"
-        "<thead><tr><th>Play</th><th>Stepwise solution</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>\n"
+        "<thead><tr><th>Play</th><th>Stepwise solution</th><th>Size</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>\n"
         "<tbody>\n"
         f"{rows_html}\n"
         "</tbody>\n</table>\n"
@@ -227,8 +232,9 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "    rows.sort(function(a,b){\n"
         "      var av=a.cells[col].textContent.trim();\n"
         "      var bv=b.cells[col].textContent.trim();\n"
-        "      if(col===1||col===4){\n"
-        "        var an=parseFloat(av)||0,bn=parseFloat(bv)||0;\n"
+        "      if(col===1||col===2||col===5){\n"
+        "        var an=(col===2?parseInt(av,10):parseFloat(av))||0;\n"
+        "        var bn=(col===2?parseInt(bv,10):parseFloat(bv))||0;\n"
         "        return sa?an-bn:bn-an;\n"
         "      }\n"
         "      return sa?av.localeCompare(bv):bv.localeCompare(av);\n"
@@ -254,24 +260,25 @@ def parse_args():
     group.add_argument("--first", type=int, metavar="N", help="First level number (inclusive)")
     group.add_argument("--last", type=int, metavar="N", help="Last level number (inclusive)")
     parser.add_argument("--rate", type=float, default=2.0, metavar="R", help="Submissions per second; 0=unlimited (default: 2)")
+    parser.add_argument("--timestamps", action="store_true", help="Prefix stepwise trace lines with elapsed time in generated outputs")
     args = parser.parse_args()
     if (args.first is not None) ^ (args.last is not None):
         parser.error("--first and --last must be specified together, or both omitted for auto mode.")
     return args
 
-def process_levels(levels, out_dir, rate):
+def process_levels(levels, out_dir, rate, timestamps=False):
     min_gap = 1.0 / rate if rate > 0 else 0.0
     results: list[dict] = []
     # Directly call _check_level in the main process, no multiprocessing
     for level in levels:
-        result = _check_level(level, 0, out_dir)
+        result = _check_level(level, 0, out_dir, timestamps)
         results.append(result)
         if min_gap > 0:
             time.sleep(min_gap)
     return results
 
 
-def run_auto_mode(out_dir, rate):
+def run_auto_mode(out_dir, rate, timestamps=False):
     import re
     index_path = out_dir / "index.html"
     max_level_index = 0
@@ -298,7 +305,7 @@ def run_auto_mode(out_dir, rate):
             if row_lines and '</tr>' in line:
                 row_html = ''.join(row_lines)
                 cols = re.findall(r'<td>(.*?)</td>', row_html, re.DOTALL)
-                if len(cols) == 6:
+                if len(cols) in (6, 7):
                     m = re.search(r'>(\d+)<', cols[1]) or re.search(r'>(\d+)<', cols[1], re.IGNORECASE)
                     if not m:
                         try:
@@ -307,13 +314,27 @@ def run_auto_mode(out_dir, rate):
                             continue
                     else:
                         n = int(m.group(1))
+                    if len(cols) == 7:
+                        size_match = re.search(r'(\d+)\s*(?:[xX×]\s*\1)?$', cols[2].strip())
+                        size_val = int(size_match.group(1)) if size_match else None
+                        multi_col = cols[3]
+                        created_col = cols[4]
+                        runtime_col = cols[5]
+                        rules_col = cols[6]
+                    else:
+                        size_val = None
+                        multi_col = cols[2]
+                        created_col = cols[3]
+                        runtime_col = cols[4]
+                        rules_col = cols[5]
                     prev_results[n] = {
                         "level": n,
-                        "status": "ok" if not cols[5].startswith('<em>') else unescape(cols[5][4:-5]),
-                        "multi": cols[2].strip() == "Y",
-                        "created_by": cols[3],
-                        "elapsed": float(cols[4].replace('s','')) if cols[4] else None,
-                        "rules": [] if cols[5].startswith('<em>') else [r.strip() for r in cols[5].split(',')],
+                        "status": "ok" if not rules_col.startswith('<em>') else unescape(rules_col[4:-5]),
+                        "size": size_val,
+                        "multi": multi_col.strip() == "Y",
+                        "created_by": created_col,
+                        "elapsed": float(runtime_col.replace('s','')) if runtime_col else None,
+                        "rules": [] if rules_col.startswith('<em>') else [r.strip() for r in rules_col.split(',')],
                     }
                     if n > max_level_index:
                         max_level_index = n
@@ -337,7 +358,7 @@ def run_auto_mode(out_dir, rate):
     found_any = False
     # Process missing levels (gaps)
     if missing_levels:
-        results.extend(process_levels(missing_levels, out_dir, rate))
+        results.extend(process_levels(missing_levels, out_dir, rate, timestamps))
         found_any = any(r.get("status") == "ok" for r in results)
     # Then, continue with new levels after max_level
     level = max_level + 1
@@ -356,7 +377,7 @@ def run_auto_mode(out_dir, rate):
                 print(f"fetch error — {exc}")
                 break
         # If found, process it fully
-        res = process_levels([level], out_dir, rate)
+        res = process_levels([level], out_dir, rate, timestamps)
         if not res:
             break
         r = res[0]
@@ -379,13 +400,13 @@ def run_auto_mode(out_dir, rate):
     else:
         print("No new levels found to solve.")
 
-def run_range_mode(first, last, out_dir, rate):
+def run_range_mode(first, last, out_dir, rate, timestamps=False):
     if first > last:
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
     levels = list(range(first, last + 1))
     # Always process the requested levels, regardless of existing files
-    results = process_levels(levels, out_dir, rate)
+    results = process_levels(levels, out_dir, rate, timestamps)
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
         _write_index_html(results, out_dir)
@@ -398,11 +419,11 @@ def main():
     out_dir = Path("all_solutions")
     out_dir.mkdir(exist_ok=True)
     if args.first is None and args.last is None:
-        run_auto_mode(out_dir, args.rate)
+        run_auto_mode(out_dir, args.rate, args.timestamps)
     else:
         first = args.first
         last = args.last
-        run_range_mode(first, last, out_dir, args.rate)
+        run_range_mode(first, last, out_dir, args.rate, args.timestamps)
 
 if __name__ == "__main__":
     main()

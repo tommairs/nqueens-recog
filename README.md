@@ -48,6 +48,27 @@ Add `-v` / `--verbose` to also render the board state after each rule fires,
 showing region letters for active candidates, `✖` for eliminated cells, and
 👑 for placed queens (newly-eliminated cells are highlighted in red).
 
+Add `--timestamps` to prefix trace lines with elapsed time:
+
+```bash
+nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise --timestamps
+# 0.2s:   forced: [A] confined to row 1 → 3 cell(s) eliminated
+```
+
+Add `--x-wing-max N` to cap how large X-Wing groups are scanned. If omitted,
+the default is `6`. Larger values increase runtimes a lot.
+
+```bash
+# Default: scans up to size 6
+nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise
+
+# Explicit cap
+nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise --x-wing-max 4
+```
+
+When `--verbose` is enabled, large X-Wing scans print progress lines such as
+`x-wing scan: checking size 6 (...)` and `x-wing scan: size 6 no hit ...`.
+
 Ten rules are applied in order of increasing cost:
 
 1. **Region singleton** — a region/row/column narrowed to one cell; place the queen.
@@ -107,6 +128,7 @@ python chk_stepwise.py --help
 
 # Auto mode (default) - solve all missing and new levels
 python chk_stepwise.py
+python chk_stepwise.py --timestamps                # Include elapsed prefixes in stepwise traces
 
 # Range mode (specify both --first and --last):
 python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
@@ -119,6 +141,7 @@ python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 - `--first N`   — First level number (inclusive). Must be used with `--last`.
 - `--last N`    — Last level number (inclusive). Must be used with `--first`.
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
+- `--timestamps` — Pass through to stepwise runs so generated traces are prefixed with elapsed time.
 
 > \[!WARNING]
 > Previous `--workers` option removed, as there are [weird Python multiprocessing bugs](https://sqlpey.com/python/solved-how-to-overcome-python-multiprocessing-crashes-on-macos/) with MacOS.
@@ -178,7 +201,7 @@ src/nqueens_recog/
    display.py       # ANSI terminal board renderer (letter view and queen view)
    url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
    solver.py        # backtracking solver; prints spoiler line + coloured board
-   __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]]
+   __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]] [--stepwise [--timestamps] [--x-wing-max N]]
 img/
    puzzle-*.png     # sample puzzle images (test fixtures)
 tests/

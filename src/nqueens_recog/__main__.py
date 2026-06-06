@@ -32,7 +32,21 @@ def main() -> None:
         action="store_true",
         help="Show the letter grid and coloured board in addition to the solution line.",
     )
+    parser.add_argument(
+        "--timestamps",
+        action="store_true",
+        help="Prefix stepwise trace lines with elapsed time (e.g. 20.1s: ...).",
+    )
+    parser.add_argument(
+        "--x-wing-max",
+        type=int,
+        default=6,
+        help="Maximum X-Wing group size to scan (default: 6).",
+    )
     args = parser.parse_args()
+    if args.x_wing_max < 2:
+        print("Error: --x-wing-max must be >= 2", file=sys.stderr)
+        sys.exit(1)
 
     if is_community_level_url(args.input):
         try:
@@ -71,7 +85,12 @@ def main() -> None:
 
     if args.stepwise:
         from .stepwise import solve_stepwise
-        solve_stepwise(board, verbose=args.verbose)
+        solve_stepwise(
+            board,
+            verbose=args.verbose,
+            timestamps=args.timestamps,
+            x_wing_max=args.x_wing_max,
+        )
 
 
 if __name__ == "__main__":

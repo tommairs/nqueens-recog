@@ -47,12 +47,15 @@ Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-qu
 The trace uses plain text so it can be piped or saved alongside the solutions produced by ``--solve``.
 """
 
+import math
+import time
 from itertools import combinations
 from .solver import is_diagonally_adjacent
 
 
 def solve_stepwise(
-    board: list[list[str]], quiet: bool = False, verbose: bool = False
+    board: list[list[str]], quiet: bool = False, verbose: bool = False,
+    timestamps: bool = False, x_wing_max: int = 6
 ) -> dict[int, int] | None:
     """Apply elimination rules to *board*, printing a trace of each step.
 
@@ -64,6 +67,7 @@ def solve_stepwise(
     cells, and 👑 for placed queens.
     """
     n = len(board)
+    t0 = time.monotonic()
     candidates: list[list[bool]] = [[True] * n for _ in range(n)]
     queens: dict[int, int] = {}
     colours = sorted({board[r][c] for r in range(n) for c in range(n)})
@@ -72,9 +76,26 @@ def solve_stepwise(
     # Helpers
     # ------------------------------------------------------------------
 
+    pending_trace: list[str] = []
+
     def out(msg: str) -> None:
-        if not quiet:
-            print(msg)
+        if quiet:
+            return
+        pending_trace.extend(msg.splitlines() or [msg])
+
+    def flush_trace() -> None:
+        if quiet or not pending_trace:
+            pending_trace.clear()
+            return
+        prefix = ""
+        if timestamps:
+            prefix = f"{time.monotonic() - t0:.1f}s: "
+        for line in pending_trace:
+            if line and prefix:
+                print(prefix + line)
+            else:
+                print(line)
+        pending_trace.clear()
 
     # Snapshot of candidates at the last show_board call, used to highlight new eliminations.
     _prev_candidates: list[list[bool]] = [row[:] for row in candidates]
@@ -479,9 +500,26 @@ def solve_stepwise(
         """
         unsolved = [col for col in colours if not colour_is_solved(col)]
         cands_by = {col: active_for_colour(col) for col in unsolved}
+        # Search group size c up to min(n-1, x_wing_max).  The "inversion" argument —
+        # that a size-c x-wing implies the complement (size n-c) would fire
+        # first — is unsound: the complement colours' candidates aren't yet
+        # confined to the complementary rows/cols until *after* the x-wing
+        # eliminates from them.  Level 452 (7x7, size-4 x-wing with no
+        # size-3 equivalent) is a concrete counterexample.
+        max_c = min(len(unsolved), n - 1, x_wing_max)
+        if max_c < 2:
+            return False
+        large_scan_threshold = max(5, n // 2 + 1)
 
-        for c in range(2, min(len(unsolved), 7)):
+        for c in range(max_c, 1, -1):
+            scan_count = 0
+            if verbose: #and c >= large_scan_threshold:
+                out(
+                    f"  x-wing scan: checking size {c}"
+                    f" ({math.comb(len(unsolved), c)} group(s))"
+                )
             for group in combinations(unsolved, c):
+                scan_count += 1
                 cell_set: set[tuple[int, int]] = set()
                 for col in group:
                     cell_set.update(cands_by[col])
@@ -527,11 +565,16 @@ def solve_stepwise(
                             rows_str = ",".join(str(r2) for r2 in sorted(row_subset))
                             cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
                             out(
-                                f"  x-wing: {label} confined to"
+                                f"  x-wing: size {c} {label} confined to"
                                 f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}"
                                 f" → {count} cell(s) eliminated"
                             )
                             return True
+            if verbose and c >= large_scan_threshold:
+                out(
+                    f"  x-wing scan: size {c} no hit"
+                    f" after {scan_count} group(s)"
+                )
         return False
 
     # ------------------------------------------------------------------
@@ -984,7 +1027,9 @@ def solve_stepwise(
     rules_used: list[str] = []
     while len(queens) < n:
         for rule_func in rule_functions:
-            if rule_func():
+            changed = rule_func()
+            flush_trace()
+            if changed:
                 rules_used.append(rule_name(rule_func))
                 show_board()
                 break
@@ -993,9 +1038,11 @@ def solve_stepwise(
 
     if len(queens) == n:
         out(f"Solved: {n} queens placed.")
+        flush_trace()
         return dict(queens), rules_used
 
     out(f"Stuck: {len(queens)}/{n} queens placed.")
+    flush_trace()
     return None, rules_used
 
 

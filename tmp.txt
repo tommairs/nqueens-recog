@@ -1,0 +1,1 @@
+all_solutions/level_273.html:  x-wing: size 7 {B,E,H,I,J,K,O} confined to rows {8,14} ∪ cols {4,5,6,7,12} → 18 cell(s) eliminated

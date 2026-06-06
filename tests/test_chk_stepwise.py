@@ -53,7 +53,7 @@ def test_auto_mode_probes_beyond_index_html(tmp_path, monkeypatch):
     chk_stepwise.Path = lambda x: out_dir if x == "all_solutions" else orig_path(x)
     probed = []
     orig_process_levels = chk_stepwise.process_levels
-    def fake_process_levels(levels, out_dir, rate):
+    def fake_process_levels(levels, out_dir, rate, timestamps=False):
         probed.extend(levels)
         results = []
         for lvl in levels:
@@ -134,7 +134,7 @@ def test_missing_levels_middle_and_end(tmp_path):
     index_html = make_index_html(levels, missing)
     # Patch process_levels to avoid network calls
     orig_process_levels = chk_stepwise.process_levels
-    def fake_process_levels(levels, out_dir, rate):
+    def fake_process_levels(levels, out_dir, rate, timestamps=False):
         results = []
         for lvl in levels:
             results.append({
@@ -172,7 +172,7 @@ def test_no_missing_levels(tmp_path):
     # Levels 1-5, none missing
     levels = list(range(1, 6))
     index_html = make_index_html(levels)
-    def fake_process_levels(levels, out_dir, rate):
+    def fake_process_levels(levels, out_dir, rate, timestamps=False):
         results = []
         for lvl in levels:
             # Only levels 1-5 are valid, anything above should be 'skipped' to stop probing
@@ -206,7 +206,7 @@ def test_no_missing_levels(tmp_path):
 def test_empty_index_html(tmp_path):
     # No index.html present
     index_html = ""  # empty
-    def fake_process_levels(levels, out_dir, rate):
+    def fake_process_levels(levels, out_dir, rate, timestamps=False):
         results = []
         for lvl in levels:
             if lvl == 1:
