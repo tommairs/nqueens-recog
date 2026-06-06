@@ -521,6 +521,34 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     assert "x-wing:" in out             # rule_x_wing fires
 
 
+def test_stepwise_345_single_xwing_per_pass(capsys) -> None:
+    """Community level 345 (7x7): apply one selected X-Wing per solver pass.
+
+    rule_x_wing may discover multiple candidates in a scan, but it should pick
+    one (largest-first, possibly collapsed) and then return to other rules.
+    Source: https://queensgame.vercel.app/community-level/345
+    """
+    board = [
+        ["B", "B", "G", "B", "B", "B", "B"],
+        ["B", "A", "A", "F", "A", "C", "B"],
+        ["B", "A", "A", "A", "A", "A", "C"],
+        ["B", "G", "A", "E", "A", "A", "B"],
+        ["F", "A", "A", "A", "A", "D", "B"],
+        ["B", "A", "A", "A", "A", "A", "B"],
+        ["B", "B", "E", "B", "D", "B", "B"],
+    ]
+    result = solve_stepwise(board, verbose=True, timestamps=True, x_wing_max=9)
+    out = capsys.readouterr().out
+    assert result[0] is not None
+    _assert_matches_solver(board, result[0])
+
+    # Expect multiple x-wing firings across passes, but only selected winners.
+    assert out.count("x-wing:") >= 3
+    assert "x-wing: size 5 {A,D,E,F,G} confined to rows {4} ∪ cols {1,2,3,4}" in out
+    assert "x-wing: size 5 {B,C,D,E,F} confined to rows {6} ∪ cols {0,3,5,6}" in out
+    assert "x-wing: size 2 {E,G} confined to rows {3} ∪ cols {2}" in out
+
+
 @pytest.mark.slow
 def test_stepwise_641_no_search(capsys) -> None:
     """Community level 641 (18×18): solved entirely by deduction — no backtracking.
@@ -699,7 +727,7 @@ class TestReadCommunityLevelInfoMocked:
         assert board == [["A", "B"], ["B", "A"]]
         assert solutions_count == 0
         assert created_by == ""
-        
+
     _valid_url = "https://queensgame.vercel.app/community-level/1"
     _fake_ts = (
         "const level = {\n"
@@ -875,33 +903,3 @@ def test_stepwise_solves_puzzle(image_path: Path, label: str, expected_cols: lis
         f"Puzzle {label}: stepwise solution {cols} != expected {expected_cols}"
     )
 
-
-# ---------------------------------------------------------------------------
-# Experimental k=5 X-wing - not yet working
-# ---------------------------------------------------------------------------
-
-# @pytest.mark.skip(reason="Experimental k=5 X-Wing test - not for general runs")
-# def test_stepwise_solves_puzzle() -> None:
-#         # 10x10 board with a k=5 X-Wing for A–E in rows/cols 0–4
-#         board = [
-#             ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
-#             ["B", "C", "D", "E", "A", "G", "H", "I", "J", "F"],
-#             ["C", "D", "E", "A", "B", "H", "I", "J", "F", "G"],
-#             ["D", "E", "A", "B", "C", "I", "J", "F", "G", "H"],
-#             ["E", "A", "B", "C", "D", "J", "F", "G", "H", "I"],
-#             ["F", "G", "H", "I", "J", "A", "B", "C", "D", "E"],
-#             ["G", "H", "I", "J", "F", "B", "C", "D", "E", "A"],
-#             ["H", "I", "J", "F", "G", "C", "D", "E", "A", "B"],
-#             ["I", "J", "F", "G", "H", "D", "E", "A", "B", "C"],
-#             ["J", "F", "G", "H", "I", "E", "A", "B", "C", "D"],
-#         ]
-#         import io
-#         import contextlib
-#         buf = io.StringIO()
-#         with contextlib.redirect_stdout(buf):
-#             result = solve_stepwise(board, verbose=True)
-#         verbose_output = buf.getvalue()
-#         with open("stepwise_result.txt", "w") as f:
-#             f.write(verbose_output)
-#             f.write(f"\nStepwise result: {result}\n")
-#         assert result is not None

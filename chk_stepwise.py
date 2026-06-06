@@ -2,7 +2,7 @@
 """Batch stepwise solver for community levels.
 
 Usage:
-    python chk_stepwise.py [--first N] [--last N] [--rate R] [--timestamps] [--x-wing-max N]
+    python chk_stepwise.py [--first N] [--last N] [--rate R] [--timestamps] [--x-wing-max N] [--verbose]
 
 Defaults: --first 1, --last 10, --rate 2 (submissions per second).
 Set --rate 0 to submit as fast as possible.
@@ -73,40 +73,17 @@ def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
 
 def _write_html(
     level: int,
-    url: str,
     out_dir: Path,
+    trace: str,
     created_by: str = "",
-    timestamps: bool = False,
-    x_wing_max: int = 6,
 ) -> None:
-    """Run nqueens-recog --stepwise --verbose | aha and write the HTML file."""
+    """Convert a captured stepwise trace to HTML via aha and write it."""
     out_path = out_dir / f"level_{level}.html"
     title = f"Level {level}" + (f" \u2014 by {created_by}" if created_by else "")
     try:
-        cmd = [
-            sys.executable,
-            "-m",
-            "nqueens_recog",
-            url,
-            "--stepwise",
-            "--verbose",
-            "--x-wing-max",
-            str(x_wing_max),
-        ]
-        if timestamps:
-            cmd.append("--timestamps")
-        proc1 = subprocess.run(
-            cmd,
-            capture_output=True, text=True, check=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        p_stderr(f"  [HTML] nqueens-recog failed: {exc.stderr.strip()}")
-        return
-
-    try:
         proc2 = subprocess.run(
             ["aha", "--title", title],
-            input=proc1.stdout, capture_output=True, text=True, check=True,
+            input=trace, capture_output=True, text=True, check=True,
         )
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
         p_stderr(f"  [HTML] aha failed: {exc}")
@@ -123,10 +100,29 @@ def _check_level(
     out_dir: Path,
     timestamps: bool = False,
     x_wing_max: int = 6,
+    verbose: bool = False,
 ) -> dict:
     url = BASE_URL.format(n=level)
     print(f"=== Level {level} ===")
     try:
+        class _TeeBuffer:
+            """Capture writes and optionally mirror them to another stream."""
+
+            def __init__(self, sink: StringIO, mirror=None):
+                self.sink = sink
+                self.mirror = mirror
+
+            def write(self, data: str) -> int:
+                written = self.sink.write(data)
+                if self.mirror is not None:
+                    self.mirror.write(data)
+                return written
+
+            def flush(self) -> None:
+                self.sink.flush()
+                if self.mirror is not None:
+                    self.mirror.flush()
+
         # --- Fetch (board + solutionsCount from TypeScript source) ---
         try:
             board, solutions_count, created_by = read_community_level_info(url)
@@ -146,23 +142,27 @@ def _check_level(
 
         unique = solutions_count == 1
 
-        # --- Stepwise solver (capture trace) ---
+        # --- Stepwise solver (single run: capture trace + optional live mirror) ---
+        t0 = time.perf_counter()
         buf = StringIO()
         _stdout_orig = sys.stdout
-        sys.stdout = buf
-        t0 = time.perf_counter()
+        sys.stdout = _TeeBuffer(buf, _stdout_orig if verbose else None)
         try:
+            # Match CLI stepwise output: include the starting grid before deductions.
+            from nqueens_recog.display import print_board
+            print(f"Grid: {n} × {n}, {n} colours")
+            print_board(board)
             step_result, rules_used = solve_stepwise(
                 board,
                 quiet=False,
-                verbose=False,
+                verbose=True,
                 timestamps=timestamps,
                 x_wing_max=x_wing_max,
             )
         finally:
             sys.stdout = _stdout_orig
-        step_elapsed = time.perf_counter() - t0
         trace = buf.getvalue()
+        step_elapsed = time.perf_counter() - t0
 
         # Compact rules_used to unique rule names in declaration order using stepwise.py logic
         rules = compact_rules_used(rules_used)
@@ -183,7 +183,7 @@ def _check_level(
                 status = "ok"
 
         # --- Write HTML ---
-        _write_html(level, url, out_dir, created_by, timestamps, x_wing_max)
+        _write_html(level, out_dir, trace, created_by)
 
         if delay > 0:
             time.sleep(delay)
@@ -296,6 +296,11 @@ def parse_args():
         metavar="N",
         help="Maximum X-Wing group size to scan (default: 6)",
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Stream stepwise trace to stdout during batch processing",
+    )
     args = parser.parse_args()
     if (args.first is not None) ^ (args.last is not None):
         parser.error("--first and --last must be specified together, or both omitted for auto mode.")
@@ -303,22 +308,22 @@ def parse_args():
         parser.error("--x-wing-max must be >= 2")
     return args
 
-def process_levels(levels, out_dir, rate, timestamps=False, x_wing_max=6):
+def process_levels(levels, out_dir, rate, timestamps=False, x_wing_max=6, verbose=False):
     min_gap = 1.0 / rate if rate > 0 else 0.0
     results: list[dict] = []
     # Directly call _check_level in the main process, no multiprocessing
     for level in levels:
-        result = _check_level(level, 0, out_dir, timestamps, x_wing_max)
+        result = _check_level(level, 0, out_dir, timestamps, x_wing_max, verbose)
         results.append(result)
         if min_gap > 0:
             time.sleep(min_gap)
     return results
 
 
-def _process_levels_compat(levels, out_dir, rate, timestamps=False, x_wing_max=6):
+def _process_levels_compat(levels, out_dir, rate, timestamps=False, x_wing_max=6, verbose=False):
     """Call process_levels with backward compatibility for test monkeypatches."""
     try:
-        return process_levels(levels, out_dir, rate, timestamps, x_wing_max)
+        return process_levels(levels, out_dir, rate, timestamps, x_wing_max, verbose)
     except TypeError as exc:
         # Some tests monkeypatch process_levels with the old 4-argument shape.
         msg = str(exc)
@@ -327,7 +332,7 @@ def _process_levels_compat(levels, out_dir, rate, timestamps=False, x_wing_max=6
         raise
 
 
-def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6):
+def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6, verbose=False):
     import re
     index_path = out_dir / "index.html"
     max_level_index = 0
@@ -407,7 +412,7 @@ def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6):
     found_any = False
     # Process missing levels (gaps)
     if missing_levels:
-        results.extend(_process_levels_compat(missing_levels, out_dir, rate, timestamps, x_wing_max))
+        results.extend(_process_levels_compat(missing_levels, out_dir, rate, timestamps, x_wing_max, verbose))
         found_any = any(r.get("status") == "ok" for r in results)
     # Then, continue with new levels after max_level
     level = max_level + 1
@@ -426,7 +431,7 @@ def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6):
                 print(f"fetch error — {exc}")
                 break
         # If found, process it fully
-        res = _process_levels_compat([level], out_dir, rate, timestamps, x_wing_max)
+        res = _process_levels_compat([level], out_dir, rate, timestamps, x_wing_max, verbose)
         if not res:
             break
         r = res[0]
@@ -449,13 +454,13 @@ def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6):
     else:
         print("No new levels found to solve.")
 
-def run_range_mode(first, last, out_dir, rate, timestamps=False, x_wing_max=6):
+def run_range_mode(first, last, out_dir, rate, timestamps=False, x_wing_max=6, verbose=False):
     if first > last:
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
     levels = list(range(first, last + 1))
     # Always process the requested levels, regardless of existing files
-    results = _process_levels_compat(levels, out_dir, rate, timestamps, x_wing_max)
+    results = _process_levels_compat(levels, out_dir, rate, timestamps, x_wing_max, verbose)
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
         _write_index_html(results, out_dir)
@@ -468,11 +473,11 @@ def main():
     out_dir = Path("all_solutions")
     out_dir.mkdir(exist_ok=True)
     if args.first is None and args.last is None:
-        run_auto_mode(out_dir, args.rate, args.timestamps, args.x_wing_max)
+        run_auto_mode(out_dir, args.rate, args.timestamps, args.x_wing_max, args.verbose)
     else:
         first = args.first
         last = args.last
-        run_range_mode(first, last, out_dir, args.rate, args.timestamps, args.x_wing_max)
+        run_range_mode(first, last, out_dir, args.rate, args.timestamps, args.x_wing_max, args.verbose)
 
 if __name__ == "__main__":
     main()

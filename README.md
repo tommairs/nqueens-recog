@@ -66,8 +66,8 @@ nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise
 nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise --x-wing-max 4
 ```
 
-When `--verbose` is enabled, large X-Wing scans print progress lines such as
-`x-wing scan: checking size 6 (...)` and `x-wing scan: size 6 no hit ...`.
+Large X-Wing scans print progress lines such as
+`x-wing scan: size 6 → 0 hit(s) after 7 group(s)`.
 
 Ten rules are applied in order of increasing cost:
 
@@ -76,7 +76,7 @@ Ten rules are applied in order of increasing cost:
 3. **Squeeze** — a row/col's candidates span ≤ 2 cells, so the queen always diagonally attacks the overlap zone in adjacent rows/cols.
 4. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
 5. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
-6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); claim all those lines.
+6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); scan all candidates, collapse equivalent larger hits to the smallest equivalent structure, apply one selected hit, then return to other rules.
 7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
 8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
 9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
@@ -115,11 +115,11 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
    - If both $|R| \geq 2$ and $|C| \geq 2$, all $|R| \times |C|$ intersections (crossing-points) are also eliminated for all $k$ colours.
    - If either $|R|=1$ or $|C|=1$, only line elimination applies—no crossing-points are eliminated.
 
-
-
 ## Batch stepwise solver
 
 This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any browser regardless of font. Also an index.html is created/updated as an easy way to view the solutions in a browser.
+
+Each level is solved once. The generated trace is captured and converted to HTML via `aha` (no second solver run). In batch mode, `--verbose` mirrors that same trace to stdout as it is produced.
 
 **Run the batch stepwise solver from the project root:**
 
@@ -136,7 +136,6 @@ python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 python chk_stepwise.py --first 578 --last 642 --x-wing-max 4
 ```
 
-
 **Arguments:**
 
 - `--first N`   — First level number (inclusive). Must be used with `--last`.
@@ -144,6 +143,7 @@ python chk_stepwise.py --first 578 --last 642 --x-wing-max 4
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 - `--timestamps` — Pass through to stepwise runs so generated traces are prefixed with elapsed time.
 - `--x-wing-max N` — Pass through to stepwise X-Wing scanning cap (default: 6). Larger values can increase runtimes significantly.
+- `--verbose` — Mirror the live stepwise trace to stdout during batch processing (HTML is still written from the captured trace).
 
 > \[!WARNING]
 > Previous `--workers` option removed, as there are [weird Python multiprocessing bugs](https://sqlpey.com/python/solved-how-to-overcome-python-multiprocessing-crashes-on-macos/) with MacOS.

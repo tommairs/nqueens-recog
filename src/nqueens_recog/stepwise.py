@@ -47,7 +47,6 @@ Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-qu
 The trace uses plain text so it can be piped or saved alongside the solutions produced by ``--solve``.
 """
 
-import math
 import time
 from itertools import combinations
 from .solver import is_diagonally_adjacent
@@ -510,9 +509,13 @@ def solve_stepwise(
         if max_c < 2:
             return False
 
+        hits: list[dict[str, object]] = []
+        seen_hits: set[tuple[frozenset[str], frozenset[int], frozenset[int]]] = set()
         out(f"  x-wing scan from size {max_c} down to 2...")
+        flush_trace()
         for c in range(max_c, 1, -1):
             scan_count = 0
+            hits_this_size = 0
             for group in combinations(unsolved, c):
                 scan_count += 1
                 cell_set: set[tuple[int, int]] = set()
@@ -535,18 +538,22 @@ def solve_stepwise(
                         )
                         if len(needed_cols) != b:
                             continue
-                        # X-Wing confirmed — eliminate non-group from R and C
-                        count = 0
+                        rows_frozen = frozenset(row_subset)
+                        hit_key = (frozenset(group_set), rows_frozen, needed_cols)
+                        if hit_key in seen_hits:
+                            continue
+                        seen_hits.add(hit_key)
+
+                        # X-Wing confirmed — build elimination set from R and C
+                        elim_cells: set[tuple[int, int]] = set()
                         for r2 in row_subset:
                             for cc in range(n):
                                 if board[r2][cc] not in group_set and candidates[r2][cc]:
-                                    eliminate(r2, cc, trace=False)
-                                    count += 1
+                                    elim_cells.add((r2, cc))
                         for cc in needed_cols:
                             for r2 in range(n):
                                 if board[r2][cc] not in group_set and candidates[r2][cc]:
-                                    eliminate(r2, cc, trace=False)
-                                    count += 1
+                                    elim_cells.add((r2, cc))
                         # Group candidates at corner intersections (row_subset ∩ needed_cols)
                         # are also invalid: the b queens outside row_subset must each claim
                         # one of the b cols in needed_cols, exhausting all of them, so the
@@ -554,20 +561,117 @@ def solve_stepwise(
                         for r2 in row_subset:
                             for cc in needed_cols:
                                 if board[r2][cc] in group_set and candidates[r2][cc]:
-                                    eliminate(r2, cc, trace=False)
-                                    count += 1
-                        if count:
-                            rows_str = ",".join(str(r2) for r2 in sorted(row_subset))
-                            cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
-                            out(
-                                f"  x-wing: size {c} {label} confined to"
-                                f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}"
-                                f" → {count} cell(s) eliminated"
-                            )
-                            return True
-            if verbose:
-                out(f"    x-wing scan: size {c} → ✗ no hit after {scan_count} group(s)")
-        return False
+                                    elim_cells.add((r2, cc))
+
+                        if not elim_cells:
+                            continue
+
+                        hits.append(
+                            {
+                                "size": c,
+                                "group": frozenset(group_set),
+                                "label": label,
+                                "rows": rows_frozen,
+                                "cols": needed_cols,
+                                "elim_cells": elim_cells,
+                                "collapse_to": None,
+                                "collapse_via": None,
+                            }
+                        )
+                        hits_this_size += 1
+            out(
+                f"    x-wing scan: size {c} → {hits_this_size} hit(s)"
+                f" after {scan_count} group(s)"
+            )
+            flush_trace()
+
+        if not hits:
+            return False
+
+        # Compare high-size hits against lower-size hits discovered later.
+        # A larger candidate is considered "collapsed" only when a smaller
+        # candidate yields an identical elimination set.
+        for hi in hits:
+            hi_size = int(hi["size"])
+            hi_group = hi["group"]
+            hi_rows = hi["rows"]
+            hi_cols = hi["cols"]
+            hi_elims = set(hi["elim_cells"])
+            best_to: int | None = None
+            best_via: str | None = None
+            for low in hits:
+                low_size = int(low["size"])
+                if low_size >= hi_size:
+                    continue
+                if not low["group"].issubset(hi_group):
+                    continue
+                if not low["rows"].issubset(hi_rows):
+                    continue
+                if not low["cols"].issubset(hi_cols):
+                    continue
+                if set(low["elim_cells"]) != hi_elims:
+                    continue
+                if best_to is None or low_size < best_to:
+                    best_to = low_size
+                    best_via = str(low["label"])
+            if best_to is not None:
+                hi["collapse_to"] = best_to
+                hi["collapse_via"] = best_via
+
+        def smallest_equivalent(hit: dict[str, object]) -> dict[str, object]:
+            """Return the smallest-size equivalent hit (same elimination set)."""
+            hi_size = int(hit["size"])
+            hi_group = hit["group"]
+            hi_rows = hit["rows"]
+            hi_cols = hit["cols"]
+            hi_elims = set(hit["elim_cells"])
+            best: dict[str, object] = hit
+            for low in hits:
+                low_size = int(low["size"])
+                if low_size >= hi_size:
+                    continue
+                if not low["group"].issubset(hi_group):
+                    continue
+                if not low["rows"].issubset(hi_rows):
+                    continue
+                if not low["cols"].issubset(hi_cols):
+                    continue
+                if set(low["elim_cells"]) != hi_elims:
+                    continue
+                if low_size < int(best["size"]):
+                    best = low
+            return best
+
+        # Apply only one x-wing per pass to avoid flooding with trivial variants.
+        # Start from the largest candidate found this pass, but collapse it to the
+        # smallest equivalent structure when available.
+        origin = max(
+            hits,
+            key=lambda h: (int(h["size"]), len(h["elim_cells"])),
+        )
+        chosen = smallest_equivalent(origin)
+
+        pending = set(chosen["elim_cells"])
+        if not pending:
+            return False
+        for r2, cc in pending:
+            eliminate(r2, cc, trace=False)
+
+        rows_str = ",".join(str(r2) for r2 in sorted(chosen["rows"]))
+        cols_str = ",".join(str(cc) for cc in sorted(chosen["cols"]))
+        collapse_note = ""
+        if int(origin["size"]) != int(chosen["size"]):
+            collapse_note = (
+                f" (selected from size {origin['size']} candidate"
+                f" {origin['label']})"
+            )
+        out(
+            f"  x-wing: size {chosen['size']} {chosen['label']} confined to"
+            f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}{collapse_note}"
+            f" → {len(pending)} cell(s) eliminated"
+        )
+
+        return True
 
     # ------------------------------------------------------------------
     # Simulation helpers — shared by rules 5–8
