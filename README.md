@@ -133,6 +133,7 @@ python chk_stepwise.py --timestamps                # Include elapsed prefixes in
 # Range mode (specify both --first and --last):
 python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
 python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
+python chk_stepwise.py --first 578 --last 642 --x-wing-max 4
 ```
 
 
@@ -142,6 +143,7 @@ python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 - `--last N`    — Last level number (inclusive). Must be used with `--first`.
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 - `--timestamps` — Pass through to stepwise runs so generated traces are prefixed with elapsed time.
+- `--x-wing-max N` — Pass through to stepwise X-Wing scanning cap (default: 6). Larger values can increase runtimes significantly.
 
 > \[!WARNING]
 > Previous `--workers` option removed, as there are [weird Python multiprocessing bugs](https://sqlpey.com/python/solved-how-to-overcome-python-multiprocessing-crashes-on-macos/) with MacOS.

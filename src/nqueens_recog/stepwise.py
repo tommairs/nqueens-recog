@@ -81,20 +81,20 @@ def solve_stepwise(
     def out(msg: str) -> None:
         if quiet:
             return
-        pending_trace.extend(msg.splitlines() or [msg])
+        lines = msg.splitlines() or [msg]
+        if timestamps:
+            prefix = f"{time.monotonic() - t0:.1f}s: "
+            for line in lines:
+                pending_trace.append(prefix + line if line else line)
+        else:
+            pending_trace.extend(lines)
 
     def flush_trace() -> None:
         if quiet or not pending_trace:
             pending_trace.clear()
             return
-        prefix = ""
-        if timestamps:
-            prefix = f"{time.monotonic() - t0:.1f}s: "
         for line in pending_trace:
-            if line and prefix:
-                print(prefix + line)
-            else:
-                print(line)
+            print(line)
         pending_trace.clear()
 
     # Snapshot of candidates at the last show_board call, used to highlight new eliminations.
@@ -509,15 +509,10 @@ def solve_stepwise(
         max_c = min(len(unsolved), n - 1, x_wing_max)
         if max_c < 2:
             return False
-        large_scan_threshold = max(5, n // 2 + 1)
 
+        out(f"  x-wing scan from size {max_c} down to 2...")
         for c in range(max_c, 1, -1):
             scan_count = 0
-            if verbose: #and c >= large_scan_threshold:
-                out(
-                    f"  x-wing scan: checking size {c}"
-                    f" ({math.comb(len(unsolved), c)} group(s))"
-                )
             for group in combinations(unsolved, c):
                 scan_count += 1
                 cell_set: set[tuple[int, int]] = set()
@@ -570,11 +565,8 @@ def solve_stepwise(
                                 f" → {count} cell(s) eliminated"
                             )
                             return True
-            if verbose and c >= large_scan_threshold:
-                out(
-                    f"  x-wing scan: size {c} no hit"
-                    f" after {scan_count} group(s)"
-                )
+            if verbose:
+                out(f"    x-wing scan: size {c} → ✗ no hit after {scan_count} group(s)")
         return False
 
     # ------------------------------------------------------------------

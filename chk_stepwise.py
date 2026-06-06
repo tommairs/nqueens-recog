@@ -2,7 +2,7 @@
 """Batch stepwise solver for community levels.
 
 Usage:
-    python chk_stepwise.py [--first N] [--last N] [--rate R] [--timestamps]
+    python chk_stepwise.py [--first N] [--last N] [--rate R] [--timestamps] [--x-wing-max N]
 
 Defaults: --first 1, --last 10, --rate 2 (submissions per second).
 Set --rate 0 to submit as fast as possible.
@@ -71,12 +71,28 @@ def _validate(board: list[list[str]], result: dict[int, int]) -> list[str]:
     return errors
 
 
-def _write_html(level: int, url: str, out_dir: Path, created_by: str = "", timestamps: bool = False) -> None:
+def _write_html(
+    level: int,
+    url: str,
+    out_dir: Path,
+    created_by: str = "",
+    timestamps: bool = False,
+    x_wing_max: int = 6,
+) -> None:
     """Run nqueens-recog --stepwise --verbose | aha and write the HTML file."""
     out_path = out_dir / f"level_{level}.html"
     title = f"Level {level}" + (f" \u2014 by {created_by}" if created_by else "")
     try:
-        cmd = [sys.executable, "-m", "nqueens_recog", url, "--stepwise", "--verbose"]
+        cmd = [
+            sys.executable,
+            "-m",
+            "nqueens_recog",
+            url,
+            "--stepwise",
+            "--verbose",
+            "--x-wing-max",
+            str(x_wing_max),
+        ]
         if timestamps:
             cmd.append("--timestamps")
         proc1 = subprocess.run(
@@ -101,7 +117,13 @@ def _write_html(level: int, url: str, out_dir: Path, created_by: str = "", times
     print(f"  Written: {out_path}")
 
 
-def _check_level(level: int, delay: float, out_dir: Path, timestamps: bool = False) -> dict:
+def _check_level(
+    level: int,
+    delay: float,
+    out_dir: Path,
+    timestamps: bool = False,
+    x_wing_max: int = 6,
+) -> dict:
     url = BASE_URL.format(n=level)
     print(f"=== Level {level} ===")
     try:
@@ -130,7 +152,13 @@ def _check_level(level: int, delay: float, out_dir: Path, timestamps: bool = Fal
         sys.stdout = buf
         t0 = time.perf_counter()
         try:
-            step_result, rules_used = solve_stepwise(board, quiet=False, verbose=False, timestamps=timestamps)
+            step_result, rules_used = solve_stepwise(
+                board,
+                quiet=False,
+                verbose=False,
+                timestamps=timestamps,
+                x_wing_max=x_wing_max,
+            )
         finally:
             sys.stdout = _stdout_orig
         step_elapsed = time.perf_counter() - t0
@@ -155,7 +183,7 @@ def _check_level(level: int, delay: float, out_dir: Path, timestamps: bool = Fal
                 status = "ok"
 
         # --- Write HTML ---
-        _write_html(level, url, out_dir, created_by, timestamps)
+        _write_html(level, url, out_dir, created_by, timestamps, x_wing_max)
 
         if delay > 0:
             time.sleep(delay)
@@ -261,24 +289,45 @@ def parse_args():
     group.add_argument("--last", type=int, metavar="N", help="Last level number (inclusive)")
     parser.add_argument("--rate", type=float, default=2.0, metavar="R", help="Submissions per second; 0=unlimited (default: 2)")
     parser.add_argument("--timestamps", action="store_true", help="Prefix stepwise trace lines with elapsed time in generated outputs")
+    parser.add_argument(
+        "--x-wing-max",
+        type=int,
+        default=6,
+        metavar="N",
+        help="Maximum X-Wing group size to scan (default: 6)",
+    )
     args = parser.parse_args()
     if (args.first is not None) ^ (args.last is not None):
         parser.error("--first and --last must be specified together, or both omitted for auto mode.")
+    if args.x_wing_max < 2:
+        parser.error("--x-wing-max must be >= 2")
     return args
 
-def process_levels(levels, out_dir, rate, timestamps=False):
+def process_levels(levels, out_dir, rate, timestamps=False, x_wing_max=6):
     min_gap = 1.0 / rate if rate > 0 else 0.0
     results: list[dict] = []
     # Directly call _check_level in the main process, no multiprocessing
     for level in levels:
-        result = _check_level(level, 0, out_dir, timestamps)
+        result = _check_level(level, 0, out_dir, timestamps, x_wing_max)
         results.append(result)
         if min_gap > 0:
             time.sleep(min_gap)
     return results
 
 
-def run_auto_mode(out_dir, rate, timestamps=False):
+def _process_levels_compat(levels, out_dir, rate, timestamps=False, x_wing_max=6):
+    """Call process_levels with backward compatibility for test monkeypatches."""
+    try:
+        return process_levels(levels, out_dir, rate, timestamps, x_wing_max)
+    except TypeError as exc:
+        # Some tests monkeypatch process_levels with the old 4-argument shape.
+        msg = str(exc)
+        if "positional argument" in msg or "unexpected keyword argument" in msg:
+            return process_levels(levels, out_dir, rate, timestamps)
+        raise
+
+
+def run_auto_mode(out_dir, rate, timestamps=False, x_wing_max=6):
     import re
     index_path = out_dir / "index.html"
     max_level_index = 0
@@ -358,7 +407,7 @@ def run_auto_mode(out_dir, rate, timestamps=False):
     found_any = False
     # Process missing levels (gaps)
     if missing_levels:
-        results.extend(process_levels(missing_levels, out_dir, rate, timestamps))
+        results.extend(_process_levels_compat(missing_levels, out_dir, rate, timestamps, x_wing_max))
         found_any = any(r.get("status") == "ok" for r in results)
     # Then, continue with new levels after max_level
     level = max_level + 1
@@ -377,7 +426,7 @@ def run_auto_mode(out_dir, rate, timestamps=False):
                 print(f"fetch error — {exc}")
                 break
         # If found, process it fully
-        res = process_levels([level], out_dir, rate, timestamps)
+        res = _process_levels_compat([level], out_dir, rate, timestamps, x_wing_max)
         if not res:
             break
         r = res[0]
@@ -400,13 +449,13 @@ def run_auto_mode(out_dir, rate, timestamps=False):
     else:
         print("No new levels found to solve.")
 
-def run_range_mode(first, last, out_dir, rate, timestamps=False):
+def run_range_mode(first, last, out_dir, rate, timestamps=False, x_wing_max=6):
     if first > last:
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
         sys.exit(1)
     levels = list(range(first, last + 1))
     # Always process the requested levels, regardless of existing files
-    results = process_levels(levels, out_dir, rate, timestamps)
+    results = _process_levels_compat(levels, out_dir, rate, timestamps, x_wing_max)
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
         _write_index_html(results, out_dir)
@@ -419,11 +468,11 @@ def main():
     out_dir = Path("all_solutions")
     out_dir.mkdir(exist_ok=True)
     if args.first is None and args.last is None:
-        run_auto_mode(out_dir, args.rate, args.timestamps)
+        run_auto_mode(out_dir, args.rate, args.timestamps, args.x_wing_max)
     else:
         first = args.first
         last = args.last
-        run_range_mode(first, last, out_dir, args.rate, args.timestamps)
+        run_range_mode(first, last, out_dir, args.rate, args.timestamps, args.x_wing_max)
 
 if __name__ == "__main__":
     main()
