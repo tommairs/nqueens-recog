@@ -106,10 +106,6 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 | ≥4 | 1 or k–1 | k–1 or 1 | 1 row, k–1 cols (or vice versa) | Only non-colours eliminated from lines | Larger shapes, no crossing-point elimination |
 
 **Generalisation for $k \geq 4$:**
-
-> \[!NOTE]
-> Up to puzzle 707 there are none with k>4, and finding them seems difficult. This is merely a theoretical capability.
-
 - If $k$ colours are confined to $|R|$ rows and $|C|$ columns with $|R| + |C| = k$:
    - All those rows and columns are claimed for those colours (eliminate other colours from those lines).
    - If both $|R| \geq 2$ and $|C| \geq 2$, all $|R| \times |C|$ intersections (crossing-points) are also eliminated for all $k$ colours.
