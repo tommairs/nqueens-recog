@@ -113,7 +113,7 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 
 #### Large X-wings
 
-Some large X-wings have been found experimentally. Often these pick up extra singleton rows or columns, which do not feature in the crosswise elimination. I've counted their true (or "collapsed") size separately; level 641 is an example.
+Some large X-wings have been found experimentally. Often these pick up extra singleton rows or columns, so they are equivalent to a smaller-sized X-wing. I've counted their true (or "collapsed") size separately; level 641 is an example.
 |Level|"True" size|Rule|
 |-|-|-|
 |587|9|x-wing: size 9 {A,B,C,D,E,F,H,I,J} confined to rows {0,4,5,6,10} ∪ cols {0,4,6,10} → 19 cell(s) eliminated|
