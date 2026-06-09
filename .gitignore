@@ -27,3 +27,7 @@ notebooks/.ipynb_checkpoints/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Deeper X-wing explorations
+reruns/**
+*.zip
