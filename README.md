@@ -115,6 +115,17 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
    - If both $|R| \geq 2$ and $|C| \geq 2$, all $|R| \times |C|$ intersections (crossing-points) are also eliminated for all $k$ colours.
    - If either $|R|=1$ or $|C|=1$, only line elimination applies—no crossing-points are eliminated.
 
+#### Large X-wings
+
+Some large X-wings have been found experimentally. Often these pick up extra singleton rows or columns, which do not feature in the crosswise elimination. I've counted their true (or "collapsed") size separately; level 641 is an example.
+|Level|"True" size|Rule|
+|-|-|-|
+|587|9|x-wing: size 9 {A,B,C,D,E,F,H,I,J} confined to rows {0,4,5,6,10} ∪ cols {0,4,6,10} → 19 cell(s) eliminated|
+|641|9|x-wing: size 9 {A,B,C,D,E,I,J,K,Q} confined to rows {0,1,8,16,17} ∪ cols {0,1,16,17} (selected from size 12 candidate {A,B,C,D,E,I,J,K,M,N,Q,R}) → 44 cell(s) eliminated|
+|674|9|x-wing: size 9 {B,C,D,E,F,G,H,I,J} confined to rows {0,2,7,10} ∪ cols {0,2,4,7,10} → 22 cell(s) eliminated|
+
+There are many levels with size 8 X-wings. At time of writing: 273, 538, 583, 589, 600, 601, 623, 636, 647, 674.
+
 ## Batch stepwise solver
 
 This script looks for any unsolved community levels, printing solution output as HTML. The HTML uses fixed-width coloured cells so the board renders cleanly in any browser regardless of font. Also an index.html is created/updated as an easy way to view the solutions in a browser.
