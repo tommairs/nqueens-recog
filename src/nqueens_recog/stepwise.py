@@ -54,7 +54,8 @@ from .solver import is_diagonally_adjacent
 
 def solve_stepwise(
     board: list[list[str]], quiet: bool = False, verbose: bool = False,
-    timestamps: bool = False, x_wing_max: int = 6
+    timestamps: bool = False, x_wing_max: int = 6,
+    lookahead_max_cands: int | None = None,
 ) -> dict[int, int] | None:
     """Apply elimination rules to *board*, printing a trace of each step.
 
@@ -961,7 +962,11 @@ def solve_stepwise(
         left untouched.
         """
         unsolved = [col for col in colours if not colour_is_solved(col)]
+        changed = False
+        multi_colour_mode = lookahead_max_cands is not None
         for colour in sorted(unsolved, key=lambda col: len(active_for_colour(col))):
+            if lookahead_max_cands is not None and len(active_for_colour(colour)) > lookahead_max_cands:
+                continue
             attempts: list[tuple[int, int, list[str], bool, list[str]]] = []
             for r, c in active_for_colour(colour):
                 sc = [row[:] for row in candidates]
@@ -1014,9 +1019,14 @@ def solve_stepwise(
                     verdict = "✗ eliminated" if acontra else "ok"
                     lines.append(f"    try ({ar},{ac}){ch} → {verdict}")
                     lines.extend(abt)
-                out(f"  lookahead [{colour}]:\n" + "\n".join(lines))
-                return True
-        return False
+                out(
+                    f"  lookahead [{colour}] ({len(attempts)} candidates):\n"
+                    + "\n".join(lines)
+                )
+                changed = True
+                if not multi_colour_mode:
+                    return True
+        return changed
 
     # ------------------------------------------------------------------
     # Rule — Search

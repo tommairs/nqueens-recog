@@ -66,6 +66,15 @@ nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise
 nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise --x-wing-max 4
 ```
 
+Add `--lookahead-max-cands N` to limit lookahead to colours with at most `N`
+active candidates. When set, lookahead processes all eligible colours in the
+same pass (instead of stopping after the first contradictory colour).
+
+```bash
+# Only run lookahead for colours with <= 5 active candidates
+nqueens-recog https://queensgame.vercel.app/community-level/734 --stepwise --lookahead-max-cands 5
+```
+
 X-Wing scans ascending from size 2 up to the cap, printing a progress line per size, e.g.:
 ```
 x-wing scan from size 2 up to 6...
@@ -85,7 +94,7 @@ Ten rules are applied in order of increasing cost:
 6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); scan sizes 2 upward, apply the first valid hit found, then return to other rules.
 7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
 8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
-9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
+9. **Lookahead** — trial-place a queen in every candidate of a colour; by default stop after the first contradictory colour. With `--lookahead-max-cands N`, consider all colours with ≤ N candidates in the same pass.
 10. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
 
 ### What is X-Wing?
@@ -150,6 +159,7 @@ python chk_stepwise.py --timestamps                # Include elapsed prefixes in
 python chk_stepwise.py --first 1 --last 100             # Levels 1–100, rate 2/s
 python chk_stepwise.py --first 578 --last 642 --rate 0  # Unlimited rate
 python chk_stepwise.py --first 578 --last 642 --x-wing-max 4
+python chk_stepwise.py --first 734 --last 734 --lookahead-max-cands 5
 ```
 
 **Arguments:**
@@ -159,6 +169,7 @@ python chk_stepwise.py --first 578 --last 642 --x-wing-max 4
 - `--rate R`    — Submissions per second; 0 = unlimited (default: 2).
 - `--timestamps` — Pass through to stepwise runs so generated traces are prefixed with elapsed time.
 - `--x-wing-max N` — Pass through to stepwise X-Wing scanning cap (default: 6). Larger values can increase runtimes significantly.
+- `--lookahead-max-cands N` — Pass through to stepwise lookahead candidate cap. When set, lookahead considers all eligible colours (≤ N candidates) in one pass.
 - `--verbose` — Mirror the live stepwise trace to stdout during batch processing (HTML is still written from the captured trace).
 
 > \[!WARNING]
@@ -219,7 +230,7 @@ src/nqueens_recog/
    display.py       # ANSI terminal board renderer (letter view and queen view)
    url_reader.py    # community-level URL → letter grid (fetches GitHub TS source)
    solver.py        # backtracking solver; prints spoiler line + coloured board
-   __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]] [--stepwise [--timestamps] [--x-wing-max N]]
+   __main__.py      # entry point: nqueens-recog <url_or_image> [--solve [-v]] [--stepwise [--timestamps] [--x-wing-max N] [--lookahead-max-cands N]]
 img/
    puzzle-*.png     # sample puzzle images (test fixtures)
 tests/

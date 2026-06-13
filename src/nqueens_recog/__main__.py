@@ -43,9 +43,22 @@ def main() -> None:
         default=6,
         help="Maximum X-Wing group size to scan (default: 6).",
     )
+    parser.add_argument(
+        "--lookahead-max-cands",
+        type=int,
+        default=None,
+        metavar="N",
+        help=(
+            "If set, lookahead only evaluates colours with at most N active "
+            "candidates and applies all such lookahead eliminations in one pass."
+        ),
+    )
     args = parser.parse_args()
     if args.x_wing_max < 2:
         print("Error: --x-wing-max must be >= 2", file=sys.stderr)
+        sys.exit(1)
+    if args.lookahead_max_cands is not None and args.lookahead_max_cands < 1:
+        print("Error: --lookahead-max-cands must be >= 1", file=sys.stderr)
         sys.exit(1)
 
     if is_community_level_url(args.input):
@@ -90,6 +103,7 @@ def main() -> None:
             verbose=args.verbose,
             timestamps=args.timestamps,
             x_wing_max=args.x_wing_max,
+            lookahead_max_cands=args.lookahead_max_cands,
         )
 
 
