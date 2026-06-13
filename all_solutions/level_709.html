@@ -118,15 +118,25 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#f56d43;">  I </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  ✖ </span>
 <span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;"> 👑 </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 
-0.0s:   x-wing scan from size 6 down to 2...
-0.0s:     x-wing scan: size 6 → 0 hit(s) after 1 group(s)
-0.0s:     x-wing scan: size 5 → 0 hit(s) after 6 group(s)
-0.0s:     x-wing scan: size 4 → 0 hit(s) after 15 group(s)
-0.0s:     x-wing scan: size 3 → 0 hit(s) after 20 group(s)
+0.0s:   x-wing scan from size 2 up to 6...
 0.0s:     x-wing scan: size 2 → 0 hit(s) after 15 group(s)
+0.0s:     x-wing scan: size 3 → 0 hit(s) after 20 group(s)
+0.0s:     x-wing scan: size 4 → 0 hit(s) after 15 group(s)
+0.0s:     x-wing scan: size 5 → 0 hit(s) after 6 group(s)
+0.0s:     x-wing scan: size 6 → 0 hit(s) after 1 group(s)
 0.0s:   lookahead [A]:
-0.0s:     try (6,3) → H(0,2), D(4,7), E(2,8), [I] empty → ✗ eliminated
+0.0s:     try (6,3) → ✗ eliminated
+0.0s:       try (0,2) [H]
+0.0s:         try (4,7) [D]
+0.0s:           try (2,8) [E] → G(7,0) → [I] empty ✗
+0.0s:           try (2,9) [E] → I(8,0) → [G] empty ✗
+0.0s:         ✗ (4,7)
+0.0s:         try (7,7) [D] → G(2,0), I(4,9) → [E] empty ✗
+0.0s:         try (7,8) [D] → G(2,0), I(4,9) → [E] empty ✗
+0.0s:       ✗ (0,2)
+0.0s:       try (2,2) [H] → I(8,0) → col 9 empty ✗
 0.0s:     try (7,3) → ok
+0.0s:       try (4,7) [D] → I(8,0), E(2,9), G(6,8), H(0,2)
 <span style="background-color:#e6f598;">  G </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#f56d43;">  I </span>
 <span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#3287bd;"> 👑 </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span>
@@ -162,12 +172,10 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#f56d43;">  I </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  ✖ </span>
 <span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;"> 👑 </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 
-0.0s:   x-wing scan from size 5 down to 2...
-0.0s:     x-wing scan: size 5 → 0 hit(s) after 1 group(s)
-0.0s:     x-wing scan: size 4 → 1 hit(s) after 5 group(s)
-0.0s:     x-wing scan: size 3 → 1 hit(s) after 10 group(s)
+0.0s:   x-wing scan from size 2 up to 5...
 0.0s:     x-wing scan: size 2 → 0 hit(s) after 10 group(s)
-0.0s:   x-wing: size 3 {E,G,H} confined to rows {0,2} ∪ cols {8} (selected from size 4 candidate {D,E,G,H}) → 3 cell(s) eliminated
+0.0s:     x-wing scan: size 3 → 1 hit after 7 group(s)
+0.0s:   x-wing: size 3 {E,G,H} confined to rows {0,2} ∪ cols {8} → 3 cell(s) eliminated
 <span style="background-color:#e6f598;">  G </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#f56d43;"> ❌ </span>
 <span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#8e8875;">  ✖ </span><span style="background-color:#3287bd;"> 👑 </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#e6f598;">  G </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#6c7a89;">  E </span>
@@ -191,11 +199,11 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#f56d43;">  I </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  ✖ </span>
 <span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;"> 👑 </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 
-0.0s:   x-wing scan from size 5 down to 2...
-0.0s:     x-wing scan: size 5 → 0 hit(s) after 1 group(s)
-0.0s:     x-wing scan: size 4 → 0 hit(s) after 5 group(s)
-0.0s:     x-wing scan: size 3 → 0 hit(s) after 10 group(s)
+0.0s:   x-wing scan from size 2 up to 5...
 0.0s:     x-wing scan: size 2 → 0 hit(s) after 10 group(s)
+0.0s:     x-wing scan: size 3 → 0 hit(s) after 10 group(s)
+0.0s:     x-wing scan: size 4 → 0 hit(s) after 5 group(s)
+0.0s:     x-wing scan: size 5 → 0 hit(s) after 1 group(s)
 0.0s:   lookahead [D]:
 0.0s:     try (4,7) → E(2,9), H(0,2), I(8,0), G(6,8) → ok
 0.0s:     try (6,7) → I(8,0), H(0,2), E(2,9), [G] empty → ✗ eliminated

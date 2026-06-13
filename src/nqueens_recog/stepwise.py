@@ -499,6 +499,14 @@ def solve_stepwise(
         """
         unsolved = [col for col in colours if not colour_is_solved(col)]
         cands_by = {col: active_for_colour(col) for col in unsolved}
+        rows_by = {
+            col: frozenset(r for r, _ in cands)
+            for col, cands in cands_by.items()
+        }
+        cols_by = {
+            col: frozenset(c for _, c in cands)
+            for col, cands in cands_by.items()
+        }
         # Search group size c up to min(n-1, x_wing_max).  The "inversion" argument —
         # that a size-c x-wing implies the complement (size n-c) would fire
         # first — is unsound: the complement colours' candidates aren't yet
@@ -509,28 +517,39 @@ def solve_stepwise(
         if max_c < 2:
             return False
 
-        hits: list[dict[str, object]] = []
         seen_hits: set[tuple[frozenset[str], frozenset[int], frozenset[int]]] = set()
-        out(f"  x-wing scan from size {max_c} down to 2...")
+        out(f"  x-wing scan from size 2 up to {max_c}...")
         flush_trace()
-        for c in range(max_c, 1, -1):
+        for c in range(2, max_c + 1):
             scan_count = 0
-            hits_this_size = 0
             for group in combinations(unsolved, c):
                 scan_count += 1
+
+                # Cheap pre-screen: choose only feasible (a, b) split range from
+                # group row/col coverage before expensive cell-level checks.
+                group_rows: set[int] = set()
+                group_cols: set[int] = set()
+                for col in group:
+                    group_rows.update(rows_by[col])
+                    group_cols.update(cols_by[col])
+                if not group_rows:
+                    continue
+                a_min = max(1, c - len(group_cols))
+                a_max = min(c - 1, len(group_rows))
+                if a_min > a_max:
+                    continue
+
                 cell_set: set[tuple[int, int]] = set()
                 for col in group:
                     cell_set.update(cands_by[col])
                 if not cell_set:
                     continue
-                rows_used = sorted({r for r, _ in cell_set})
+                rows_used = sorted(group_rows)
                 group_set = set(group)
                 label = "{" + ",".join(sorted(group_set)) + "}"
 
-                for a in range(1, c):
+                for a in range(a_min, a_max + 1):
                     b = c - a
-                    if len(rows_used) < a:
-                        break  # fewer rows than needed; larger a won't help
                     for row_subset in combinations(rows_used, a):
                         row_set = set(row_subset)
                         needed_cols = frozenset(
@@ -565,113 +584,24 @@ def solve_stepwise(
 
                         if not elim_cells:
                             continue
+                        for r2, cc in elim_cells:
+                            eliminate(r2, cc, trace=False)
 
-                        hits.append(
-                            {
-                                "size": c,
-                                "group": frozenset(group_set),
-                                "label": label,
-                                "rows": rows_frozen,
-                                "cols": needed_cols,
-                                "elim_cells": elim_cells,
-                                "collapse_to": None,
-                                "collapse_via": None,
-                            }
+                        rows_str = ",".join(str(r2) for r2 in sorted(rows_frozen))
+                        cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
+                        out(
+                            f"    x-wing scan: size {c} → 1 hit after {scan_count} group(s)"
                         )
-                        hits_this_size += 1
-            out(
-                f"    x-wing scan: size {c} → {hits_this_size} hit(s)"
-                f" after {scan_count} group(s)"
-            )
+                        out(
+                            f"  x-wing: size {c} {label} confined to"
+                            f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}"
+                            f" → {len(elim_cells)} cell(s) eliminated"
+                        )
+                        return True
+            out(f"    x-wing scan: size {c} → 0 hit(s) after {scan_count} group(s)")
             flush_trace()
 
-        if not hits:
-            return False
-
-        # Compare high-size hits against lower-size hits discovered later.
-        # A larger candidate is considered "collapsed" only when a smaller
-        # candidate yields an identical elimination set.
-        for hi in hits:
-            hi_size = int(hi["size"])
-            hi_group = hi["group"]
-            hi_rows = hi["rows"]
-            hi_cols = hi["cols"]
-            hi_elims = set(hi["elim_cells"])
-            best_to: int | None = None
-            best_via: str | None = None
-            for low in hits:
-                low_size = int(low["size"])
-                if low_size >= hi_size:
-                    continue
-                if not low["group"].issubset(hi_group):
-                    continue
-                if not low["rows"].issubset(hi_rows):
-                    continue
-                if not low["cols"].issubset(hi_cols):
-                    continue
-                if set(low["elim_cells"]) != hi_elims:
-                    continue
-                if best_to is None or low_size < best_to:
-                    best_to = low_size
-                    best_via = str(low["label"])
-            if best_to is not None:
-                hi["collapse_to"] = best_to
-                hi["collapse_via"] = best_via
-
-        def smallest_equivalent(hit: dict[str, object]) -> dict[str, object]:
-            """Return the smallest-size equivalent hit (same elimination set)."""
-            hi_size = int(hit["size"])
-            hi_group = hit["group"]
-            hi_rows = hit["rows"]
-            hi_cols = hit["cols"]
-            hi_elims = set(hit["elim_cells"])
-            best: dict[str, object] = hit
-            for low in hits:
-                low_size = int(low["size"])
-                if low_size >= hi_size:
-                    continue
-                if not low["group"].issubset(hi_group):
-                    continue
-                if not low["rows"].issubset(hi_rows):
-                    continue
-                if not low["cols"].issubset(hi_cols):
-                    continue
-                if set(low["elim_cells"]) != hi_elims:
-                    continue
-                if low_size < int(best["size"]):
-                    best = low
-            return best
-
-        # Apply only one x-wing per pass to avoid flooding with trivial variants.
-        # Start from the largest candidate found this pass, but collapse it to the
-        # smallest equivalent structure when available.
-        origin = max(
-            hits,
-            key=lambda h: (int(h["size"]), len(h["elim_cells"])),
-        )
-        chosen = smallest_equivalent(origin)
-
-        pending = set(chosen["elim_cells"])
-        if not pending:
-            return False
-        for r2, cc in pending:
-            eliminate(r2, cc, trace=False)
-
-        rows_str = ",".join(str(r2) for r2 in sorted(chosen["rows"]))
-        cols_str = ",".join(str(cc) for cc in sorted(chosen["cols"]))
-        collapse_note = ""
-        if int(origin["size"]) != int(chosen["size"]):
-            collapse_note = (
-                f" (selected from size {origin['size']} candidate"
-                f" {origin['label']})"
-            )
-        out(
-            f"  x-wing: size {chosen['size']} {chosen['label']} confined to"
-            f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}{collapse_note}"
-            f" → {len(pending)} cell(s) eliminated"
-        )
-
-        return True
+        return False
 
     # ------------------------------------------------------------------
     # Simulation helpers — shared by rules 5–8
@@ -1032,7 +962,7 @@ def solve_stepwise(
         """
         unsolved = [col for col in colours if not colour_is_solved(col)]
         for colour in sorted(unsolved, key=lambda col: len(active_for_colour(col))):
-            attempts: list[tuple[int, int, list[str], bool]] = []
+            attempts: list[tuple[int, int, list[str], bool, list[str]]] = []
             for r, c in active_for_colour(colour):
                 sc = [row[:] for row in candidates]
                 sq = dict(queens)
@@ -1044,6 +974,7 @@ def solve_stepwise(
                     for r2 in sq  # insertion order = propagation order
                     if r2 not in sq_after_trial
                 ]
+                bt_lines: list[str] = []
                 if not prop_ok:
                     # Enrich the chain with why propagation failed
                     occ_cols = set(sq.values())
@@ -1063,20 +994,26 @@ def solve_stepwise(
                                     break
                     ok = False
                 else:
-                    witness = _solve_sim(sc, sq)  # full silent search from propagated state
-                    ok = witness is None
-                    if not ok and witness:
-                        deduced.extend(witness)
-                attempts.append((r, c, deduced, not ok))
-            contradictions = [(r, c) for r, c, _, contra in attempts if contra]
+                    if verbose:
+                        # Full backtrack trace so every dead-end branch is visible
+                        result_bt, bt_lines = _backtrack(sc, sq, depth=1)
+                        ok = result_bt is not None
+                    else:
+                        witness = _solve_sim(sc, sq)  # full silent search from propagated state
+                        ok = witness is None
+                        if not ok and witness:
+                            deduced.extend(witness)
+                attempts.append((r, c, deduced, not ok, bt_lines))
+            contradictions = [(r, c) for r, c, _, contra, _ in attempts if contra]
             if contradictions:
                 for r, c in contradictions:
                     eliminate(r, c, trace=False)
                 lines = []
-                for ar, ac, achain, acontra in attempts:
+                for ar, ac, achain, acontra, abt in attempts:
                     ch = " → " + ", ".join(achain) if achain else ""
                     verdict = "✗ eliminated" if acontra else "ok"
                     lines.append(f"    try ({ar},{ac}){ch} → {verdict}")
+                    lines.extend(abt)
                 out(f"  lookahead [{colour}]:\n" + "\n".join(lines))
                 return True
         return False

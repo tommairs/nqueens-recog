@@ -521,11 +521,11 @@ def test_stepwise_xwing_with_lookahead(capsys) -> None:
     assert "x-wing:" in out             # rule_x_wing fires
 
 
-def test_stepwise_345_single_xwing_per_pass(capsys) -> None:
-    """Community level 345 (7x7): apply one selected X-Wing per solver pass.
+def test_stepwise_345_first_xwing_per_pass(capsys) -> None:
+    """Community level 345 (7x7): apply the first X-Wing found each pass.
 
-    rule_x_wing may discover multiple candidates in a scan, but it should pick
-    one (largest-first, possibly collapsed) and then return to other rules.
+    rule_x_wing scans size 2..N and short-circuits on the first valid hit,
+    then returns so other rules can run before the next x-wing scan.
     Source: https://queensgame.vercel.app/community-level/345
     """
     board = [
@@ -542,11 +542,14 @@ def test_stepwise_345_single_xwing_per_pass(capsys) -> None:
     assert result[0] is not None
     _assert_matches_solver(board, result[0])
 
-    # Expect multiple x-wing firings across passes, but only selected winners.
+    # First-hit-per-pass: expect the earliest available hit at each scan.
+    l2 = "x-wing: size 2 {E,G} confined to rows {3} ∪ cols {2}"
+    l3 = "x-wing: size 3 {D,E,F} confined to rows {4,6} ∪ cols {3}"
+    l5 = "x-wing: size 5 {A,B,C,F,G} confined to rows {0,1} ∪ cols {0,1,6}"
+    for line in [l2, l3, l5]:
+        assert line in out
     assert out.count("x-wing:") >= 3
-    assert "x-wing: size 5 {A,D,E,F,G} confined to rows {4} ∪ cols {1,2,3,4}" in out
-    assert "x-wing: size 5 {B,C,D,E,F} confined to rows {6} ∪ cols {0,3,5,6}" in out
-    assert "x-wing: size 2 {E,G} confined to rows {3} ∪ cols {2}" in out
+    assert out.index(l2) < out.index(l3) < out.index(l5)
 
 
 @pytest.mark.slow
