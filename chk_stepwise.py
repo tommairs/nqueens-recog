@@ -17,6 +17,7 @@ Finally writes all_solutions/index.html with a summary table.
 """
 
 import argparse
+import re
 import subprocess
 import sys
 import time
@@ -129,14 +130,14 @@ def _check_level(
             board, solutions_count, created_by = read_community_level_info(url)
         except ValueError:
             print("  Skip: could not parse level source")
-            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "xwing_max": None, "rules": [], "created_by": ""}
         except RuntimeError as exc:
             msg = str(exc)
             if "404" in msg or "Not Found" in msg:
                 print("  Skip: level not found (404)")
             else:
                 print(f"  Skip: fetch error — {exc}")
-            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": ""}
+            return {"level": level, "status": "skipped", "size": None, "multi": False, "elapsed": None, "xwing_max": None, "rules": [], "created_by": ""}
 
         n = len(board)
         print(f"  Board: {n}×{n}, solutionsCount={solutions_count}, createdBy={created_by or '(unknown)'}")
@@ -165,6 +166,8 @@ def _check_level(
             sys.stdout = _stdout_orig
         trace = buf.getvalue()
         step_elapsed = time.perf_counter() - t0
+        xwing_sizes = [int(m.group(1)) for m in re.finditer(r"x-wing: size (\d+)", trace)]
+        max_xwing_size = max(xwing_sizes) if xwing_sizes else None
 
         # Compact rules_used to unique rule names in declaration order using stepwise.py logic
         rules = compact_rules_used(rules_used)
@@ -190,10 +193,19 @@ def _check_level(
         if delay > 0:
             time.sleep(delay)
 
-        return {"level": level, "status": status, "size": n, "multi": not unique, "elapsed": step_elapsed, "rules": rules, "created_by": created_by}
+        return {
+            "level": level,
+            "status": status,
+            "size": n,
+            "multi": not unique,
+            "elapsed": step_elapsed,
+            "xwing_max": max_xwing_size,
+            "rules": rules,
+            "created_by": created_by,
+        }
     except Exception as exc:
         print(f"[ERROR] Exception in _check_level for level {level}: {exc}")
-        return {"level": level, "status": "error", "size": None, "multi": False, "elapsed": None, "rules": [], "created_by": "", "error": str(exc)}
+        return {"level": level, "status": "error", "size": None, "multi": False, "elapsed": None, "xwing_max": None, "rules": [], "created_by": "", "error": str(exc)}
 
 
 def _write_index_html(results: list[dict], out_dir: Path) -> None:
@@ -210,13 +222,14 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         size_cell = str(size) if size is not None else ""
         multi = "Y" if r["multi"] else ""
         runtime = f"{r['elapsed']:.3f}s" if r["elapsed"] is not None else ""
+        xwing_cell = str(r.get("xwing_max")) if r.get("xwing_max") is not None else ""
         if r["status"] == "ok":
             rules_cell = ", ".join(r["rules"]) if r["rules"] else "(none)"
         else:
             rules_cell = f'<em>{r["status"]}</em>'
         rows.append(
             f"  <tr><td>{play_cell}</td><td>{level_cell}</td><td>{size_cell}</td><td>{multi}</td>"
-            f"<td>{r['created_by']}</td><td>{runtime}</td><td>{rules_cell}</td></tr>"
+            f"<td>{r['created_by']}</td><td>{runtime}</td><td>{xwing_cell}</td><td>{rules_cell}</td></tr>"
         )
     rows_html = "\n".join(rows)
     html = (
@@ -236,7 +249,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         " style=\"margin-bottom:8px;padding:4px 8px;font-size:14px;"
         "border:1px solid #ccc;border-radius:4px;width:300px\">\n"
         "<table>\n"
-        "<thead><tr><th>Play</th><th>Stepwise solution</th><th>Size</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Rules used</th></tr></thead>\n"
+        "<thead><tr><th>Play</th><th>Stepwise solution</th><th>Size</th><th>Multi</th><th>Created by</th><th>Runtime</th><th>Max X-Wing</th><th>Rules used</th></tr></thead>\n"
         "<tbody>\n"
         f"{rows_html}\n"
         "</tbody>\n</table>\n"
@@ -262,9 +275,9 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "    rows.sort(function(a,b){\n"
         "      var av=a.cells[col].textContent.trim();\n"
         "      var bv=b.cells[col].textContent.trim();\n"
-        "      if(col===1||col===2||col===5){\n"
-        "        var an=(col===2?parseInt(av,10):parseFloat(av))||0;\n"
-        "        var bn=(col===2?parseInt(bv,10):parseFloat(bv))||0;\n"
+        "      if(col===1||col===2||col===5||col===6){\n"
+        "        var an=(col===2||col===6?parseInt(av,10):parseFloat(av))||0;\n"
+        "        var bn=(col===2||col===6?parseInt(bv,10):parseFloat(bv))||0;\n"
         "        return sa?an-bn:bn-an;\n"
         "      }\n"
         "      return sa?av.localeCompare(bv):bv.localeCompare(av);\n"
@@ -378,7 +391,6 @@ def run_auto_mode(
     lookahead_max_cands=None,
     verbose=False,
 ):
-    import re
     index_path = out_dir / "index.html"
     max_level_index = 0
     min_level = None
@@ -404,7 +416,7 @@ def run_auto_mode(
             if row_lines and '</tr>' in line:
                 row_html = ''.join(row_lines)
                 cols = re.findall(r'<td>(.*?)</td>', row_html, re.DOTALL)
-                if len(cols) in (6, 7):
+                if len(cols) in (6, 7, 8):
                     m = re.search(r'>(\d+)<', cols[1]) or re.search(r'>(\d+)<', cols[1], re.IGNORECASE)
                     if not m:
                         try:
@@ -413,19 +425,31 @@ def run_auto_mode(
                             continue
                     else:
                         n = int(m.group(1))
-                    if len(cols) == 7:
+                    if len(cols) == 8:
                         size_match = re.search(r'(\d+)\s*(?:[xX×]\s*\1)?$', cols[2].strip())
                         size_val = int(size_match.group(1)) if size_match else None
                         multi_col = cols[3]
                         created_col = cols[4]
                         runtime_col = cols[5]
+                        xwing_col = cols[6]
+                        rules_col = cols[7]
+                    elif len(cols) == 7:
+                        size_match = re.search(r'(\d+)\s*(?:[xX×]\s*\1)?$', cols[2].strip())
+                        size_val = int(size_match.group(1)) if size_match else None
+                        multi_col = cols[3]
+                        created_col = cols[4]
+                        runtime_col = cols[5]
+                        xwing_col = ""
                         rules_col = cols[6]
                     else:
                         size_val = None
                         multi_col = cols[2]
                         created_col = cols[3]
                         runtime_col = cols[4]
+                        xwing_col = ""
                         rules_col = cols[5]
+                    xwing_match = re.search(r'(\d+)', xwing_col.strip())
+                    xwing_val = int(xwing_match.group(1)) if xwing_match else None
                     prev_results[n] = {
                         "level": n,
                         "status": "ok" if not rules_col.startswith('<em>') else unescape(rules_col[4:-5]),
@@ -433,6 +457,7 @@ def run_auto_mode(
                         "multi": multi_col.strip() == "Y",
                         "created_by": created_col,
                         "elapsed": float(runtime_col.replace('s','')) if runtime_col else None,
+                        "xwing_max": xwing_val,
                         "rules": [] if rules_col.startswith('<em>') else [r.strip() for r in rules_col.split(',')],
                     }
                     if n > max_level_index:
