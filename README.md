@@ -66,8 +66,14 @@ nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise
 nqueens-recog https://queensgame.vercel.app/community-level/705 --stepwise --x-wing-max 4
 ```
 
-Large X-Wing scans print progress lines such as
-`x-wing scan: size 6 → 0 hit(s) after 7 group(s)`.
+X-Wing scans ascending from size 2 up to the cap, printing a progress line per size, e.g.:
+```
+x-wing scan from size 2 up to 6...
+  x-wing scan: size 2 → 0 hit(s) after 28 group(s)
+  x-wing scan: size 3 → 0 hit(s) after 56 group(s)
+  x-wing scan: size 4 → 1 hit after 35 group(s)
+```
+The first valid hit found is applied immediately and the rule returns (no further scanning that pass).
 
 Ten rules are applied in order of increasing cost:
 
@@ -76,7 +82,7 @@ Ten rules are applied in order of increasing cost:
 3. **Squeeze** — a row/col's candidates span ≤ 2 cells, so the queen always diagonally attacks the overlap zone in adjacent rows/cols.
 4. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
 5. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
-6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); scan all candidates, collapse equivalent larger hits to the smallest equivalent structure, apply one selected hit, then return to other rules.
+6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); scan sizes 2 upward, apply the first valid hit found, then return to other rules.
 7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
 8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
 9. **Lookahead** — trial-place a queen in every candidate of small regions; remove contradictions.
@@ -114,6 +120,9 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 #### Large X-wings
 
 Some large X-wings have been found experimentally. Often these pick up extra singleton rows or columns, so they are equivalent to a smaller-sized X-wing. I've counted their true (or "collapsed") size separately; level 641 is an example.
+
+> **Note:** the `(selected from size N candidate …)` notation below was produced by an earlier experimental version of the solver that explicitly collapsed large hits to their smallest equivalent structure. The current solver scans ascending from size 2 and applies the first valid hit found, so this collapsed form would appear directly.
+
 |Level|"True" size|Rule|
 |-|-|-|
 |587|9|x-wing: size 9 {A,B,C,D,E,F,H,I,J} confined to rows {0,4,5,6,10} ∪ cols {0,4,6,10} → 19 cell(s) eliminated|
