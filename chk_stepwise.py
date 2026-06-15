@@ -21,6 +21,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from io import StringIO
 from pathlib import Path
 
@@ -208,8 +209,20 @@ def _check_level(
         return {"level": level, "status": "error", "size": None, "multi": False, "elapsed": None, "xwing_max": None, "rules": [], "created_by": "", "error": str(exc)}
 
 
-def _write_index_html(results: list[dict], out_dir: Path) -> None:
+def _write_index_html(results: list[dict], out_dir: Path, args=None) -> None:
     """Write a summary table of all processed levels to index.html."""
+    # Build command line string from args - show all arguments
+    cmd_parts = ["chk_stepwise.py"]
+    if args:
+        for key, value in sorted(vars(args).items()):
+            flag_name = f"--{key.replace('_', '-')}"
+            if isinstance(value, bool):
+                if value:
+                    cmd_parts.append(flag_name)
+            elif value is not None:
+                cmd_parts.append(f"{flag_name} {value}")
+    cmd_str = " ".join(cmd_parts)
+    
     rows = []
     for r in results:
         lvl = r["level"]
@@ -232,6 +245,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
             f"<td>{r['created_by']}</td><td>{runtime}</td><td>{xwing_cell}</td><td>{rules_cell}</td></tr>"
         )
     rows_html = "\n".join(rows)
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     html = (
         "<!DOCTYPE html>\n"
         "<html>\n<head>\n<meta charset=\"utf-8\">\n"
@@ -245,6 +259,7 @@ def _write_index_html(results: list[dict], out_dir: Path) -> None:
         "td:nth-child(6){text-align:right;font-variant-numeric:tabular-nums}\n"
         "</style>\n"
         "</head>\n<body>\n"
+        f"<p style=\"color:#666;font-size:12px;margin:0 0 8px 0\">Solutions Index built: {now} | Command: {cmd_str}</p>\n"
         "<input id=\"filter\" type=\"search\" placeholder=\"Filter\u2026\""
         " style=\"margin-bottom:8px;padding:4px 8px;font-size:14px;"
         "border:1px solid #ccc;border-radius:4px;width:300px\">\n"
@@ -390,6 +405,7 @@ def run_auto_mode(
     x_wing_max=6,
     lookahead_max_cands=None,
     verbose=False,
+    args=None,
 ):
     index_path = out_dir / "index.html"
     max_level_index = 0
@@ -538,7 +554,7 @@ def run_auto_mode(
             merged[n] = r
     merged_results = [merged[n] for n in sorted(merged)]
     if found_any or merged_results:
-        _write_index_html(merged_results, out_dir)
+        _write_index_html(merged_results, out_dir, args)
     else:
         print("No new levels found to solve.")
 
@@ -551,6 +567,7 @@ def run_range_mode(
     x_wing_max=6,
     lookahead_max_cands=None,
     verbose=False,
+    args=None,
 ):
     if first > last:
         p_stderr(f"Error: FIRST ({first}) > LAST ({last})")
@@ -568,7 +585,7 @@ def run_range_mode(
     )
     found_any = any(r.get("status") == "ok" for r in results)
     if found_any:
-        _write_index_html(results, out_dir)
+        _write_index_html(results, out_dir, args)
     else:
         print("No new levels found to solve.")
 
@@ -585,6 +602,7 @@ def main():
             args.x_wing_max,
             args.lookahead_max_cands,
             args.verbose,
+            args,
         )
     else:
         first = args.first
@@ -598,6 +616,7 @@ def main():
             args.x_wing_max,
             args.lookahead_max_cands,
             args.verbose,
+            args,
         )
 
 if __name__ == "__main__":

@@ -87,33 +87,27 @@ Grid: 7 × 7, 7 colours
 0.0s:           try (5,1) [C] → F(3,2)
 0.0s:     try (1,4) → E(3,5), F(2,1), B(4,3), [C] empty → ✗ eliminated
 0.0s:     try (1,5) → E(3,4), F(2,1), G(6,6), A(0,0), C(4,2), [B] empty → ✗ eliminated
-0.0s:   lookahead [B] (5 candidates):
-0.0s:     try (4,3) → C(5,1), D(1,2), E(3,5), G(6,6), A(0,0), [F] empty → ✗ eliminated
-0.0s:     try (4,4) → E(2,5), D(1,3) → ok
-0.0s:       try (0,0) [A] → G(6,6)
-0.0s:         try (5,1) [C] → F(3,2)
-0.0s:     try (4,5) → E(2,4), D(1,2), F(3,1), C(5,3) → ok
-0.0s:       try (0,0) [A] → G(6,6)
-0.0s:     try (5,4) → ok
-0.0s:       try (0,0) [A] → G(6,6)
-0.0s:         try (4,1) [C] → D(1,2), F(3,3), E(2,5)
-0.0s:     try (5,5) → G(0,6), A(6,0) → ok
-0.0s:       try (4,1) [C] → D(1,2), F(3,3) → [E] empty ✗
-0.0s:       try (4,2) [C] → D(1,3), E(3,4), F(2,1)
-0.0s:   lookahead [F] (5 candidates):
-0.0s:     try (2,1) → D(1,3) → ok
-0.0s:       try (0,0) [A] → G(6,6)
-0.0s:         try (4,2) [C] → B(5,4), E(3,5)
-0.0s:     try (2,3) → [D] empty → ✗ eliminated
-0.0s:     try (3,1) → ok
-0.0s:       try (0,0) [A] → G(6,6)
-0.0s:         try (4,4) [B] → C(5,2), D(1,3), E(2,5)
-0.0s:     try (3,2) → D(1,3), E(2,5), B(4,4), C(5,1), G(6,6), A(0,0) → ok
-0.0s:     try (3,3) → D(1,2), E(2,5), C(4,1), B(5,4) → ok
-0.0s:       try (0,0) [A] → G(6,6)
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#e6f598;">  G </span>
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span>
+
+0.0s:   squeeze: row 1 cols 2–3 → 1 cell(s) eliminated in adjacent rows
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#d53e4f;"> ❌ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#e6f598;">  G </span>
+
+0.0s:   n-group: cols {4,5} exclusive to {B,E} → 1 cell(s) eliminated
+<span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#e6f598;">  G </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span>
+<span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#d53e4f;">  ✖ </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#e6f598;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#fdae61;">  B </span><span style="background-color:#e6f598;">  ✖ </span>
