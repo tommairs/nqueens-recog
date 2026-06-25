@@ -32,14 +32,11 @@ Rule names are based upon (and extend) https://www.caterbum.com/blog/linkedin-qu
       claim every row in R and every column in C; eliminate other colours'
       candidates from those rows and columns.  The typical case is c=4,
       a=b=2 (two pairs of colours forming a cross pattern).
-  7. **Double-block** — tentatively place a queen at a candidate cell and
-      fast-forward forced eliminations; if two regions are then left with
-      all their remaining candidates on the *same* row or column (an
-      impossible collision) that cell is eliminated.
+  7. **Double-block** — removed from the trace; it is a special case of N-group.
   8. **Elimination** — if placing a queen at a candidate cell would leave
       some other region with no remaining candidates at all, that cell is
       ruled out (one-step lookahead).
-  9. **Lookahead** (not active yet) — for small regions, trial-place a queen in every
+  9. **Lookahead** — starting with smaller regions, trial-place a queen in every
       candidate cell; remove any candidate that leads to a contradiction.
   10. **Search** — last resort: pick the most-constrained region, guess,
       and recurse with backtracking.
@@ -88,6 +85,16 @@ def solve_stepwise(
                 pending_trace.append(prefix + line if line else line)
         else:
             pending_trace.extend(lines)
+
+    # Helper to print (row, col) - now begins from R1C1
+    def row_str(r: int) -> str:
+        return 'R'+str(r+1)
+
+    def col_str(c: int) -> str:
+        return 'C'+str(c+1)
+
+    def row_col_str(r: int, c: int) -> str:
+        return f"({row_str(r)},{col_str(c)})"
 
     def flush_trace() -> None:
         if quiet or not pending_trace:
@@ -145,7 +152,7 @@ def solve_stepwise(
         if candidates[r][c]:
             candidates[r][c] = False
             if trace:
-                out(f"  eliminate ({r},{c}) [{colour_at(r, c)}]")
+                out(f"  eliminate {row_col_str(r, c)} [{colour_at(r, c)}]") # updated
 
     def place_queen(r: int, c: int, reason: str) -> None:
         queens[r] = c
@@ -170,7 +177,7 @@ def solve_stepwise(
                 if is_diagonally_adjacent(cc, rr, placed) and candidates[rr][cc]:
                     candidates[rr][cc] = False
                     elim += 1
-        out(f"  QUEEN ({r},{c}) [{colour}]: {reason}: eliminating row {r}, col {c}, region [{colour}], diagonal adjacents → {elim} cell(s)")
+        out(f"  QUEEN {row_col_str(r, c)} [{colour}]: {reason}: eliminating row {row_str(r)}, col {col_str(c)}, region [{colour}], diagonal adjacents → {elim} cell(s)") # updated
 
     # ------------------------------------------------------------------
     # Rule — Region / row / col singleton
@@ -193,7 +200,7 @@ def solve_stepwise(
                 continue
             cands = active_in_row(r)
             if len(cands) == 1:
-                place_queen(r, cands[0], f"row {r} singleton")
+                place_queen(r, cands[0], f"row {row_str(r)} singleton")
                 changed = True
         for c in range(n):
             if c in queens.values():
@@ -202,7 +209,7 @@ def solve_stepwise(
             if len(cands) == 1:
                 r = cands[0]
                 if r not in queens:
-                    place_queen(r, c, f"col {c} singleton")
+                    place_queen(r, c, f"col {col_str(c)} singleton")
                     changed = True
         return changed
 
@@ -230,7 +237,7 @@ def solve_stepwise(
                     for cc in range(n):
                         if board[r][cc] != colour:
                             eliminate(r, cc, trace=False)
-                    out(f"  forced: [{colour}] confined to row {r} → {count} cell(s) eliminated")
+                    out(f"  forced: [{colour}] confined to row {row_str(r)} → {count} cell(s) eliminated") # updated
                     changed = True
             cols = {c for _, c in cands}
             if len(cols) == 1:
@@ -243,7 +250,7 @@ def solve_stepwise(
                     for rr in range(n):
                         if board[rr][col] != colour:
                             eliminate(rr, col, trace=False)
-                    out(f"  forced: [{colour}] confined to col {col} → {count} cell(s) eliminated")
+                    out(f"  forced: [{colour}] confined to col {col_str(col)} → {count} cell(s) eliminated") # updated
                     changed = True
         return changed
 
@@ -288,7 +295,7 @@ def solve_stepwise(
                         eliminate(adj_r, cc, trace=False)
                         count += 1
             if count:
-                out(f"  squeeze: row {r} cols {c_min}–{c_max} → {count} cell(s) eliminated in adjacent rows")
+                out(f"  squeeze: {row_str(r)} cols {col_str(c_min)}–{col_str(c_max)} → {count} cell(s) eliminated in adjacent rows") # updated
                 return True
         # Column perspective
         for c in range(n):
@@ -310,7 +317,7 @@ def solve_stepwise(
                         eliminate(rr, adj_c, trace=False)
                         count += 1
             if count:
-                out(f"  squeeze: col {c} rows {r_min}–{r_max} → {count} cell(s) eliminated in adjacent cols")
+                out(f"  squeeze: col {col_str(c)} rows {row_str(r_min)}–{row_str(r_max)} → {count} cell(s) eliminated in adjacent cols") # updated
                 return True
         return False
 
@@ -346,7 +353,7 @@ def solve_stepwise(
                         eliminate(r, c, trace=False)
                         count += 1
             if count:
-                out(f"  shadow: [{colour}] ({len(cands)} candidates) → {count} cell(s) eliminated")
+                out(f"  shadow: [{colour}] ({len(cands)} candidates) → {count} cell(s) eliminated") # no update needed
                 return True
         return False
 
@@ -409,10 +416,9 @@ def solve_stepwise(
                             for r2, c2 in cands_by_colour[colour]:
                                 if r2 not in row_set:
                                     eliminate(r2, c2, trace=False)
-                        rows_str = ",".join(str(r) for r in sorted(row_group))
+                        rows_str_formatted = ",".join(str(row_str(r)) for r in sorted(row_group))
                         clabel = "{" + ",".join(sorted(colours_here)) + "}"
-                        out(f"  n-group: rows {{{rows_str}}} exclusive to {clabel}"
-                            f" → {count} cell(s) eliminated")
+                        out(f"  n-group: rows {{{rows_str_formatted}}} exclusive to {clabel} → {count} cell(s) eliminated") # updated
                         return True
             for col_group in combinations(free_cols, k):
                 colours_here = set()
@@ -432,10 +438,9 @@ def solve_stepwise(
                             for r2, c2 in cands_by_colour[colour]:
                                 if c2 not in col_set:
                                     eliminate(r2, c2, trace=False)
-                        cols_str = ",".join(str(c) for c in sorted(col_group))
+                        cols_str_formatted = ",".join(col_str(c) for c in sorted(col_group))
                         clabel = "{" + ",".join(sorted(colours_here)) + "}"
-                        out(f"  n-group: cols {{{cols_str}}} exclusive to {clabel}"
-                            f" → {count} cell(s) eliminated")
+                        out(f"  n-group: cols {{{cols_str_formatted}}} exclusive to {clabel} → {count} cell(s) eliminated") # updated
                         return True
 
             if k < 2:
@@ -460,9 +465,8 @@ def solve_stepwise(
                             for cc in range(n):
                                 if board[r][cc] not in group_set:
                                     eliminate(r, cc, trace=False)
-                        rows_str = ",".join(str(r) for r in sorted(rows))
-                        out(f"  n-group: {label} claims rows {rows_str}"
-                            f" → {count} cell(s) eliminated")
+                        rows_str_formatted = ",".join(row_str(r) for r in sorted(rows))
+                        out(f"  n-group: {label} claims rows {rows_str_formatted} → {count} cell(s) eliminated") # updated
                         return True
                 cols: set[int] = set()
                 for colour in group:
@@ -477,9 +481,8 @@ def solve_stepwise(
                             for rr in range(n):
                                 if board[rr][col] not in group_set:
                                     eliminate(rr, col, trace=False)
-                        cols_str = ",".join(str(c) for c in sorted(cols))
-                        out(f"  n-group: {label} claims cols {cols_str}"
-                            f" → {count} cell(s) eliminated")
+                        cols_str_formatted = ",".join(col_str(c) for c in sorted(cols))
+                        out(f"  n-group: {label} claims cols {cols_str_formatted} → {count} cell(s) eliminated") # updated
                         return True
         return False
 
@@ -519,7 +522,7 @@ def solve_stepwise(
             return False
 
         seen_hits: set[tuple[frozenset[str], frozenset[int], frozenset[int]]] = set()
-        out(f"  x-wing scan from size 2 up to {max_c}...")
+        out(f"  x-wing scan from size 2 up to {max_c}...") # no update needed
         flush_trace()
         for c in range(2, max_c + 1):
             scan_count = 0
@@ -588,18 +591,12 @@ def solve_stepwise(
                         for r2, cc in elim_cells:
                             eliminate(r2, cc, trace=False)
 
-                        rows_str = ",".join(str(r2) for r2 in sorted(rows_frozen))
-                        cols_str = ",".join(str(cc) for cc in sorted(needed_cols))
-                        out(
-                            f"    x-wing scan: size {c} → 1 hit after {scan_count} group(s)"
-                        )
-                        out(
-                            f"  x-wing: size {c} {label} confined to"
-                            f" rows {{{rows_str}}} ∪ cols {{{cols_str}}}"
-                            f" → {len(elim_cells)} cell(s) eliminated"
-                        )
+                        rows_formatted_str = ",".join(row_str(r2) for r2 in sorted(rows_frozen))
+                        cols_formatted_str = ",".join(col_str(cc) for cc in sorted(needed_cols))
+                        out(f"    x-wing scan: size {c} → 1 hit after {scan_count} group(s)") # no update needed
+                        out(f"  x-wing: size {c} {label} confined to rows {{{rows_formatted_str}}} ∪ cols {{{cols_formatted_str}}} → {len(elim_cells)} cell(s) eliminated") # updated
                         return True
-            out(f"    x-wing scan: size {c} → 0 hit(s) after {scan_count} group(s)")
+            out(f"    x-wing scan: size {c} → 0 hit(s) after {scan_count} group(s)") # no update needed
             flush_trace()
 
         return False
@@ -797,54 +794,57 @@ def solve_stepwise(
         if len(sq) == n:
             return dict(sq), []
         un = [col for col in colours if not _sim_solved(sq, col)]
-        best_col = min(un, key=lambda col: len(_sim_active(sc, sq, col)))
+        best_colour = min(un, key=lambda col: len(_sim_active(sc, sq, col)))
         pad = "  " * (depth + 2)
         lines: list[str] = []
-        for r_t, c_t in _sim_active(sc, sq, best_col):
+        for r_t, c_t in _sim_active(sc, sq, best_colour):
             nsc = [row[:] for row in sc]
             nsq = dict(sq)
             _sim_place(nsc, nsq, r_t, c_t)
             sq_placed = dict(nsq)  # state after placing, before propagation
             prop_ok = _propagate_sim(nsc, nsq)
             deduced = [
-                f"{board[r2][nsq[r2]]}({r2},{nsq[r2]})"
+                f"{board[r2][nsq[r2]]}{row_col_str(r2, nsq[r2])}"
                 for r2 in nsq if r2 not in sq_placed
             ]
-            chain = " → " + ", ".join(deduced) if deduced else ""
+            if deduced:
+                chain = " → " + ", ".join(deduced)
+            else:
+                chain = ""
             if not prop_ok:
                 occ_cols = set(nsq.values())
                 reason = "empty"
-                for col2 in colours:
-                    if not _sim_solved(nsq, col2) and not _sim_active(nsc, nsq, col2):
-                        reason = f"[{col2}] empty ✗"
+                for colour2 in colours:
+                    if not _sim_solved(nsq, colour2) and not _sim_active(nsc, nsq, colour2):
+                        reason = f"[{colour2}] empty ✗"
                         break
                 if reason == "empty":
                     for r2 in range(n):
                         if r2 not in nsq and not any(nsc[r2][c2] for c2 in range(n)):
-                            reason = f"row {r2} empty ✗"
+                            reason = f"row {row_str(r2)} empty ✗" # updated
                             break
                 if reason == "empty":
                     for c2 in range(n):
                         if c2 not in occ_cols and not any(nsc[r2][c2] for r2 in range(n)):
-                            reason = f"col {c2} empty ✗"
+                            reason = f"col {col_str(c2)} empty ✗" # updated
                             break
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → {reason}")
+                lines.append(f"{pad}try {row_col_str(r_t, c_t)} [{best_colour}]{chain} → {reason}")
                 continue
             if len(nsq) == n:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
+                lines.append(f"{pad}try {row_col_str(r_t, c_t)} [{best_colour}]{chain}")
                 return dict(nsq), lines
             # nsc/nsq already propagated; recursive call's initial propagation is a no-op
             result, child_lines = _backtrack(nsc, nsq, depth + 1)
             if result is not None:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
+                lines.append(f"{pad}try {row_col_str(r_t, c_t)} [{best_colour}]{chain}")
                 lines.extend(child_lines)
                 return result, lines
             if child_lines:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain}")
+                lines.append(f"{pad}try {row_col_str(r_t, c_t)} [{best_colour}]{chain}")
                 lines.extend(child_lines)
-                lines.append(f"{pad}✗ ({r_t},{c_t})")
+                lines.append(f"{pad}✗ {row_col_str(r_t, c_t)}")
             else:
-                lines.append(f"{pad}try ({r_t},{c_t}) [{best_col}]{chain} → ✗")
+                lines.append(f"{pad}try {row_col_str(r_t, c_t)} [{best_colour}]{chain} → ✗")
         return None, lines
 
     def _solve_sim(
@@ -857,15 +857,15 @@ def solve_stepwise(
         """
         if not _propagate_sim(sc, sq):
             occ_cols = set(sq.values())
-            for col2 in colours:
-                if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
-                    return [f"[{col2}] empty"]
+            for colour2 in colours:
+                if not _sim_solved(sq, colour2) and not _sim_active(sc, sq, colour2):
+                    return [f"[{colour2}] empty"]
             for r2 in range(n):
                 if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
-                    return [f"row{r2} empty"]
+                    return [f"row {row_str(r2)} empty"]
             for c2 in range(n):
                 if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
-                    return [f"col{c2} empty"]
+                    return [f"col {col_str(c2)} empty"]
             return ["empty"]
         if len(sq) == n:
             return None
@@ -883,48 +883,6 @@ def solve_stepwise(
                 first_fail = [f"{board[r_t][c_t]}({r_t},{c_t})"] + result
         return first_fail if first_fail is not None else ["empty"]
 
-    # ------------------------------------------------------------------
-    # Rule — Double-block
-    # ------------------------------------------------------------------
-
-    def rule_double_block() -> bool:
-        """Eliminate if placement + propagation forces two regions to the same line."""
-        for colour in colours:
-            if colour_is_solved(colour):
-                continue
-            for r, c in active_for_colour(colour):
-                sc = [row[:] for row in candidates]
-                sq = dict(queens)
-                _sim_place(sc, sq, r, c)
-                if not _propagate_sim(sc, sq):
-                    continue  # general contradiction; elimination/lookahead handles it
-                forced_rows: dict[int, str] = {}
-                forced_cols: dict[int, str] = {}
-                for col2 in colours:
-                    if col2 == colour or _sim_solved(sq, col2):
-                        continue
-                    ca = _sim_active(sc, sq, col2)
-                    if not ca:
-                        continue
-                    rs2 = {r2 for r2, _ in ca}
-                    if len(rs2) == 1:
-                        row2 = next(iter(rs2))
-                        if row2 in forced_rows:
-                            eliminate(r, c, trace=False)
-                            out(f"  double-block: ({r},{c}) [{colour}]: [{col2}]+[{forced_rows[row2]}]"
-                                f" both forced to row {row2} → 1 cell eliminated")
-                            return True
-                        forced_rows[row2] = col2
-                    cs2 = {c2 for _, c2 in ca}
-                    if len(cs2) == 1:
-                        col_v = next(iter(cs2))
-                        if col_v in forced_cols:
-                            eliminate(r, c, trace=False)
-                            out(f"  double-block: ({r},{c}) [{colour}]: [{col2}]+[{forced_cols[col_v]}]"
-                                f" both forced to col {col_v} → 1 cell eliminated")
-                            return True
-                        forced_cols[col_v] = col2
-        return False
 
     # ------------------------------------------------------------------
     # Rule — Elimination
@@ -939,13 +897,12 @@ def solve_stepwise(
                 sc = [row[:] for row in candidates]
                 sq = dict(queens)
                 _sim_place(sc, sq, r, c)
-                for col2 in colours:
-                    if col2 == colour or _sim_solved(sq, col2):
+                for colour2 in colours:
+                    if colour2 == colour or _sim_solved(sq, colour2):
                         continue
-                    if not _sim_active(sc, sq, col2):
+                    if not _sim_active(sc, sq, colour2):
                         eliminate(r, c, trace=False)
-                        out(f"  eliminate: ({r},{c}) [{colour}]: immediately strands"
-                            f" [{col2}] → 1 cell eliminated")
+                        out(f"  eliminate: {row_col_str(r, c)} [{colour}]: immediately strands [{colour2}] → 1 cell eliminated") # updated
                         return True
         return False
 
@@ -975,27 +932,27 @@ def solve_stepwise(
                 sq_after_trial = dict(sq)
                 prop_ok = _propagate_sim(sc, sq)  # capture forced moves for the deduced chain
                 deduced = [
-                    f"{board[r2][sq[r2]]}({r2},{sq[r2]})"
+                    f"{board[r2][sq[r2]]}{row_col_str(r2, sq[r2])}"
                     for r2 in sq  # insertion order = propagation order
                     if r2 not in sq_after_trial
-                ]
+                ] # updated
                 bt_lines: list[str] = []
                 if not prop_ok:
                     # Enrich the chain with why propagation failed
                     occ_cols = set(sq.values())
-                    for col2 in colours:
-                        if not _sim_solved(sq, col2) and not _sim_active(sc, sq, col2):
-                            deduced.append(f"[{col2}] empty")
+                    for colour2 in colours:
+                        if not _sim_solved(sq, colour2) and not _sim_active(sc, sq, colour2):
+                            deduced.append(f"[{colour2}] empty")
                             break
                     else:
                         for r2 in range(n):
                             if r2 not in sq and not any(sc[r2][c2] for c2 in range(n)):
-                                deduced.append(f"row{r2} empty")
+                                deduced.append(f"row {row_str(r2)} empty")
                                 break
                         else:
                             for c2 in range(n):
                                 if c2 not in occ_cols and not any(sc[r2][c2] for r2 in range(n)):
-                                    deduced.append(f"col{c2} empty")
+                                    deduced.append(f"col{col_str(c2)} empty")
                                     break
                     ok = False
                 else:
@@ -1017,12 +974,9 @@ def solve_stepwise(
                 for ar, ac, achain, acontra, abt in attempts:
                     ch = " → " + ", ".join(achain) if achain else ""
                     verdict = "✗ eliminated" if acontra else "ok"
-                    lines.append(f"    try ({ar},{ac}){ch} → {verdict}")
+                    lines.append(f"    try {row_col_str(ar,ac)}{ch} → {verdict}")
                     lines.extend(abt)
-                out(
-                    f"  lookahead [{colour}] ({len(attempts)} candidates):\n"
-                    + "\n".join(lines)
-                )
+                out(f"  lookahead [{colour}] ({len(attempts)} candidates):\n" + "\n".join(lines))
                 changed = True
                 if not multi_colour_mode:
                     return True
@@ -1063,7 +1017,6 @@ def solve_stepwise(
         rule_n_group,
         rule_x_wing,
         rule_elimination,
-        rule_double_block,
         rule_lookahead,
         rule_search,
     ]

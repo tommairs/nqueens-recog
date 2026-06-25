@@ -25,6 +25,8 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
+> **Note:** By popular demand, cell locations are mapped for text output e.g. to (R1,C1) for the top left cell. Code internals still use Python 0-based lists.
+
 ## Run
 
 ```bash
@@ -92,7 +94,7 @@ Ten rules are applied in order of increasing cost:
 4. **Shadow** — eliminate any cell attacked by *all* candidates of a colour.
 5. **N-group** — k regions whose candidates are confined to k rows/cols; reserve those lines.
 6. **X-Wing** — c colours whose candidates fit within a rows + b columns (a+b=c); scan sizes 2 upward, apply the first valid hit found, then return to other rules.
-7. **Double-block** — tentatively place a queen; if two regions are then forced onto the same row/col, the candidate is invalid.
+7. **Double-block** — _removed as this was just a special case of n-group, and was never being used_
 8. **Elimination** — placing a queen at a candidate leaves another region empty; rule it out.
 9. **Lookahead** — trial-place a queen in every candidate of a colour; by default stop after the first contradictory colour. With `--lookahead-max-cands N`, consider all colours with ≤ N candidates in the same pass.
 10. **Search** — last resort: pick the most-constrained region, guess, and backtrack.
@@ -128,15 +130,11 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 
 #### Large X-wings
 
-Some large X-wings have been found experimentally. Often these pick up extra singleton rows or columns, so they are equivalent to a smaller-sized X-wing. I've counted their true (or "collapsed") size separately; level 641 is an example.
-
-> **Note:** the `(selected from size N candidate …)` notation below was produced by an earlier experimental version of the solver that explicitly collapsed large hits to their smallest equivalent structure. The current solver scans ascending from size 2 and applies the first valid hit found, so this collapsed form would appear directly.
-
-|Level|"True" size|Rule|
+|Level|"True" size|
 |-|-|-|
-|587|9|x-wing: size 9 {A,B,C,D,E,F,H,I,J} confined to rows {0,4,5,6,10} ∪ cols {0,4,6,10} → 19 cell(s) eliminated|
-|641|9|x-wing: size 9 {A,B,C,D,E,I,J,K,Q} confined to rows {0,1,8,16,17} ∪ cols {0,1,16,17} (selected from size 12 candidate {A,B,C,D,E,I,J,K,M,N,Q,R}) → 44 cell(s) eliminated|
-|674|9|x-wing: size 9 {B,C,D,E,F,G,H,I,J} confined to rows {0,2,7,10} ∪ cols {0,2,4,7,10} → 22 cell(s) eliminated|
+|587|9|
+|641|9|
+|674|9|
 
 There are many levels with size 8 X-wings. At time of writing: 273, 538, 583, 589, 600, 601, 623, 636, 647, 674.
 
