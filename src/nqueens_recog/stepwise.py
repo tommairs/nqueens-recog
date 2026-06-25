@@ -48,6 +48,15 @@ import time
 from itertools import combinations
 from .solver import is_diagonally_adjacent
 
+# Helper to print (row, col) - now begins from R1C1
+def row_str(r: int) -> str:
+    return 'R'+str(r+1)
+
+def col_str(c: int) -> str:
+    return 'C'+str(c+1)
+
+def row_col_str(r: int, c: int) -> str:
+    return f"({row_str(r)},{col_str(c)})"
 
 def solve_stepwise(
     board: list[list[str]], quiet: bool = False, verbose: bool = False,
@@ -85,16 +94,6 @@ def solve_stepwise(
                 pending_trace.append(prefix + line if line else line)
         else:
             pending_trace.extend(lines)
-
-    # Helper to print (row, col) - now begins from R1C1
-    def row_str(r: int) -> str:
-        return 'R'+str(r+1)
-
-    def col_str(c: int) -> str:
-        return 'C'+str(c+1)
-
-    def row_col_str(r: int, c: int) -> str:
-        return f"({row_str(r)},{col_str(c)})"
 
     def flush_trace() -> None:
         if quiet or not pending_trace:

@@ -28,7 +28,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Imports from the installed package (run from project root with venv active)
 # ---------------------------------------------------------------------------
-from nqueens_recog.stepwise import solve_stepwise, compact_rules_used
+from nqueens_recog.stepwise import solve_stepwise, compact_rules_used, row_col_str
 from nqueens_recog.url_reader import read_community_level_info
 
 # ---------------------------------------------------------------------------
@@ -153,7 +153,7 @@ def _check_level(
         try:
             # Match CLI stepwise output: include the starting grid before deductions.
             from nqueens_recog.display import print_board
-            print(f"Grid: {n} × {n}, {n} colours")
+            print(f"Grid: {n} × {n}, {n} colours. Top left is shown as {row_col_str(0,0)}")
             print_board(board)
             step_result, rules_used = solve_stepwise(
                 board,

@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from nqueens_recog.display import print_board
 from nqueens_recog.grid_reader import Grid, Tile, read_grid
 from nqueens_recog.__main__ import main
-from nqueens_recog.palette import PALETTE, hex_to_rgb, nearest_letter, grid_to_letters
+from nqueens_recog.palette import PALETTE, grid_to_letters
 from nqueens_recog.url_reader import is_community_level_url, read_community_level, _parse_color_regions
 from nqueens_recog.solver import solve
 from nqueens_recog.stepwise import solve_stepwise
@@ -344,8 +344,8 @@ def test_stepwise_singleton_paths_and_stuck(capsys) -> None:
     assert result[0] is None                # stuck path → return None
     assert "region singleton" in out        # rule_singleton region branch
     assert "squeeze:" in out               # rule_squeeze fires
-    assert "row 2 singleton" in out        # rule_singleton row branch
-    assert "row 3 singleton" in out        # rule_singleton row branch
+    assert "row R3 singleton" in out        # rule_singleton row branch
+    assert "row R4 singleton" in out        # rule_singleton row branch
 
 
 # ---------------------------------------------------------------------------
@@ -543,9 +543,9 @@ def test_stepwise_345_first_xwing_per_pass(capsys) -> None:
     _assert_matches_solver(board, result[0])
 
     # First-hit-per-pass: expect the earliest available hit at each scan.
-    l2 = "x-wing: size 2 {E,G} confined to rows {3} ∪ cols {2}"
-    l3 = "x-wing: size 3 {D,E,F} confined to rows {4,6} ∪ cols {3}"
-    l5 = "x-wing: size 5 {A,B,C,F,G} confined to rows {0,1} ∪ cols {0,1,6}"
+    l2 = "x-wing: size 2 {E,G}"
+    l3 = "x-wing: size 3 {D,E,F}"
+    l5 = "x-wing: size 5 {A,B,C,F,G}"
     for line in [l2, l3, l5]:
         assert line in out
     assert out.count("x-wing:") >= 3

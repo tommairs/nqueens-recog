@@ -83,7 +83,8 @@ def main() -> None:
         print(f"Error: expected {size} distinct colours for a {size}×{size} board, found {n_colours}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Grid: {size} × {size}, {size} colours")
+    from .stepwise import row_col_str
+    print(f"Grid: {size} × {size}, {size} colours. Top left is shown as {row_col_str(0,0)}")
     if args.verbose:
         from .display import print_board
         print_board(board)
