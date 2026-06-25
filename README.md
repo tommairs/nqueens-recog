@@ -130,6 +130,9 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 
 #### Large X-wings
 
+Some large X-wings can be found by changing the solver to look for largest-first.
+These results not given by the current stepwise code, as it looks for smaller X-wings first and uses the first found one.
+
 |Level|Size|
 |-|-|
 |587|9|
