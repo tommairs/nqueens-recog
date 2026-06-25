@@ -130,8 +130,8 @@ All $|R|$ rows and all $|C|$ columns will be claimed by these $k$ colours. There
 
 #### Large X-wings
 
-|Level|"True" size|
-|-|-|-|
+|Level|Size|
+|-|-|
 |587|9|
 |641|9|
 |674|9|
