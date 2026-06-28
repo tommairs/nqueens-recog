@@ -43,7 +43,7 @@ def _fetch_source(url: str) -> tuple[str, str]:
                 source = resp.read().decode("utf-8")
             return source, level_number
         except HTTPError as exc:
-            if exc.code in (429, 403):
+            if exc.code in (429, 403, 400): # github sometimes returns 400 for rate limiting
                 if attempt < retries:
                     time.sleep(10)
                     continue

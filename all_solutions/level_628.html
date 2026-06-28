@@ -8,7 +8,7 @@
 <style>pre{font-family:"SF Pro Rounded",-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;line-height:1.4}pre span{display:inline-block;height:1.4em;overflow:hidden;vertical-align:top;width:4ch}</style></head>
 <body>
 <pre>
-Grid: 10 × 10, 10 colours
+Grid: 10 × 10, 10 colours. Top left is shown as (R1,C1)
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#f56d43;">  I </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#fdae61;">  B </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span>
@@ -20,7 +20,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#f56d43;">  I </span>
 <span style="background-color:#fdae61;">  B </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span>
 
-0.0s:   x-wing scan from size 2 up to 9...
+0.0s:   x-wing scan from size 2 up to 8...
 0.0s:     x-wing scan: size 2 → 0 hit(s) after 45 group(s)
 0.0s:     x-wing scan: size 3 → 0 hit(s) after 120 group(s)
 0.1s:     x-wing scan: size 4 → 0 hit(s) after 210 group(s)
@@ -28,50 +28,49 @@ Grid: 10 × 10, 10 colours
 0.5s:     x-wing scan: size 6 → 0 hit(s) after 210 group(s)
 0.7s:     x-wing scan: size 7 → 0 hit(s) after 120 group(s)
 0.8s:     x-wing scan: size 8 → 0 hit(s) after 45 group(s)
-0.8s:     x-wing scan: size 9 → 0 hit(s) after 10 group(s)
-0.9s:   lookahead [B] (3 candidates):
-0.9s:     try (0,9) → ✗ eliminated
-0.9s:       try (1,0) [A] → E(8,1), D(7,8)
-0.9s:         try (2,3) [F] → col 2 empty ✗
-0.9s:         try (3,2) [F] → C(9,3), J(2,7)
-0.9s:           try (5,6) [G] → [H] empty ✗
-0.9s:           try (6,5) [G] → [H] empty ✗
-0.9s:         ✗ (3,2)
-0.9s:       ✗ (1,0)
-0.9s:       try (1,1) [A]
-0.9s:         try (7,8) [D]
-0.9s:           try (2,3) [F]
-0.9s:             try (9,2) [C] → J(3,7), E(8,0)
-0.9s:               try (5,6) [G] → [H] empty ✗
-0.9s:               try (6,5) [G] → [H] empty ✗
-0.9s:             ✗ (9,2)
-0.9s:             try (9,7) [C] → J(8,2), E(3,0)
-0.9s:               try (5,6) [G] → [H] empty ✗
-0.9s:               try (6,5) [G] → [H] empty ✗
-0.9s:             ✗ (9,7)
-0.9s:           ✗ (2,3)
-0.9s:           try (3,2) [F] → E(8,0), C(9,3), J(2,7)
-0.9s:             try (5,6) [G] → [H] empty ✗
-0.9s:             try (6,5) [G] → [H] empty ✗
-0.9s:           ✗ (3,2)
-0.9s:         ✗ (7,8)
-0.9s:         try (8,7) [D] → E(7,0)
-0.9s:           try (2,3) [F] → J(3,8), C(9,2)
-0.9s:             try (5,6) [G] → [H] empty ✗
-0.9s:             try (6,5) [G] → [H] empty ✗
-0.9s:           ✗ (2,3)
-0.9s:           try (3,2) [F] → J(2,8), C(9,3)
-0.9s:             try (5,6) [G] → [H] empty ✗
-0.9s:             try (6,5) [G] → [H] empty ✗
-0.9s:           ✗ (3,2)
-0.9s:         ✗ (8,7)
-0.9s:       ✗ (1,1)
-0.9s:     try (9,0) → E(1,8), A(0,1), D(8,7), F(2,3), J(3,9), C(6,2), G(5,6), [H] empty → ✗ eliminated
-0.9s:     try (9,9) → ok
-0.9s:       try (0,7) [H] → D(7,8)
-0.9s:         try (1,0) [A] → E(8,1), C(6,2), F(2,3), G(5,6), I(4,4) → [J] empty ✗
-0.9s:         try (1,1) [A]
-0.9s:           try (6,2) [C] → F(2,3), G(5,6), I(4,4), J(8,5), E(3,0)
+0.8s:   lookahead [B] (3 candidates):
+0.8s:     try (R1,C10) → ✗ eliminated
+0.8s:       try (R2,C1) [A] → E(R9,C2), D(R8,C9)
+0.8s:         try (R3,C4) [F] → col C3 empty ✗
+0.8s:         try (R4,C3) [F] → C(R10,C4), J(R3,C8)
+0.8s:           try (R6,C7) [G] → [H] empty ✗
+0.8s:           try (R7,C6) [G] → [H] empty ✗
+0.8s:         ✗ (R4,C3)
+0.8s:       ✗ (R2,C1)
+0.8s:       try (R2,C2) [A]
+0.8s:         try (R8,C9) [D]
+0.8s:           try (R3,C4) [F]
+0.8s:             try (R10,C3) [C] → J(R4,C8), E(R9,C1)
+0.8s:               try (R6,C7) [G] → [H] empty ✗
+0.8s:               try (R7,C6) [G] → [H] empty ✗
+0.8s:             ✗ (R10,C3)
+0.8s:             try (R10,C8) [C] → J(R9,C3), E(R4,C1)
+0.8s:               try (R6,C7) [G] → [H] empty ✗
+0.8s:               try (R7,C6) [G] → [H] empty ✗
+0.8s:             ✗ (R10,C8)
+0.8s:           ✗ (R3,C4)
+0.8s:           try (R4,C3) [F] → E(R9,C1), C(R10,C4), J(R3,C8)
+0.8s:             try (R6,C7) [G] → [H] empty ✗
+0.8s:             try (R7,C6) [G] → [H] empty ✗
+0.8s:           ✗ (R4,C3)
+0.8s:         ✗ (R8,C9)
+0.8s:         try (R9,C8) [D] → E(R8,C1)
+0.8s:           try (R3,C4) [F] → J(R4,C9), C(R10,C3)
+0.8s:             try (R6,C7) [G] → [H] empty ✗
+0.8s:             try (R7,C6) [G] → [H] empty ✗
+0.8s:           ✗ (R3,C4)
+0.8s:           try (R4,C3) [F] → J(R3,C9), C(R10,C4)
+0.8s:             try (R6,C7) [G] → [H] empty ✗
+0.8s:             try (R7,C6) [G] → [H] empty ✗
+0.8s:           ✗ (R4,C3)
+0.8s:         ✗ (R9,C8)
+0.8s:       ✗ (R2,C2)
+0.8s:     try (R10,C1) → E(R2,C9), A(R1,C2), D(R9,C8), F(R3,C4), J(R4,C10), C(R7,C3), G(R6,C7), [H] empty → ✗ eliminated
+0.8s:     try (R10,C10) → ok
+0.8s:       try (R1,C8) [H] → D(R8,C9)
+0.8s:         try (R2,C1) [A] → E(R9,C2), C(R7,C3), F(R3,C4), G(R6,C7), I(R5,C5) → [J] empty ✗
+0.8s:         try (R2,C2) [A]
+0.8s:           try (R7,C3) [C] → F(R3,C4), G(R6,C7), I(R5,C5), J(R9,C6), E(R4,C1)
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#f56d43;">  I </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#fdae61;"> ❌ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span>
@@ -83,7 +82,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#f56d43;">  I </span>
 <span style="background-color:#fdae61;"> ❌ </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#fdae61;">  B </span>
 
-0.9s:   QUEEN (9,9) [B]: region singleton [B]: eliminating row 9, col 9, region [B], diagonal adjacents → 17 cell(s)
+0.8s:   QUEEN (R10,C10) [B]: region singleton [B]: eliminating row R10, col C10, region [B], diagonal adjacents → 17 cell(s)
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#f56d43;">  I </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;"> ❌ </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;"> ❌ </span>
@@ -95,24 +94,23 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#f56d43;"> ❌ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-0.9s:   x-wing scan from size 2 up to 9...
-0.9s:     x-wing scan: size 2 → 0 hit(s) after 36 group(s)
-0.9s:     x-wing scan: size 3 → 0 hit(s) after 84 group(s)
-0.9s:     x-wing scan: size 4 → 0 hit(s) after 126 group(s)
-1.0s:     x-wing scan: size 5 → 0 hit(s) after 126 group(s)
-1.1s:     x-wing scan: size 6 → 0 hit(s) after 84 group(s)
-1.1s:     x-wing scan: size 7 → 0 hit(s) after 36 group(s)
-1.1s:     x-wing scan: size 8 → 0 hit(s) after 9 group(s)
-1.1s:     x-wing scan: size 9 → 0 hit(s) after 1 group(s)
-1.1s:   lookahead [H] (3 candidates):
-1.1s:     try (0,7) → D(7,8) → ok
-1.1s:       try (1,0) [A] → E(8,1), C(6,2), F(2,3), G(5,6), I(4,4) → [J] empty ✗
-1.1s:       try (1,1) [A]
-1.1s:         try (6,2) [C] → F(2,3), G(5,6), I(4,4), J(8,5), E(3,0)
-1.1s:     try (4,5) → ✗ eliminated
-1.1s:       try (2,2) [G] → F(6,7), I(0,6) → [D] empty ✗
-1.1s:       try (7,7) [G] → I(0,6), J(5,8), F(3,2), E(6,0), C(8,4), A(1,1) → [D] empty ✗
-1.1s:     try (5,4) → C(4,0), E(1,8), A(0,1), D(8,7), G(2,2), I(6,6), J(3,5), [F] empty → ✗ eliminated
+0.8s:   x-wing scan from size 2 up to 8...
+0.8s:     x-wing scan: size 2 → 0 hit(s) after 36 group(s)
+0.8s:     x-wing scan: size 3 → 0 hit(s) after 84 group(s)
+0.8s:     x-wing scan: size 4 → 0 hit(s) after 126 group(s)
+0.9s:     x-wing scan: size 5 → 0 hit(s) after 126 group(s)
+1.0s:     x-wing scan: size 6 → 0 hit(s) after 84 group(s)
+1.0s:     x-wing scan: size 7 → 0 hit(s) after 36 group(s)
+1.0s:     x-wing scan: size 8 → 0 hit(s) after 9 group(s)
+1.0s:   lookahead [H] (3 candidates):
+1.0s:     try (R1,C8) → D(R8,C9) → ok
+1.0s:       try (R2,C1) [A] → E(R9,C2), C(R7,C3), F(R3,C4), G(R6,C7), I(R5,C5) → [J] empty ✗
+1.0s:       try (R2,C2) [A]
+1.0s:         try (R7,C3) [C] → F(R3,C4), G(R6,C7), I(R5,C5), J(R9,C6), E(R4,C1)
+1.0s:     try (R5,C6) → ✗ eliminated
+1.0s:       try (R3,C3) [G] → F(R7,C8), I(R1,C7) → [D] empty ✗
+1.0s:       try (R8,C8) [G] → I(R1,C7), J(R6,C9), F(R4,C3), E(R7,C1), C(R9,C5), A(R2,C2) → [D] empty ✗
+1.0s:     try (R6,C5) → C(R5,C1), E(R2,C9), A(R1,C2), D(R9,C8), G(R3,C3), I(R7,C7), J(R4,C6), [F] empty → ✗ eliminated
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#f56d43;">  I </span><span style="background-color:#8e8875;">  H </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -124,7 +122,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (0,7) [H]: region singleton [H]: eliminating row 0, col 7, region [H], diagonal adjacents → 18 cell(s)
+1.0s:   QUEEN (R1,C8) [H]: region singleton [H]: eliminating row R1, col C8, region [H], diagonal adjacents → 18 cell(s)
 <span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#f56d43;"> ❌ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -136,7 +134,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   forced: [A] confined to row 1 → 4 cell(s) eliminated
+1.0s:   forced: [A] confined to row R2 → 4 cell(s) eliminated
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  C </span><span style="background-color:#acdda5;">  D </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -148,7 +146,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   squeeze: row 1 cols 0–1 → 2 cell(s) eliminated in adjacent rows
+1.0s:   squeeze: R2 cols C1–C2 → 2 cell(s) eliminated in adjacent rows
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#acdda5;"> ❌ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -160,7 +158,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (7,8) [D]: region singleton [D]: eliminating row 7, col 8, region [D], diagonal adjacents → 12 cell(s)
+1.0s:   QUEEN (R8,C9) [D]: region singleton [D]: eliminating row R8, col C9, region [D], diagonal adjacents → 12 cell(s)
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  G </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -172,7 +170,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   shadow: [F] (2 candidates) → 4 cell(s) eliminated
+1.0s:   shadow: [F] (2 candidates) → 4 cell(s) eliminated
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;"> ❌ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -184,7 +182,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   shadow: [G] (2 candidates) → 2 cell(s) eliminated
+1.0s:   shadow: [G] (2 candidates) → 2 cell(s) eliminated
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -196,7 +194,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  C </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (4,4) [I]: region singleton [I]: eliminating row 4, col 4, region [I], diagonal adjacents → 9 cell(s)
+1.0s:   QUEEN (R5,C5) [I]: region singleton [I]: eliminating row R5, col C5, region [I], diagonal adjacents → 9 cell(s)
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -208,7 +206,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;"> ❌ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   shadow: [C] (3 candidates) → 3 cell(s) eliminated
+1.0s:   shadow: [C] (3 candidates) → 3 cell(s) eliminated
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -220,7 +218,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   n-group: cols {5,6} exclusive to {G,J} → 4 cell(s) eliminated
+1.0s:   n-group: cols {C6,C7} exclusive to {G,J} → 4 cell(s) eliminated
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;">  F </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -232,7 +230,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (2,3) [F]: col 3 singleton: eliminating row 2, col 3, region [F], diagonal adjacents → 3 cell(s)
+1.0s:   QUEEN (R3,C4) [F]: col C4 singleton: eliminating row R3, col C4, region [F], diagonal adjacents → 3 cell(s)
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -244,9 +242,9 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  E </span><span style="background-color:#6c7a89;">  E </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#65c2a5;">  J </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (6,2) [C]: col 2 singleton: eliminating row 6, col 2, region [C], diagonal adjacents → 3 cell(s)
-1.1s:   QUEEN (8,5) [J]: col 5 singleton: eliminating row 8, col 5, region [J], diagonal adjacents → 4 cell(s)
-1.1s:   QUEEN (5,6) [G]: col 6 singleton: eliminating row 5, col 6, region [G], diagonal adjacents → 0 cell(s)
+1.0s:   QUEEN (R7,C3) [C]: col C3 singleton: eliminating row R7, col C3, region [C], diagonal adjacents → 3 cell(s)
+1.0s:   QUEEN (R9,C6) [J]: col C6 singleton: eliminating row R9, col C6, region [J], diagonal adjacents → 4 cell(s)
+1.0s:   QUEEN (R6,C7) [G]: col C7 singleton: eliminating row R6, col C7, region [G], diagonal adjacents → 0 cell(s)
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;">  A </span><span style="background-color:#5e4fa2;">  A </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -258,8 +256,8 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#6c7a89;"> ❌ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;"> 👑 </span><span style="background-color:#65c2a5;"> ❌ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s:   QUEEN (3,0) [E]: region singleton [E]: eliminating row 3, col 0, region [E], diagonal adjacents → 1 cell(s)
-1.1s:   QUEEN (1,1) [A]: row 1 singleton: eliminating row 1, col 1, region [A], diagonal adjacents → 0 cell(s)
+1.0s:   QUEEN (R4,C1) [E]: region singleton [E]: eliminating row R4, col C1, region [E], diagonal adjacents → 1 cell(s)
+1.0s:   QUEEN (R2,C2) [A]: row R2 singleton: eliminating row R2, col C2, region [A], diagonal adjacents → 0 cell(s)
 <span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#5e4fa2;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span><span style="background-color:#8e8875;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#fdae61;">  ✖ </span>
 <span style="background-color:#5e4fa2;"> ❌ </span><span style="background-color:#5e4fa2;"> 👑 </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
 <span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#e6f598;">  ✖ </span><span style="background-color:#d53e4f;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span>
@@ -271,7 +269,7 @@ Grid: 10 × 10, 10 colours
 <span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#6c7a89;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#65c2a5;"> 👑 </span><span style="background-color:#65c2a5;">  ✖ </span><span style="background-color:#acdda5;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#f56d43;">  ✖ </span>
 <span style="background-color:#fdae61;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#3287bd;">  ✖ </span><span style="background-color:#fdae61;"> 👑 </span>
 
-1.1s: Solved: 10 queens placed.
+1.0s: Solved: 10 queens placed.
 </pre>
 </body>
 </html>
